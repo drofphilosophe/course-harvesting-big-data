@@ -1,0 +1,447 @@
+---
+title: |
+  FAOSTAT Data and Visualization
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+---
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals
+
+Familiarize Ourselves with the FAO Crop & Livestock Data
+
+- Understand the content and methodology
+- Load the data in R
+- Examine the content
+
+Basic Data Visualization using `ggplot()`
+
+- Construct data visualization using `ggplot()`
+- Consider ggplot layers, aesthetics, and layer properties
+- Save visualizations for use in other documents
+
+Look at the FAO data in
+
+`AGNR-AREC280_Fall2026/Data/FAO`
+
+Think about how you would load data in this folder into R
+
+# Measuring Agricultural Productivity
+
+## Agricultural Productivity {.smaller}
+
+How should we measure agricultural productivity?
+
+. . .
+
+- Productivity is a measure of how inputs are converted into outputs
+
+What are inputs to agriculture?
+
+. . .
+
+- Land
+- Labor
+- Water
+- Machinery (capital)
+- Fertilizer
+- etc
+
+## Measuring Agricultural Productivity
+
+How do we measure agricultural productivity?
+
+- One measure is **Total Factor Productivity**
+- Index measuring how efficiently agricultural inputs are transformed into agricultural outputs
+- Effectively a ratio of output to inputs
+- Easy when there is one input
+- More difficult when there are many
+
+## TFP in Practice {.smaller}
+
+In practice we measure TFP as a function
+
+- Hold other inputs/factors constant
+- TFP is the "left over" productivity
+
+What is the difficulty with this approach?
+
+. . .
+
+- How do we make sure farmers hold inputs constant? (we can't)
+- Other factors (e.g., weather) are impossible to hold constant
+- Do we care about productivity in the lab or on real farms?
+
+## Estimating TFP
+
+Estimating TFP is an empirical modeling problem
+
+- Collect data on all factors we think influence crop growth
+- Across many farms and many years
+- Use of inputs and other factors will vary across observations
+- Use this variation to isolate the impact of each factor on output
+- Combine this with actual input use to predict output for each observation
+- TFP is the "residual" (true value minus prediction)
+
+## Total Factor Productivity Over Time
+
+![US TFP Over Time](/assets/images/productivity-2023.png){height="550" fig-align="center"}\
+
+## Challenges with Measuring TFP
+
+- Suppose we want to compute the change in TFP for many countries over time
+- We'll use the method I outlined
+  - Collect data on output, inputs, and other factors
+  - Use it to construct an empirical model of productivity
+  - TFP is the residual unexplained by the model
+- What challenges might we encounter?
+- What might you do to address those problems?
+
+## Some Challenges Measuring TFP
+
+Some challenges measuring TFP using observational data
+
+- Consistency in measurement both across **time** and **space**
+- Unmeasured factors (e.g., intensity of rain)
+- Unmeasured quality of inputs and output
+- Substitution between inputs
+- Crop switching
+- Many more!
+
+## Is Measuring TFP Impossible?
+
+- There are many ways our estimates of TFP could go wrong
+- No set of estimates is "perfect"
+- Should we just give up?
+
+. . .
+
+- TFP estimates provide valuable information, even if not "perfect"
+- Do the best job we can
+- Continue to improve (better data, models, etc)
+
+# United Nations FAOSTAT Crop & Livestock Data
+
+## Measuring National Agricultural Production
+
+Consistency of data is important for measuring TFP across countries and over time
+
+- Ideally measure output using methods that allow for comparing measurements
+  - Across all countries
+  - Across time
+- Include the majority of countries
+- Include a wide array of agricultural products
+
+## United Nations FAOSTAT Data
+
+The UN collects and reports the FAOSTAT Data
+
+- Annual measurements of agricultural production
+- Consistent methods across over 200 countries/territories
+- Output measurements for nearly 300 types of output
+- Long time series of measurements (starting in 1961)
+
+Available at <https://www.fao.org/faostat>
+
+On Google Drive in `Data/FAO`
+
+## Summary of FAOSTAT
+
+Each observation is a combination of
+
+- Year
+- Country
+- Agricultural output type
+- Measurement
+
+## FAOSTAT Measurements - Crops
+
+FAOSTAT measures
+
+**Crops**
+
+- Total area of land harvested (ha)
+- Production quantity (mt)
+- Yield (mt/ha)
+
+Measurements for both primary crops (soybeans) and refined goods (soybean oil)
+
+## FAOSTAT Measurements - Livestock
+
+FAOSTAT Measures
+
+**Livestock**
+
+- Number of animals
+- Production quantity (mt)
+- Yield (mt/animal)
+
+## Loading FAOSTAT {.smaller}
+
+Load the FAOSTAT data into R
+
+- The Full FAOSTAT datafile is very large (over 300 MB)
+  - It will take a long time to load
+  - WiFi will clog up with everyone downloading the file
+- A second file (`FAO_crop_livestock-subsample.csv`) contains a limited set of observations
+  - Brazil only
+  - Years 1990 - 2010
+- Load this file into R for today
+
+## Loading FAOSTAT Code
+
+```{r load_faostat}
+#| echo: true
+read_csv(
+  file.path(data_path,"FAO","csv","FAO_crop_livestock-subsample.csv")
+) -> faostat
+```
+
+- Here's how I loaded the data
+- What should I do next?
+
+## Exploring the FAOSTAT Data
+
+```{r glimpse_faostat}
+#| echo: true
+glimpse(faostat)
+```
+
+## Understanding the FAOSTAT Data
+
+What agricultural products are in this data set?
+
+. . .
+
+```{r distinct_items}
+#| echo: true
+#| eval: false
+faostat |>
+  distinct(Item)
+```
+
+## Focus on one products
+
+There are many products
+
+- Choose one
+- Create a new data frame containing only that product
+
+. . .
+
+I choose **Brazil nuts, in shell**
+
+```{r select_item}
+#| echo: true
+faostat |>
+  filter(Item == "Brazil nuts, in shell") -> faostat_brazilnuts
+```
+
+## Focus on one product - Result
+
+```{r show_select_item}
+faostat_brazilnuts
+```
+
+## Focus on one measurement
+
+What are the possible values of `Element`?
+
+. . .
+
+```{r distinct_elements}
+#| echo: true
+faostat_brazilnuts |>
+  distinct(Element)
+```
+
+- Brazil nuts only have a "Production" measurement
+- Other products might have more measurements
+- You will need to filter down to a single measurement
+
+## Plot your data over time
+
+Create a plot of your selected crop/measurement
+
+- `Year` on the horizontal axis
+- Your measurement (`Value`) on the vertical
+
+How do you do this with `ggplot`?
+
+## Using ggplot
+
+- You create visualizations with ggplot
+- Always starts with the `ggplot()` function
+  - Arguments to this function are *inherited* by all layers
+- Add layers and other elements using the `+` operator
+- Arguments to layers override inherited arguments
+
+## Common ggplot layers
+
+Layers add visual elements to your visualization
+
+- Scatter plot `geom_point()`
+- Line plot `geom_line()`
+- Smoothed line `geom_smooth()`
+- Many, many more
+
+## Create a visualization
+
+- `Year` on the horizontal axis (`x` aesthetic)
+- Your measurement (`Value`) on the vertical (`y` aesthetic)
+
+Provide data and aesthetics to `ggplot()`
+
+```{r}
+#| echo: true
+#| eval: false
+
+ggplot(
+  data=faostat_brazilnuts,
+  mapping=aes(x=Year,y=Value)
+  ) +
+  geom_line()
+```
+
+## Create a visualization
+
+- `Year` on the horizontal axis (`x` aesthetic)
+- Your measurement (`Value`) on the vertical (`y` aesthetic)
+
+Provide data and aesthetics to layers
+
+```{r}
+#| echo: true
+#| eval: false
+
+ggplot(
+  data=faostat_brazilnuts
+  ) +
+  geom_line(
+    mapping=aes(x=Year,y=Value)
+  )
+```
+
+Both versions will produce the same visualization
+
+## Sample visualization
+
+```{r first_viz}
+#| eval: true
+
+ggplot(
+  data=faostat_brazilnuts
+  ) +
+  geom_line(
+    mapping=aes(x=Year,y=Value)
+  )
+```
+
+- Is this a good visualization?
+- How could we improve it?
+
+## Improving the visualization
+
+Good visualizations are clear and self-contained
+
+- Informative axis labels
+- Clear what is being plotted
+- Use a legend where appropraite
+
+## An improved visualization
+
+```{r second_viz}
+#| echo: true
+ggplot(
+  data=faostat_brazilnuts,
+  aes(x=Year,y=Value)
+) +
+  geom_line() +
+  labs(
+    x="Year",
+    y="Production (mt)",
+    title="Annual Brazil Nut Production",
+    subtitle="Brazil 1990 - 2010",
+    caption="Source: United Nations FAOSTAT"
+  ) -> viz_1
+```
+
+## Look at an improved version
+
+```{r show_second_viz}
+viz_1
+```
+
+## Adding layers
+
+Adding Layers
+
+- Add additional layers using the `+` operator
+- Each stacks on top of the previous one
+
+Modifying Layers
+
+- Modify the appearance of an entire layer with layer properties
+- Arguments to layer functions outside the aesthetic
+- Available properties depend on the layer type
+
+## Adding Layers - Example
+
+```{r third_viz}
+#| echo: true
+#| eval: false
+ggplot(
+  data=faostat_brazilnuts,
+  aes(x=Year,y=Value)
+) +
+  geom_line(color="black",linewidth=1) +
+  geom_smooth(color="blue",linewidth=1.2) 
+```
+
+## Adding Layers - New Visualization
+
+```{r show_third_viz}
+#| echo: false
+#| eval: true
+ggplot(
+  data=faostat_brazilnuts,
+  aes(x=Year,y=Value)
+) +
+  geom_line(color="black",linewidth=1) +
+  geom_smooth(color="blue",linewidth=1.2) +
+  labs(
+    x="Year",
+    y="Production (mt)",
+    title="Annual Brazil Nut Production",
+    subtitle="Brazil 1990 - 2010",
+    caption="Source: United Nations FAOSTAT"
+  ) 
+```
+
+## Next Class
+
+- More Data Visualization
+- Reading and writing Parquet files

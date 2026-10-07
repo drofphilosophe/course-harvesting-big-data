@@ -1,0 +1,14 @@
+# Local settings in an environment file
+.env
+
+# Published HTML files
+_site/
+
+# R-specific files
+.Rproj.user/
+.Rhistory
+
+# Quarto-specific files
+.quarto/
+/.quarto/
+**/*.quarto_ipynb

@@ -1,0 +1,22 @@
+---
+title: "AREC 280: Harvesting Big Data"
+subtitle: "Content License"
+format:
+  # Suppress the level 1 header information in this page
+  html:
+    title-block-banner: false
+    page-layout: article
+---
+## License Notice
+
+All materials on this site are 
+Copyright © 2026 James Archsmith. 
+All rights reserved.
+
+### Rights for students enrolled in this course
+
+University of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, 
+print, and use all print materials for any purposes related to their personal use for 
+this course and may retain these materials indefinitely after the course concludes. 
+
+Unauthorized reproduction is expressly prohibited.

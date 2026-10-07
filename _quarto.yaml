@@ -1,0 +1,110 @@
+project:
+  type: website  
+  output-dir: _site
+  resources:
+    - "assets/**"
+
+# ---------
+# Instance-specific customizations
+# ---------
+author:
+  name: "James Archsmith"
+  affiliation: "University of Maryland"
+  
+
+course:
+  number: &course_number "AREC 280"
+  number_title: &course_number_title "AREC 280 - Harvesting Big Data"
+  term: &course_term "Fall 2026"
+  number_term: &course_number_term "AREC 280 - Fall 2026"
+  short_name: &course_short_name "Harvesting Big Data"
+  full_name: &course_long_name "Harvesting Big Data to Examine Agriculture and Climate Change"
+  instructor_email: archsmit@umd.edu
+  instructor_name: "Prof. James Archsmith"
+
+# Default subtitle if a lecture doesn't specify one
+subtitle: *course_number_title 
+
+execute:
+  warning: false    # Suppresses R warnings in output slides
+  message: false
+
+execution:  
+  execute-dir: project   # Forces code execution to run relative to project root
+
+format:
+  revealjs:          # Calls your extension folder name + format
+    theme: [_extensions/umd-theme/umd-theme-slides.scss]
+    slide-number: true
+    #logo: /assets/logo.png   # Assets still use the standard / root syntax
+    show-slide-number: all
+    chalkboard: false
+    preview-links: auto
+    footer: *course_number_term
+    
+    # Code display options for classrooms
+    code-line-numbers: true
+    code-copy: true
+    highlight-style: monokai # High-contrast theme for dark backgrounds
+    
+    # PDF printing configuration
+    pdf-separate-fragments: false
+
+    # Set viewport size
+    width: 1280
+    height: 780
+    margin: 0.05         # Disables fixed pixel margins to let CSS handle responsive sizing
+    min-scale: 0.2       # Allows downscaling on small displays
+    max-scale: 4.0       # Allows upscaling on ultrawide / 4K displays
+    auto-stretch: true   # Automatically resizes plots, tables, and code outputs to fit
+    scrollable: false    # The slide viewport is not scrollable if content overflows
+
+    # Custom additions to the hamburger menu
+    menu:
+      custom:
+        # This adds a License section with the associated text
+        - title: "License"
+          icon: '<span style="font-weight:bold; font-size:2.5em;">©</span>'
+          content: |
+            <div style="padding: 1.5em; font-size: 0.9em; line-height: 1.6;">
+              <h3 style="margin-top:0;">License Notice</h3>
+              <p>This presentation and its underlying materials are Copyright © 2026 James Archsmith. All rights reserved.</p>
+              <p>University of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, 
+              and use all print materials for any purposes related to their personal use for this course and may retain these materials
+              indefinitely after the course concludes. Unauthorized reproduction is expressly prohibited. </p>
+            </div>
+  html:
+    theme: [_extensions/umd-theme/umd-theme-html.scss]
+    toc: true
+
+website:
+  title: *course_number_title  
+  sidebar:
+    style: "docked"        # Options: "docked" (pinned left) or "floating"
+    search: true           # Enables a search bar at the top of the sidebar
+    collapse-level: 1      # Automatically collapses sub-sections deeper than level 1
+    # -------
+    # Define the course content here, this will be used to construct the index page  
+    # -------
+    contents:  
+      - text: "Course Overview"  
+        href: index.qmd  
+      - section: "Modules"
+        contents: 
+        - text: "1. Data Visualization"  
+          href: modules/data-visualization/index.qmd
+      - "---"
+      - section: "About"
+        contents:
+        - text: "License Notice"
+          href: LICENSE.qmd
+  # Top navbar
+  navbar:
+    title: *course_number_title
+    href: index.html       # Forces the course title link to target index.html
+    search: true
+  # Page Footer
+  page-footer:
+    right: *course_term
+    center: *course_number
+    border: true

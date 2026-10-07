@@ -1,0 +1,37 @@
+---
+title: "Data Visualization"
+subtitle: ""
+format: html
+listing:
+  - id: checkins
+    contents: "*.qmd"
+    include:
+      categories: "Check-ins"
+    type: grid
+    grid-columns: 2
+    sort: "filename asc"
+    fields: [title, subtitle]
+
+  - id: class-materials
+    contents: "*.qmd"
+    include:
+      categories: "Class Materials"
+    type: grid
+    grid-columns: 2
+    sort: "filename asc"
+    fields: [title, subtitle]
+---
+
+## 📋 Offline Learning and Check-ins
+*Complete these slide decks/activities before class.*
+
+:::{#checkins}
+:::
+
+---
+
+## 🏫 In-Class Materials
+*Slide decks used during live lectures and interactive sessions.*
+
+:::{#class-materials}
+:::

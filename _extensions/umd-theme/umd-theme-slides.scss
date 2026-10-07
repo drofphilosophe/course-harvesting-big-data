@@ -1,0 +1,329 @@
+/*-- scss:defaults --*/
+
+// 1. Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;700&display=swap');
+
+// 2. Font Variables
+$mainFont: 'Plus Jakarta Sans', system-ui, sans-serif;
+$headingFont: 'Plus Jakarta Sans', system-ui, sans-serif;
+$codeFont: 'Fira Code', monospace;
+
+// 3. Layout Dimension Variables
+$banner-clearance: 80px; // Defines how far down slide body content starts to avoid the h2 banner
+$footer-height: 40px;
+
+// 4. Official UMD Color Palette
+$umd-red: #E21833;
+$umd-gold: #FFD100;
+$umd-black: #101010;
+$umd-white: #FFFFFF;
+$umd-offwhite: #F9F9F9;
+
+// 5. Quarto / Reveal.js Theme Defaults
+$font-family-main: $mainFont;
+$font-family-heading: $headingFont;
+$font-family-code: $codeFont;
+$body-bg: $umd-offwhite;
+$body-color: $umd-black;
+$link-color: $umd-red;
+$selection-bg: $umd-gold;
+$heading-color: $umd-black;
+$heading-font-weight: 600;
+$code-block-bg: #0d0d0d;
+$code-color: #f8f8f2;
+
+// --- Callout Customization ---
+$callout-color-note: $umd-black;
+$callout-color-tip: $umd-gold;
+$callout-color-important: $umd-red;
+$callout-color-warning: #FF7221;
+
+/*-- scss:rules --*/
+
+// --- TYPOGRAPHY & OVERRIDES ---
+.reveal,
+.reveal .slides,
+.reveal .slides section,
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6,
+.reveal p, .reveal li, .reveal span, .reveal table, .reveal td, .reveal th {
+  font-family: $mainFont !important;
+}
+
+.reveal pre,
+.reveal code,
+.reveal kbd,
+.reveal samp,
+.reveal .cell-code,
+.reveal .cell-code pre,
+.reveal .cell-code code,
+.reveal .sourceCode,
+.reveal .sourceCode pre,
+.reveal .sourceCode code,
+.reveal .sourceCode span,
+.reveal div.cell-output pre,
+.reveal div.cell-output code {
+  font-family: $codeFont !important;
+  /* Disable code ligatures */
+  font-variant-ligatures: none !important;
+  -webkit-font-variant-ligatures: none !important;
+  font-feature-settings: "calt" 0, "liga" 0 !important;
+}
+
+.reveal .slide-number,
+.reveal .footer,
+.reveal .slide-menu-button {
+  font-family: $headingFont !important;
+}
+
+
+// --- SLIDE BOUNDARIES (Making room for the banner) ---
+
+// 1. Reset outer section stacks created when H1 / # headers are present
+.reveal .slides section.stack {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100% !important;
+}
+
+// 2. Apply clearance padding ONLY to individual slide sections (both top-level and inside stacks)
+.reveal .slides > section:not(.stack),
+.reveal .slides section.stack > section {
+  height: 100% !important; 
+  padding-top: $banner-clearance !important;
+  padding-bottom: calc(#{$footer-height} + 10px) !important;
+  box-sizing: border-box !important;
+}
+
+// Reset standard heading margins
+.reveal h1,
+.reveal h3,
+.reveal h4 {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  margin-bottom: 0.5em !important;
+}
+
+// --- SECTION DIVIDER (H1) SLIDES ----
+/* Target section divider slides (slides containing an h1) */
+.reveal .slides section:has(> h1) {
+  /* Use flexbox to center content vertically and horizontally */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important; /* Vertical center */
+  align-items: center !important;     /* Horizontal center */
+  text-align: center !important;
+  height: 100% !important;
+
+  /* Target the h1 heading directly */
+  h1 {
+    font-size: 2.0em !important;      /* Adjust size (default is ~2.5em to 3.75em) */
+    margin: 0 !important;             /* Remove margins that could bias centering */
+    line-height: 1.2 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* Place lines before and after H1 text
+       It will be 80% of the viewport width */
+    &::before,
+    &::after {
+      content: "";
+      display: block;
+      width: 80vw;             /* 80% of the slide canvas width */
+      max-width: 80%;          /* Fallback constraint */
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    /* Rule before (above) the text */
+    &::before {
+      background-color: $umd-red; /* Matches the heading font color */
+      margin-bottom: 0.5em;      /* Space between line and heading */
+    }
+
+    /* Rule after (below) the text */
+    &::after {
+      background-color: $umd-gold;
+      margin-top: 0.5em;         /* Space between heading and line */
+    }
+  }
+
+  /* Optional: if you also have a subtitle or text on the section divider slide */
+  p {
+    font-size: 1.1em;
+    margin-top: 0.5em;
+  }
+}
+
+// --- SLIDE HEADER (H2) AS THE BANNER ---
+.reveal h2 {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 10px 40px !important;
+  background-color: $umd-red !important;
+  border-bottom: 4px solid $umd-gold !important;
+  color: $umd-white !important;
+  font-size: 1.25em !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+  box-sizing: border-box !important;
+  z-index: 20 !important;
+}
+
+
+// --- CUSTOM HEADER UTILITY (If using header.html markup) ---
+.custom-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: $banner-clearance;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  box-sizing: border-box;
+  font-family: $mainFont;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: $umd-white;
+  z-index: 25;
+  pointer-events: none;
+
+  .header-left {
+    color: $umd-white;
+    font-weight: 700;
+  }
+
+  .header-right {
+    color: $umd-gold;
+    font-weight: 500;
+  }
+}
+
+
+// --- BOTTOM FOOTER BANNER BAR ---
+.reveal .footer {
+  position: fixed;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: $footer-height;
+  background-color: $umd-black;
+  color: $umd-white !important;
+  line-height: $footer-height;
+  text-align: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  font-size: 0.55em;
+  font-weight: 500;
+  z-index: 20;
+
+  a {
+    color: $umd-gold !important;
+  }
+}
+
+// Slide Numbers seated inside the footer bar
+.reveal .slide-number {
+  position: fixed;
+  bottom: 0 !important;
+  right: 25px !important;
+  height: $footer-height;
+  line-height: $footer-height;
+  background-color: transparent !important;
+  color: $umd-gold !important;
+  font-size: 0.6em;
+  font-weight: 700;
+  z-index: 30;
+}
+
+
+// --- CODE & INLINE CODE FORMATTING ---
+.reveal pre {
+  background-color: $code-block-bg !important;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid #333333;
+  font-family: $codeFont !important;
+}
+
+.reveal pre code {
+  color: $code-color !important;
+  background-color: transparent !important;
+  font-family: $codeFont !important;
+  padding: 0.8em;
+}
+
+.reveal div.sourceCode {
+  border-left: 5px solid $umd-gold;
+  border-radius: 4px;
+  font-family: $codeFont !important;
+}
+
+.reveal code:not(pre code) {
+  color: $umd-red !important;
+  background-color: #f0f0f0 !important;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-family: $codeFont !important;
+  font-size: 0.9em;
+}
+
+// --- PREVENT GGPLOT / R-STRETCH COLLAPSE ---
+.reveal .slides section img.r-stretch,
+.reveal .slides section .r-stretch {
+  width: auto !important;
+  height: auto !important;
+  max-width: 90% !important;
+  max-height: 60vh !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+// --- Reduce the size of the toogle for code folding ---
+/* Tighten container spacing around the fold block */
+.reveal .slides section details.code-fold {
+  margin-top: 0.1em !important;
+  margin-bottom: 0.2em !important;
+  padding-bottom: 0 !important;
+}
+/* Target Quarto's code-fold summary in Reveal.js */
+.reveal .slides section details.code-fold > summary,
+.reveal .slides section details.code-fold > summary * {
+  color: $umd-black !important;
+  font-size: 0.65em !important;  /* Use rem to break free from slide font scaling */
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Style the clickable pill container */
+.reveal .slides section details.code-fold > summary {
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  margin-bottom: 0.1em;
+  background-color: $umd-gold;
+  border-radius: 4px;
+}
+
+/* Adjust disclosure marker size */
+.reveal .slides section details.code-fold > summary::marker,
+.reveal .slides section details.code-fold > summary::-webkit-details-marker {
+  color: $umd-black !important;
+  font-size: 0.65em !important;
+}
+
+/* Hover accent */
+.reveal .slides section details.code-fold > summary:hover {
+  background-color: $umd-red;
+}
+

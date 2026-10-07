@@ -1,0 +1,629 @@
+---
+title: |
+  Data Visualization and Parquet Files
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+The **Parquet** data file format
+
+- Understand the advantages and disadvantages of the Parquet file format
+- Reading and writing Parquet files in R
+
+Additional Data Visualization using `ggplot()`
+
+- Construct data visualization using `ggplot()`
+- Creating legends
+- Save visualizations for use in other documents
+
+We will continue to use the FAO data in
+
+`AGNR-AREC280_Fall2026/Data/FAO`
+
+# Modern Data File Formats
+
+## CSV has been a *de facto* standard for data {.smaller}
+
+**The Bottleneck:**
+
+- Modern datasets like high-resolution climate rasters or satellite indices overwhelm plain text formats like CSV
+  - e.g., The FAO data is nearly 400 MB in CSV format
+- Data stored in purely text format
+  - Requires software "guess" properties of the data
+  - Numeric data needs to be translated from text
+  - Repeated text values written out in full, each time
+- CSV files are
+  - Slow to read
+  - Large
+  - Require guesses or manual intervention to read correctly
+
+## Modern Big Data Storage
+
+**The Next Generation:**
+
+Define a data file format for modern big data
+
+- **Portable**: Works across data processing systems
+- **Fast**: Information you need loads quickly
+- **Compact**: Data stored efficiently for small files
+- **Consistent**: All software interprets the data identically without guessing
+
+## The Parquet Format
+
+[**Parquet**](https://en.wikipedia.org/wiki/Apache_Parquet) (PAR-kay) is a modern data file format for storing tidy data frames
+
+- Created in 2013
+- Specification is free and open source
+- Managed by the [Apache Foundation](https://en.wikipedia.org/wiki/The_Apache_Software_Foundation)
+- Implemented in most data analysis software
+
+## Parquet Advantages: Column-orientation
+
+**Column-oriented storage**
+
+- In CSV files data are oriented in rows
+  - You must read all of one row before moving on to the next
+  - Inefficient if you only want data from specific columns
+- Parquet files use a column format
+  - Only need to read data for the columns you request
+
+## Parquet Advantages: Automatic Compression
+
+**Automatic Compression**
+
+- A CSV must write out every value in every cell as text
+- Parquet automatically compresses information
+  - Column-oriented files are more compressible in general
+  - [Dictionary compression](https://en.wikipedia.org/wiki/Dictionary_coder) of frequent values
+  - [Run-length encoding](https://en.wikipedia.org/wiki/Run-length_encoding) for repeated values
+  - [Delta-encoding](https://en.wikipedia.org/wiki/Delta_encoding) efficiently packs sequential numbers/timestamps
+
+## Parquet Advantages: Strict Schema
+
+**Strict Schema**
+
+- A CSV file doesn't contain any information about data types
+- Parquet files explicitly define data types of each column
+  - Integer, Floating point, Character, Boolean, Date, and Timestamp data types
+- Parquet uses explicit formats for each data type (e.g., [IEEE-754 floating point](https://en.wikipedia.org/wiki/IEEE_754))
+- Any data processing package interprets each value the exact same way
+- Explicit support for missing (`NA`) values
+
+## Parquet Disadvantages
+
+- Binary files aren't human-readable
+- Column-oriented format makes "appending" data slow
+  - Poorly suited for cases where you frequently update data
+- Performance gains only materialize on larger files
+  - 1000s of observations
+  - 10s or 100s of columns
+
+## Parquet in this Class
+
+In this class I will provide Parquet versions of most data files
+
+- Data files contain many, repeated text values
+- Very large CSV files
+- Parquet much smaller, so they load quickly
+- Strict schema, so everyone gets the same data
+- ELMS and gmail understand they are data files
+
+# Loading Parquet Files in R
+
+## Loading Parquet files in R
+
+You can load parquet files in R
+
+- Use `read_parquet()`
+- Requires the `arrow` library
+
+Load `FAO/parquet/FAO_crop_livestock.parquet` into R.
+
+::: callout-tip
+### New Package
+
+You will need to install the `arrow` package if you haven't already
+:::
+
+## Load the FAO Parquet file
+
+```{r load_faostat}
+#| echo: true
+library(arrow)
+read_parquet(
+  file.path(data_path,"FAO","parquet","FAO_crop_livestock.parquet")
+) -> faostat
+```
+
+This is the full FAO data file
+
+- Full time series (1961 - 2025)
+- Full set of countires
+- Full set of commodities
+
+Let's start by focusing on a single measurement of one crop in one country
+
+# Wrangling the FAOSTAT Data
+
+## Choose your adventure: Country {.smaller}
+
+Create a pipeline to construct a single crop data frame
+
+**Step 1**
+
+- Use `distinct()` to look at countries (`Area`)
+- Choose one you are interested in
+  - Write a `filter()` command that would limit the data to that country
+
+::: callout-tip
+### Displaying long results
+
+R limits results in the console to 10 - 20 lines.
+
+Pipe your result to `print(n=Inf)` to display all rows
+:::
+
+## My Adventure: Country
+
+I chose to look at France
+
+```{r filter_country}
+#| echo: true
+faostat |>
+  filter(Area == "France") 
+```
+
+## Choose your adventure
+
+Create a pipeline to construct a single crop dataset
+
+**Step 2**
+
+- Pipe your previous result to `distinct()` to look at commodities (`Item`)
+- Choose one commodity you are interested in
+  - Write a `filter()` command that would limit the data to that commodity
+
+## My Adventure: Commodity
+
+I chose to look at Wine in France
+
+```{r filter_commodity}
+#| echo: true
+faostat |>
+  filter(Area == "France") |>
+  filter(Item == "Wine") 
+```
+
+## Choose your adventure
+
+Create a pipeline to construct a single crop dataset
+
+**Step 3**
+
+- Pipe your previous result to `distinct()` to look at measurements (`Element`)
+- Choose one measurement you are interested in
+  - Write a `filter()` command that would limit the data to that measurement
+
+## My Adventure: Measurement
+
+I chose to look at Wine in France
+
+```{r filter_measurement}
+#| echo: true
+faostat |>
+  filter(Area == "France") |>
+  filter(Item == "Wine") |> 
+  filter(Element == "Production")
+```
+
+## Choose your adventure
+
+Create a pipeline to construct a single crop dataset
+
+**Step 4**
+
+- Save this filtered data frame to a new tibble
+
+```{r save_filtered}
+#| echo: true
+faostat |>
+  filter(Area == "France") |>
+  filter(Item == "Wine") |> 
+  filter(Element == "Production") -> fao_filtered
+```
+
+## Check your work
+
+Examine you filtered data frame to be sure you have information you expect
+
+- `glimpse()`
+- `summary()`
+- `distinct()` or `count()`
+
+## Visualize {.smaller}
+
+Use your filtered data frame to create a visualization
+
+- Year on the horizontal axis
+- Your measurement on the vertical axis
+- Black dots for the value of measurement in each year (using `geom_point`)
+- A blue line showing the trend (using `geom_smooth`)
+- Clear labels throughout the visualization
+
+::: callout-tip
+### Removing error band from `geom_smooth`
+
+You can remove the error band from `geom_smooth` layers by setting the layer property `se=FALSE`
+:::
+
+## My visualization
+
+```{r viz_1}
+#| echo: true
+#| code-fold: true
+ggplot(
+  data=fao_filtered,
+  mapping=aes(x=Year,y=Value)
+) +
+  geom_line(color="black") +
+  geom_smooth(color="blue",se=FALSE) +
+  labs(
+    title="Wine Production in France",
+    x="Year",
+    y="Production (mt)",
+    caption="Source: United Nations FAOSTAT"
+  )
+```
+
+# On-the-fly Calculations in Visualizations
+
+## A tweak to the labels
+
+- The values on my vertical axis are in scientific notation
+  - R defaults to using it when values are larger than 1000
+  - Or smaller than 0.1
+- Sometimes difficult to read
+- Options for improving:
+  - Force R to format numbers in fixed-comma format (8,000,000)
+  - Rescale the axis so numbers are smaller (**million mt** vs **mt**)
+
+## Rescale values on-the-fly
+
+The cleanest choice is to rescale the vertical axis
+
+- Show "million mt" instead of "mt"
+- Requires dividing `Value` by 1,000,000
+- In `ggplot` you can do this math "on-the-fly" in a visualization
+
+```{r}
+#| eval: false
+#| echo: true
+...
+  aes(x=Year,y=Value/1000000)
+...
+```
+
+- Any mathmatical operation is supported
+- Summary functions (e.g., `mean()`) will compute the value over all data in that layer
+
+## My visualization
+
+```{r viz_1_rescale}
+#| echo: true
+#| code-fold: true
+ggplot(
+  data=fao_filtered,
+  mapping=aes(x=Year,y=Value/1000000)
+) +
+  geom_line(color="black") +
+  geom_smooth(color="blue",se=FALSE) +
+  labs(
+    title="Wine Production in France",
+    x="Year",
+    y="Production (million mt)",
+    caption="Source: United Nations FAOSTAT"
+  )
+```
+
+# Customizing an Axis
+
+## Visualization Scales
+
+- R automatically adjusts the scale of each axis to fit the data
+  - Minimum value slightly smaller than smallest value
+  - Maximum value slightly larger than largest value
+- Can exaggerate how much values change over time
+- In the previous visualization, you may want to extend the axis to zero
+
+## Adjusting Visualization Axes
+
+- Adjust axis properties using **scale** functions
+- Take the form: `scale_<axis>_<type>()`
+- `<axis>` is `x` or `y`
+- `<type>` is the axis type
+  - Determines how the axis will be drawn
+  - Depends on the type of data you're plotting
+
+## Adjusting Visualization Axes
+
+::: callout-tip
+### Axis Scale Resources
+
+The **Help** feature in RStudio has excellent documentation, start by typing "scale\_" in the search box.
+
+There is also an excellent resource for using scales at
+
+<https://ggplot2-book.org/scales-guides.html>
+:::
+
+## Adjusting a Continuous Axis
+
+The vertical axis in our visualization is **continuous**
+
+- Customize using `scale_y_continuous()`
+- Read the **help** for this function
+- There will be some things that make sense and some thing less so
+- Important options (look closely at them)
+  - `limits`
+  - `breaks`
+  - `minor_breaks`
+
+## Adjusting a Continuous Axis
+
+Arguments for `scale_y_continuous()`
+
+- `limits`
+  - A 2-element vector with the starting and ending value of the axis
+- `breaks`
+  - A vector with the major (labeled) break values on the axis
+- `minor_breaks`
+  - A vector with the minor (unlabeled) break values on the axis
+
+## Adjusting a Continuous Axis
+
+I am going to
+
+- Set the axis to start at 0 and go to 10 (`limits`)
+- Have major breaks at even numbers (`breaks`)
+- Have minor breaks at odd numbers (`minor_breaks`)
+
+::: callout-tip
+### Creating Vectors
+
+Create vectors with the `c()` function
+
+You can create a sequence of numbers in a vector with the `seq()` function
+:::
+
+Make changes you think are appropriate for your visualziation!
+
+## Visualization with Updated Axis
+
+```{r example_viz_2}
+#| echo: true
+#| code-fold: true
+ggplot(
+  data=fao_filtered,
+  mapping=aes(x=Year,y=Value/1000000)
+) +
+  geom_line(color="black") +
+  geom_smooth(color="blue",se=FALSE) +
+  labs(
+    title="Wine Production in France",
+    x="Year",
+    y="Production (million mt)",
+    caption="Source: United Nations FAOSTAT"
+  ) +
+  scale_y_continuous(
+    limits=c(0,10),
+    breaks=seq(0,10,2),
+    minor_breaks=seq(0,10,1)
+  )
+```
+
+# Storing Visualizations
+
+## Storing visualizations
+
+You can store a `ggplot` visualization using an assignment operator (e.g., `->`)
+
+- Stores everything needed to create the visualization in a named variable
+- Does not render the visualization
+- You can render/display it later with `print()`
+- Why would you do this?
+  - Create many visualizations then print/save them all at once
+  - You can modify a stored visualization by adding more layers or attributes
+
+## Storing a Visualization
+
+This stores my visualization, but does not show it!
+
+```{r define_viz_2}
+#| echo: true
+ggplot(
+  data=fao_filtered,
+  mapping=aes(x=Year,y=Value/1000000)
+) +
+  geom_line(color="black") +
+  geom_smooth(color="blue",se=FALSE) +
+  labs(
+    title="Wine Production in France",
+    x="Year",
+    y="Production (million mt)",
+    caption="Source: United Nations FAOSTAT"
+  ) +
+  scale_y_continuous(
+    limits=c(0,10),
+    breaks=seq(0,10,2),
+    minor_breaks=seq(0,10,1)
+  ) -> production_viz
+```
+
+# `ggplot` Themes
+
+## Using Themes
+
+Overall appearance of a visualization is controlled by **themes**
+
+- Themes are customizable
+- R has some built-in themes that combine common options
+- Each is named `theme_<name>()`
+- Add to a visualization to apply
+- Default theme is `theme_grey()`
+
+## Example Themes `theme_bw()`
+
+```{r viz_2_theme_bw}
+#| echo: true
+#| code-fold: true
+production_viz +
+  theme_bw()
+```
+
+## Example Themes `theme_light()`
+
+```{r viz_2_theme_light}
+#| echo: true
+#| code-fold: true
+production_viz +
+  theme_light()
+```
+
+## Example Themes `theme_dark()`
+
+```{r viz_2_theme_dark}
+#| echo: true
+#| code-fold: true
+production_viz +
+  theme_dark()
+```
+
+## Example Themes `theme_minimal()`
+
+```{r viz_2_theme_minimal}
+#| echo: true
+#| code-fold: true
+production_viz +
+  theme_minimal()
+```
+
+# Saving Visualizations
+
+## Saving Visualizations
+
+Visualizations are most useful if you can share them
+
+- R Studio's Plots viewer allows saving visualizations
+  - Several steps
+  - Not Automated
+  - Required every time you update the visualization
+- You can add code to save a visualization with `ggsave()`
+  - Visualization will be saved each time you run your R code
+  - Apply specific options to the saved file (file format, size)
+
+## Using `ggsave`
+
+To save a visualization use
+
+`ggsave(<output_path>)`
+
+- R determines the output format using the file extension
+  - e.g., `.png`, `.jpg`, `.pdf`
+- Some important optional arguments are:
+  - `plot`: A variable containing the plot to save
+    - Otherwise, the default is the last plot generated
+  - `width`: Width of the saved image in inches
+  - `height`: Height of the saved image in inches
+
+## Example Saving a Visualization
+
+```{r}
+#| echo: true
+#| eval: false
+
+# Set a path to a directory where you can save files
+homedir_path = "/home/username/Documents/AREC280"
+
+ggsave(
+  file.path(homedir_path,"wine_production.png"),
+  plot=production_viz,
+  width=16,
+  height=9
+)
+```
+
+::: callout-warning
+### No write permissions to the Data folder
+
+You do not have permission to write files to the Data folder in the class Google drive. Attempting to save a file to that folder will result in a **Permission Denied** error.
+
+Be sure to save to a folder on your local computer.
+:::
+
+```{r}
+#| echo: false
+#| eval: true
+
+# Save some sample files to show
+ggsave(
+  "wine_production.png",
+  plot=production_viz,
+  width=16,
+  height=9
+)
+
+ggsave(
+  "wine_production.pdf",
+  plot=production_viz,
+  width=16,
+  height=9
+)
+```
+
+## Choosing a Visualization File Format {.smaller}
+
+You have several choices for file formats, which have advantages and disadvantages
+
+- [**PDF**](https://en.wikipedia.org/wiki/PDF) files best for publication quality graphics
+  - Are [vector images](https://en.wikipedia.org/wiki/Vector_graphics), they scale up flawlessly to very large image sizes
+  - Complicated visualizations make large output file that load slowly
+- [**PNG**](https://en.wikipedia.org/wiki/PNG) files best for general use
+  - Are [raster images](https://en.wikipedia.org/wiki/Raster_graphics), they will get blocky as you scale them up
+  - Files will be a fixed size no matter how complicated the visualization
+- [**JPG**](https://en.wikipedia.org/wiki/JPEG) files best for websites/text messages
+  - Also raster images but use [Lossy Compression](https://en.wikipedia.org/wiki/Lossy_compression)
+  - Files tend to be very small, nearly anyone can view them
+  - Underlying compression algorithm can lose details
+- There are other, more niche formats available too
+
+## Next Class
+
+- More Data Visualization

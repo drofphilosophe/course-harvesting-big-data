@@ -1,0 +1,8 @@
+title: "AREC 280 Theme"
+author: "James Archsmith"
+version: 1.0.0
+contributes:
+  formats:
+    revealjs:
+      theme: [default, umd-theme.scss]
+      slide-number: true
