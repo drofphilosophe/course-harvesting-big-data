@@ -1,0 +1,616 @@
+[
+  {
+    "objectID": "modules/data-visualization/index.html",
+    "href": "modules/data-visualization/index.html",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Complete these slide decks/activities before class.\n\n\n\n\nNo matching items",
+    "crumbs": [
+      "Modules",
+      "1. Data Visualization"
+    ]
+  },
+  {
+    "objectID": "modules/data-visualization/index.html#offline-learning-and-check-ins",
+    "href": "modules/data-visualization/index.html#offline-learning-and-check-ins",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Complete these slide decks/activities before class.\n\n\n\n\nNo matching items",
+    "crumbs": [
+      "Modules",
+      "1. Data Visualization"
+    ]
+  },
+  {
+    "objectID": "modules/data-visualization/index.html#in-class-materials",
+    "href": "modules/data-visualization/index.html#in-class-materials",
+    "title": "Data Visualization",
+    "section": "🏫 In-Class Materials",
+    "text": "🏫 In-Class Materials\nSlide decks used during live lectures and interactive sessions.\n\n\n\n\n\n\n\nFAOSTAT Data and Visualization\n\n\nAREC 280 - Harvesting Big Data\n\n\n\n\n\n\n\n\n\nData Visualization and Parquet Files\n\n\nAREC 280 - Harvesting Big Data\n\n\n\n\n\nNo matching items",
+    "crumbs": [
+      "Modules",
+      "1. Data Visualization"
+    ]
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#todays-goals",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#todays-goals",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Today’s Goals",
+    "text": "Today’s Goals\nFamiliarize Ourselves with the FAO Crop & Livestock Data\n\nUnderstand the content and methodology\nLoad the data in R\nExamine the content\n\nBasic Data Visualization using ggplot()\n\nConstruct data visualization using ggplot()\nConsider ggplot layers, aesthetics, and layer properties\nSave visualizations for use in other documents\n\nLook at the FAO data in\nAGNR-AREC280_Fall2026/Data/FAO\nThink about how you would load data in this folder into R"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#agricultural-productivity",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#agricultural-productivity",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Agricultural Productivity",
+    "text": "Agricultural Productivity\nHow should we measure agricultural productivity?\n\n\nProductivity is a measure of how inputs are converted into outputs\n\nWhat are inputs to agriculture?\n\n\n\nLand\nLabor\nWater\nMachinery (capital)\nFertilizer\netc"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#measuring-agricultural-productivity-1",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#measuring-agricultural-productivity-1",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Measuring Agricultural Productivity",
+    "text": "Measuring Agricultural Productivity\nHow do we measure agricultural productivity?\n\nOne measure is Total Factor Productivity\nIndex measuring how efficiently agricultural inputs are transformed into agricultural outputs\nEffectively a ratio of output to inputs\nEasy when there is one input\nMore difficult when there are many"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#tfp-in-practice",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#tfp-in-practice",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "TFP in Practice",
+    "text": "TFP in Practice\nIn practice we measure TFP as a function\n\nHold other inputs/factors constant\nTFP is the “left over” productivity\n\nWhat is the difficulty with this approach?\n\n\nHow do we make sure farmers hold inputs constant? (we can’t)\nOther factors (e.g., weather) are impossible to hold constant\nDo we care about productivity in the lab or on real farms?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#estimating-tfp",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#estimating-tfp",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Estimating TFP",
+    "text": "Estimating TFP\nEstimating TFP is an empirical modeling problem\n\nCollect data on all factors we think influence crop growth\nAcross many farms and many years\nUse of inputs and other factors will vary across observations\nUse this variation to isolate the impact of each factor on output\nCombine this with actual input use to predict output for each observation\nTFP is the “residual” (true value minus prediction)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#total-factor-productivity-over-time",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#total-factor-productivity-over-time",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Total Factor Productivity Over Time",
+    "text": "Total Factor Productivity Over Time"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#challenges-with-measuring-tfp",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#challenges-with-measuring-tfp",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Challenges with Measuring TFP",
+    "text": "Challenges with Measuring TFP\n\nSuppose we want to compute the change in TFP for many countries over time\nWe’ll use the method I outlined\n\nCollect data on output, inputs, and other factors\nUse it to construct an empirical model of productivity\nTFP is the residual unexplained by the model\n\nWhat challenges might we encounter?\nWhat might you do to address those problems?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#some-challenges-measuring-tfp",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#some-challenges-measuring-tfp",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Some Challenges Measuring TFP",
+    "text": "Some Challenges Measuring TFP\nSome challenges measuring TFP using observational data\n\nConsistency in measurement both across time and space\nUnmeasured factors (e.g., intensity of rain)\nUnmeasured quality of inputs and output\nSubstitution between inputs\nCrop switching\nMany more!"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#is-measuring-tfp-impossible",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#is-measuring-tfp-impossible",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Is Measuring TFP Impossible?",
+    "text": "Is Measuring TFP Impossible?\n\nThere are many ways our estimates of TFP could go wrong\nNo set of estimates is “perfect”\nShould we just give up?\n\n\n\nTFP estimates provide valuable information, even if not “perfect”\nDo the best job we can\nContinue to improve (better data, models, etc)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#measuring-national-agricultural-production",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#measuring-national-agricultural-production",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Measuring National Agricultural Production",
+    "text": "Measuring National Agricultural Production\nConsistency of data is important for measuring TFP across countries and over time\n\nIdeally measure output using methods that allow for comparing measurements\n\nAcross all countries\nAcross time\n\nInclude the majority of countries\nInclude a wide array of agricultural products"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#united-nations-faostat-data",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#united-nations-faostat-data",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "United Nations FAOSTAT Data",
+    "text": "United Nations FAOSTAT Data\nThe UN collects and reports the FAOSTAT Data\n\nAnnual measurements of agricultural production\nConsistent methods across over 200 countries/territories\nOutput measurements for nearly 300 types of output\nLong time series of measurements (starting in 1961)\n\nAvailable at https://www.fao.org/faostat\nOn Google Drive in Data/FAO"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#summary-of-faostat",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#summary-of-faostat",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Summary of FAOSTAT",
+    "text": "Summary of FAOSTAT\nEach observation is a combination of\n\nYear\nCountry\nAgricultural output type\nMeasurement"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---crops",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---crops",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "FAOSTAT Measurements - Crops",
+    "text": "FAOSTAT Measurements - Crops\nFAOSTAT measures\nCrops\n\nTotal area of land harvested (ha)\nProduction quantity (mt)\nYield (mt/ha)\n\nMeasurements for both primary crops (soybeans) and refined goods (soybean oil)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---livestock",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---livestock",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "FAOSTAT Measurements - Livestock",
+    "text": "FAOSTAT Measurements - Livestock\nFAOSTAT Measures\nLivestock\n\nNumber of animals\nProduction quantity (mt)\nYield (mt/animal)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Loading FAOSTAT",
+    "text": "Loading FAOSTAT\nLoad the FAOSTAT data into R\n\nThe Full FAOSTAT datafile is very large (over 300 MB)\n\nIt will take a long time to load\nWiFi will clog up with everyone downloading the file\n\nA second file (FAO_crop_livestock-subsample.csv) contains a limited set of observations\n\nBrazil only\nYears 1990 - 2010\n\nLoad this file into R for today"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat-code",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat-code",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Loading FAOSTAT Code",
+    "text": "Loading FAOSTAT Code\n\nread_csv(\n  file.path(data_path,\"FAO\",\"csv\",\"FAO_crop_livestock-subsample.csv\")\n) -&gt; faostat\n\n\nHere’s how I loaded the data\nWhat should I do next?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#exploring-the-faostat-data",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#exploring-the-faostat-data",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Exploring the FAOSTAT Data",
+    "text": "Exploring the FAOSTAT Data\n\nglimpse(faostat)\n\nRows: 8,036\nColumns: 14\n$ ISO3166_1      &lt;chr&gt; \"076\", \"076\", \"076\", \"076\", \"076\", \"076\", \"076\", \"076\",…\n$ Area           &lt;chr&gt; \"Brazil\", \"Brazil\", \"Brazil\", \"Brazil\", \"Brazil\", \"Braz…\n$ ItemCode       &lt;chr&gt; \"01341\", \"01341\", \"01341\", \"01341\", \"01341\", \"01341\", \"…\n$ Item           &lt;chr&gt; \"Apples\", \"Apples\", \"Apples\", \"Apples\", \"Apples\", \"Appl…\n$ `Area Code`    &lt;dbl&gt; 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,…\n$ `Item Code`    &lt;dbl&gt; 515, 515, 515, 515, 515, 515, 515, 515, 515, 515, 515, …\n$ `Element Code` &lt;dbl&gt; 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5…\n$ Element        &lt;chr&gt; \"Area harvested\", \"Area harvested\", \"Area harvested\", \"…\n$ `Year Code`    &lt;dbl&gt; 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1…\n$ Year           &lt;dbl&gt; 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1…\n$ Unit           &lt;chr&gt; \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"…\n$ Value          &lt;dbl&gt; 22337.0, 25630.0, 24181.0, 25652.0, 27112.0, 26704.0, 2…\n$ Flag           &lt;chr&gt; \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", …\n$ Note           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#understanding-the-faostat-data",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#understanding-the-faostat-data",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Understanding the FAOSTAT Data",
+    "text": "Understanding the FAOSTAT Data\nWhat agricultural products are in this data set?\n\n\nfaostat |&gt;\n  distinct(Item)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-products",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-products",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Focus on one products",
+    "text": "Focus on one products\nThere are many products\n\nChoose one\nCreate a new data frame containing only that product\n\n\nI choose Brazil nuts, in shell\n\nfaostat |&gt;\n  filter(Item == \"Brazil nuts, in shell\") -&gt; faostat_brazilnuts"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-product---result",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-product---result",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Focus on one product - Result",
+    "text": "Focus on one product - Result\n\n\n# A tibble: 21 × 14\n   ISO3166_1 Area  ItemCode Item  `Area Code` `Item Code` `Element Code` Element\n   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;  \n 1 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 2 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 3 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 4 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 5 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 6 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 7 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 8 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 9 076       Braz… 01377    Braz…          21         216           5510 Produc…\n10 076       Braz… 01377    Braz…          21         216           5510 Produc…\n# ℹ 11 more rows\n# ℹ 6 more variables: `Year Code` &lt;dbl&gt;, Year &lt;dbl&gt;, Unit &lt;chr&gt;, Value &lt;dbl&gt;,\n#   Flag &lt;chr&gt;, Note &lt;chr&gt;"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-measurement",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-measurement",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Focus on one measurement",
+    "text": "Focus on one measurement\nWhat are the possible values of Element?\n\n\nfaostat_brazilnuts |&gt;\n  distinct(Element)\n\n# A tibble: 1 × 1\n  Element   \n  &lt;chr&gt;     \n1 Production\n\n\n\nBrazil nuts only have a “Production” measurement\nOther products might have more measurements\nYou will need to filter down to a single measurement"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#plot-your-data-over-time",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#plot-your-data-over-time",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Plot your data over time",
+    "text": "Plot your data over time\nCreate a plot of your selected crop/measurement\n\nYear on the horizontal axis\nYour measurement (Value) on the vertical\n\nHow do you do this with ggplot?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#using-ggplot",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#using-ggplot",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Using ggplot",
+    "text": "Using ggplot\n\nYou create visualizations with ggplot\nAlways starts with the ggplot() function\n\nArguments to this function are inherited by all layers\n\nAdd layers and other elements using the + operator\nArguments to layers override inherited arguments"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#common-ggplot-layers",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#common-ggplot-layers",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Common ggplot layers",
+    "text": "Common ggplot layers\nLayers add visual elements to your visualization\n\nScatter plot geom_point()\nLine plot geom_line()\nSmoothed line geom_smooth()\nMany, many more"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Create a visualization",
+    "text": "Create a visualization\n\nYear on the horizontal axis (x aesthetic)\nYour measurement (Value) on the vertical (y aesthetic)\n\nProvide data and aesthetics to ggplot()\n\nggplot(\n  data=faostat_brazilnuts,\n  mapping=aes(x=Year,y=Value)\n  ) +\n  geom_line()"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization-1",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization-1",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Create a visualization",
+    "text": "Create a visualization\n\nYear on the horizontal axis (x aesthetic)\nYour measurement (Value) on the vertical (y aesthetic)\n\nProvide data and aesthetics to layers\n\nggplot(\n  data=faostat_brazilnuts\n  ) +\n  geom_line(\n    mapping=aes(x=Year,y=Value)\n  )\n\nBoth versions will produce the same visualization"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#sample-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#sample-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Sample visualization",
+    "text": "Sample visualization\n\n\nIs this a good visualization?\nHow could we improve it?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#improving-the-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#improving-the-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Improving the visualization",
+    "text": "Improving the visualization\nGood visualizations are clear and self-contained\n\nInformative axis labels\nClear what is being plotted\nUse a legend where appropraite"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#an-improved-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#an-improved-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "An improved visualization",
+    "text": "An improved visualization\n\nggplot(\n  data=faostat_brazilnuts,\n  aes(x=Year,y=Value)\n) +\n  geom_line() +\n  labs(\n    x=\"Year\",\n    y=\"Production (mt)\",\n    title=\"Annual Brazil Nut Production\",\n    subtitle=\"Brazil 1990 - 2010\",\n    caption=\"Source: United Nations FAOSTAT\"\n  ) -&gt; viz_1"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#look-at-an-improved-version",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#look-at-an-improved-version",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Look at an improved version",
+    "text": "Look at an improved version"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Adding layers",
+    "text": "Adding layers\nAdding Layers\n\nAdd additional layers using the + operator\nEach stacks on top of the previous one\n\nModifying Layers\n\nModify the appearance of an entire layer with layer properties\nArguments to layer functions outside the aesthetic\nAvailable properties depend on the layer type"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---example",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---example",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Adding Layers - Example",
+    "text": "Adding Layers - Example\n\nggplot(\n  data=faostat_brazilnuts,\n  aes(x=Year,y=Value)\n) +\n  geom_line(color=\"black\",linewidth=1) +\n  geom_smooth(color=\"blue\",linewidth=1.2)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---new-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---new-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Adding Layers - New Visualization",
+    "text": "Adding Layers - New Visualization"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#next-class",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#next-class",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Next Class",
+    "text": "Next Class\n\nMore Data Visualization\nReading and writing Parquet files"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "AREC 280: Harvesting Big Data",
+    "section": "",
+    "text": "NoteWelcome to the Course!\n\n\n\nClasses meet Tuesdays & Thursdays from 12:30 - 1:45 PM.",
+    "crumbs": [
+      "Course Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#office-hours",
+    "href": "index.html#office-hours",
+    "title": "AREC 280: Harvesting Big Data",
+    "section": "🗓️ Office Hours",
+    "text": "🗓️ Office Hours\n\nInstructor: Prof. James Archsmith (archsmit@umd.edu)\nOffice Hours:\n\nIn-Person Drop-in Hours: Wednesdays 11 AM - 12 PM in 2216 Symons Hall\nZoom Office Hours: Fridays 10 AM - 11 AM By Appointment",
+    "crumbs": [
+      "Course Overview"
+    ]
+  },
+  {
+    "objectID": "LICENSE.html",
+    "href": "LICENSE.html",
+    "title": "AREC 280: Harvesting Big Data",
+    "section": "",
+    "text": "All materials on this site are Copyright © 2026 James Archsmith. All rights reserved.\n\n\nUniversity of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, and use all print materials for any purposes related to their personal use for this course and may retain these materials indefinitely after the course concludes.\nUnauthorized reproduction is expressly prohibited.",
+    "crumbs": [
+      "About",
+      "License Notice"
+    ]
+  },
+  {
+    "objectID": "LICENSE.html#license-notice",
+    "href": "LICENSE.html#license-notice",
+    "title": "AREC 280: Harvesting Big Data",
+    "section": "",
+    "text": "All materials on this site are Copyright © 2026 James Archsmith. All rights reserved.\n\n\nUniversity of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, and use all print materials for any purposes related to their personal use for this course and may retain these materials indefinitely after the course concludes.\nUnauthorized reproduction is expressly prohibited.",
+    "crumbs": [
+      "About",
+      "License Notice"
+    ]
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#todays-goals-1",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#todays-goals-1",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Today’s Goals",
+    "text": "Today’s Goals\nThe Parquet data file format\n\nUnderstand the advantages and disadvantages of the Parquet file format\nReading and writing Parquet files in R\n\nAdditional Data Visualization using ggplot()\n\nConstruct data visualization using ggplot()\nCreating legends\nSave visualizations for use in other documents\n\nWe will continue to use the FAO data in\nAGNR-AREC280_Fall2026/Data/FAO"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#csv-has-been-a-de-facto-standard-for-data",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#csv-has-been-a-de-facto-standard-for-data",
+    "title": "Data Visualization and Parquet Files",
+    "section": "CSV has been a de facto standard for data",
+    "text": "CSV has been a de facto standard for data\nThe Bottleneck:\n\nModern datasets like high-resolution climate rasters or satellite indices overwhelm plain text formats like CSV\n\ne.g., The FAO data is nearly 400 MB in CSV format\n\nData stored in purely text format\n\nRequires software “guess” properties of the data\nNumeric data needs to be translated from text\nRepeated text values written out in full, each time\n\nCSV files are\n\nSlow to read\nLarge\nRequire guesses or manual intervention to read correctly"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#modern-big-data-storage",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#modern-big-data-storage",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Modern Big Data Storage",
+    "text": "Modern Big Data Storage\nThe Next Generation:\nDefine a data file format for modern big data\n\nPortable: Works across data processing systems\nFast: Information you need loads quickly\nCompact: Data stored efficiently for small files\nConsistent: All software interprets the data identically without guessing"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#the-parquet-format",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#the-parquet-format",
+    "title": "Data Visualization and Parquet Files",
+    "section": "The Parquet Format",
+    "text": "The Parquet Format\nParquet (PAR-kay) is a modern data file format for storing tidy data frames\n\nCreated in 2013\nSpecification is free and open source\nManaged by the Apache Foundation\nImplemented in most data analysis software"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#parquet-advantages-column-orientation",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#parquet-advantages-column-orientation",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Parquet Advantages: Column-orientation",
+    "text": "Parquet Advantages: Column-orientation\nColumn-oriented storage\n\nIn CSV files data are oriented in rows\n\nYou must read all of one row before moving on to the next\nInefficient if you only want data from specific columns\n\nParquet files use a column format\n\nOnly need to read data for the columns you request"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#parquet-advantages-automatic-compression",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#parquet-advantages-automatic-compression",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Parquet Advantages: Automatic Compression",
+    "text": "Parquet Advantages: Automatic Compression\nAutomatic Compression\n\nA CSV must write out every value in every cell as text\nParquet automatically compresses information\n\nColumn-oriented files are more compressible in general\nDictionary compression of frequent values\nRun-length encoding for repeated values\nDelta-encoding efficiently packs sequential numbers/timestamps"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#parquet-advantages-strict-schema",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#parquet-advantages-strict-schema",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Parquet Advantages: Strict Schema",
+    "text": "Parquet Advantages: Strict Schema\nStrict Schema\n\nA CSV file doesn’t contain any information about data types\nParquet files explicitly define data types of each column\n\nInteger, Floating point, Character, Boolean, Date, and Timestamp data types\n\nParquet uses explicit formats for each data type (e.g., IEEE-754 floating point)\nAny data processing package interprets each value the exact same way\nExplicit support for missing (NA) values"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#parquet-disadvantages",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#parquet-disadvantages",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Parquet Disadvantages",
+    "text": "Parquet Disadvantages\n\nBinary files aren’t human-readable\nColumn-oriented format makes “appending” data slow\n\nPoorly suited for cases where you frequently update data\n\nPerformance gains only materialize on larger files\n\n1000s of observations\n10s or 100s of columns"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#parquet-in-this-class",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#parquet-in-this-class",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Parquet in this Class",
+    "text": "Parquet in this Class\nIn this class I will provide Parquet versions of most data files\n\nData files contain many, repeated text values\nVery large CSV files\nParquet much smaller, so they load quickly\nStrict schema, so everyone gets the same data\nELMS and gmail understand they are data files"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#loading-parquet-files-in-r-1",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#loading-parquet-files-in-r-1",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Loading Parquet files in R",
+    "text": "Loading Parquet files in R\nYou can load parquet files in R\n\nUse read_parquet()\nRequires the arrow library\n\nLoad FAO/parquet/FAO_crop_livestock.parquet into R.\n\n\n\n\n\n\nNew Package\n\n\nYou will need to install the arrow package if you haven’t already"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#load-the-fao-parquet-file",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#load-the-fao-parquet-file",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Load the FAO Parquet file",
+    "text": "Load the FAO Parquet file\n\nlibrary(arrow)\nread_parquet(\n  file.path(data_path,\"FAO\",\"parquet\",\"FAO_crop_livestock.parquet\")\n) -&gt; faostat\n\nThis is the full FAO data file\n\nFull time series (1961 - 2025)\nFull set of countires\nFull set of commodities\n\nLet’s start by focusing on a single measurement of one crop in one country"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#choose-your-adventure-country",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#choose-your-adventure-country",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Choose your adventure: Country",
+    "text": "Choose your adventure: Country\nCreate a pipeline to construct a single crop data frame\nStep 1\n\nUse distinct() to look at countries (Area)\nChoose one you are interested in\n\nWrite a filter() command that would limit the data to that country\n\n\n\n\n\n\n\n\nDisplaying long results\n\n\nR limits results in the console to 10 - 20 lines.\nPipe your result to print(n=Inf) to display all rows"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#my-adventure-country",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#my-adventure-country",
+    "title": "Data Visualization and Parquet Files",
+    "section": "My Adventure: Country",
+    "text": "My Adventure: Country\nI chose to look at France\n\nfaostat |&gt;\n  filter(Area == \"France\") \n\n# A tibble: 26,877 × 15\n   ISO3166_1 Area  ItemCode Item  `Area Code` `Item Code` `Element Code` Element\n   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;       &lt;int&gt;          &lt;int&gt; &lt;chr&gt;  \n 1 250       Fran… 01371    Almo…          68         221           5312 Area h…\n 2 250       Fran… 01371    Almo…          68         221           5312 Area h…\n 3 250       Fran… 01371    Almo…          68         221           5312 Area h…\n 4 250       Fran… 01371    Almo…          68         221           5312 Area h…\n 5 250       Fran… 01371    Almo…          68         221           5312 Area h…\n 6 250       Fran… 01371    Almo…          68         221           5312 Area h…\n 7 250       Fran… 01371    Almo…          68         221           5312 Area h…\n 8 250       Fran… 01371    Almo…          68         221           5312 Area h…\n 9 250       Fran… 01371    Almo…          68         221           5312 Area h…\n10 250       Fran… 01371    Almo…          68         221           5312 Area h…\n# ℹ 26,867 more rows\n# ℹ 7 more variables: `Year Code` &lt;int&gt;, Year &lt;int&gt;, Unit &lt;chr&gt;, Value &lt;dbl&gt;,\n#   Flag &lt;chr&gt;, Note &lt;chr&gt;, ISO3 &lt;chr&gt;"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#choose-your-adventure",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#choose-your-adventure",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Choose your adventure",
+    "text": "Choose your adventure\nCreate a pipeline to construct a single crop dataset\nStep 2\n\nPipe your previous result to distinct() to look at commodities (Item)\nChoose one commodity you are interested in\n\nWrite a filter() command that would limit the data to that commodity"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#my-adventure-commodity",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#my-adventure-commodity",
+    "title": "Data Visualization and Parquet Files",
+    "section": "My Adventure: Commodity",
+    "text": "My Adventure: Commodity\nI chose to look at Wine in France\n\nfaostat |&gt;\n  filter(Area == \"France\") |&gt;\n  filter(Item == \"Wine\") \n\n# A tibble: 63 × 15\n   ISO3166_1 Area  ItemCode Item  `Area Code` `Item Code` `Element Code` Element\n   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;       &lt;int&gt;          &lt;int&gt; &lt;chr&gt;  \n 1 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 2 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 3 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 4 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 5 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 6 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 7 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 8 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 9 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n10 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n# ℹ 53 more rows\n# ℹ 7 more variables: `Year Code` &lt;int&gt;, Year &lt;int&gt;, Unit &lt;chr&gt;, Value &lt;dbl&gt;,\n#   Flag &lt;chr&gt;, Note &lt;chr&gt;, ISO3 &lt;chr&gt;"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#choose-your-adventure-1",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#choose-your-adventure-1",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Choose your adventure",
+    "text": "Choose your adventure\nCreate a pipeline to construct a single crop dataset\nStep 3\n\nPipe your previous result to distinct() to look at measurements (Element)\nChoose one measurement you are interested in\n\nWrite a filter() command that would limit the data to that measurement"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#my-adventure-measurement",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#my-adventure-measurement",
+    "title": "Data Visualization and Parquet Files",
+    "section": "My Adventure: Measurement",
+    "text": "My Adventure: Measurement\nI chose to look at Wine in France\n\nfaostat |&gt;\n  filter(Area == \"France\") |&gt;\n  filter(Item == \"Wine\") |&gt; \n  filter(Element == \"Production\")\n\n# A tibble: 63 × 15\n   ISO3166_1 Area  ItemCode Item  `Area Code` `Item Code` `Element Code` Element\n   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;       &lt;int&gt;          &lt;int&gt; &lt;chr&gt;  \n 1 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 2 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 3 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 4 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 5 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 6 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 7 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 8 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n 9 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n10 250       Fran… 24212.02 Wine           68         564           5510 Produc…\n# ℹ 53 more rows\n# ℹ 7 more variables: `Year Code` &lt;int&gt;, Year &lt;int&gt;, Unit &lt;chr&gt;, Value &lt;dbl&gt;,\n#   Flag &lt;chr&gt;, Note &lt;chr&gt;, ISO3 &lt;chr&gt;"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#choose-your-adventure-2",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#choose-your-adventure-2",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Choose your adventure",
+    "text": "Choose your adventure\nCreate a pipeline to construct a single crop dataset\nStep 4\n\nSave this filtered data frame to a new tibble\n\n\nfaostat |&gt;\n  filter(Area == \"France\") |&gt;\n  filter(Item == \"Wine\") |&gt; \n  filter(Element == \"Production\") -&gt; fao_filtered"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#check-your-work",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#check-your-work",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Check your work",
+    "text": "Check your work\nExamine you filtered data frame to be sure you have information you expect\n\nglimpse()\nsummary()\ndistinct() or count()"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#visualize",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#visualize",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Visualize",
+    "text": "Visualize\nUse your filtered data frame to create a visualization\n\nYear on the horizontal axis\nYour measurement on the vertical axis\nBlack dots for the value of measurement in each year (using geom_point)\nA blue line showing the trend (using geom_smooth)\nClear labels throughout the visualization\n\n\n\n\n\n\n\nRemoving error band from geom_smooth\n\n\nYou can remove the error band from geom_smooth layers by setting the layer property se=FALSE"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#my-visualization",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#my-visualization",
+    "title": "Data Visualization and Parquet Files",
+    "section": "My visualization",
+    "text": "My visualization\n\n\nCode\nggplot(\n  data=fao_filtered,\n  mapping=aes(x=Year,y=Value)\n) +\n  geom_line(color=\"black\") +\n  geom_smooth(color=\"blue\",se=FALSE) +\n  labs(\n    title=\"Wine Production in France\",\n    x=\"Year\",\n    y=\"Production (mt)\",\n    caption=\"Source: United Nations FAOSTAT\"\n  )"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#a-tweak-to-the-labels",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#a-tweak-to-the-labels",
+    "title": "Data Visualization and Parquet Files",
+    "section": "A tweak to the labels",
+    "text": "A tweak to the labels\n\nThe values on my vertical axis are in scientific notation\n\nR defaults to using it when values are larger than 1000\nOr smaller than 0.1\n\nSometimes difficult to read\nOptions for improving:\n\nForce R to format numbers in fixed-comma format (8,000,000)\nRescale the axis so numbers are smaller (million mt vs mt)"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#rescale-values-on-the-fly",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#rescale-values-on-the-fly",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Rescale values on-the-fly",
+    "text": "Rescale values on-the-fly\nThe cleanest choice is to rescale the vertical axis\n\nShow “million mt” instead of “mt”\nRequires dividing Value by 1,000,000\nIn ggplot you can do this math “on-the-fly” in a visualization\n\n\n...\n  aes(x=Year,y=Value/1000000)\n...\n\n\nAny mathmatical operation is supported\nSummary functions (e.g., mean()) will compute the value over all data in that layer"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#my-visualization-1",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#my-visualization-1",
+    "title": "Data Visualization and Parquet Files",
+    "section": "My visualization",
+    "text": "My visualization\n\n\nCode\nggplot(\n  data=fao_filtered,\n  mapping=aes(x=Year,y=Value/1000000)\n) +\n  geom_line(color=\"black\") +\n  geom_smooth(color=\"blue\",se=FALSE) +\n  labs(\n    title=\"Wine Production in France\",\n    x=\"Year\",\n    y=\"Production (million mt)\",\n    caption=\"Source: United Nations FAOSTAT\"\n  )"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#visualization-scales",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#visualization-scales",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Visualization Scales",
+    "text": "Visualization Scales\n\nR automatically adjusts the scale of each axis to fit the data\n\nMinimum value slightly smaller than smallest value\nMaximum value slightly larger than largest value\n\nCan exaggerate how much values change over time\nIn the previous visualization, you may want to extend the axis to zero"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#adjusting-visualization-axes",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#adjusting-visualization-axes",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Adjusting Visualization Axes",
+    "text": "Adjusting Visualization Axes\n\nAdjust axis properties using scale functions\nTake the form: scale_&lt;axis&gt;_&lt;type&gt;()\n&lt;axis&gt; is x or y\n&lt;type&gt; is the axis type\n\nDetermines how the axis will be drawn\nDepends on the type of data you’re plotting"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#adjusting-visualization-axes-1",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#adjusting-visualization-axes-1",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Adjusting Visualization Axes",
+    "text": "Adjusting Visualization Axes\n\n\n\n\n\n\nAxis Scale Resources\n\n\nThe Help feature in RStudio has excellent documentation, start by typing “scale_” in the search box.\nThere is also an excellent resource for using scales at\nhttps://ggplot2-book.org/scales-guides.html"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#adjusting-a-continuous-axis",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#adjusting-a-continuous-axis",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Adjusting a Continuous Axis",
+    "text": "Adjusting a Continuous Axis\nThe vertical axis in our visualization is continuous\n\nCustomize using scale_y_continuous()\nRead the help for this function\nThere will be some things that make sense and some thing less so\nImportant options (look closely at them)\n\nlimits\nbreaks\nminor_breaks"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#adjusting-a-continuous-axis-1",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#adjusting-a-continuous-axis-1",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Adjusting a Continuous Axis",
+    "text": "Adjusting a Continuous Axis\nArguments for scale_y_continuous()\n\nlimits\n\nA 2-element vector with the starting and ending value of the axis\n\nbreaks\n\nA vector with the major (labeled) break values on the axis\n\nminor_breaks\n\nA vector with the minor (unlabeled) break values on the axis"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#adjusting-a-continuous-axis-2",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#adjusting-a-continuous-axis-2",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Adjusting a Continuous Axis",
+    "text": "Adjusting a Continuous Axis\nI am going to\n\nSet the axis to start at 0 and go to 10 (limits)\nHave major breaks at even numbers (breaks)\nHave minor breaks at odd numbers (minor_breaks)\n\n\n\n\n\n\n\nCreating Vectors\n\n\nCreate vectors with the c() function\nYou can create a sequence of numbers in a vector with the seq() function\n\n\n\nMake changes you think are appropriate for your visualziation!"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#visualization-with-updated-axis",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#visualization-with-updated-axis",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Visualization with Updated Axis",
+    "text": "Visualization with Updated Axis\n\n\nCode\nggplot(\n  data=fao_filtered,\n  mapping=aes(x=Year,y=Value/1000000)\n) +\n  geom_line(color=\"black\") +\n  geom_smooth(color=\"blue\",se=FALSE) +\n  labs(\n    title=\"Wine Production in France\",\n    x=\"Year\",\n    y=\"Production (million mt)\",\n    caption=\"Source: United Nations FAOSTAT\"\n  ) +\n  scale_y_continuous(\n    limits=c(0,10),\n    breaks=seq(0,10,2),\n    minor_breaks=seq(0,10,1)\n  )"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#storing-visualizations-1",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#storing-visualizations-1",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Storing visualizations",
+    "text": "Storing visualizations\nYou can store a ggplot visualization using an assignment operator (e.g., -&gt;)\n\nStores everything needed to create the visualization in a named variable\nDoes not render the visualization\nYou can render/display it later with print()\nWhy would you do this?\n\nCreate many visualizations then print/save them all at once\nYou can modify a stored visualization by adding more layers or attributes"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#storing-a-visualization",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#storing-a-visualization",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Storing a Visualization",
+    "text": "Storing a Visualization\nThis stores my visualization, but does not show it!\n\nggplot(\n  data=fao_filtered,\n  mapping=aes(x=Year,y=Value/1000000)\n) +\n  geom_line(color=\"black\") +\n  geom_smooth(color=\"blue\",se=FALSE) +\n  labs(\n    title=\"Wine Production in France\",\n    x=\"Year\",\n    y=\"Production (million mt)\",\n    caption=\"Source: United Nations FAOSTAT\"\n  ) +\n  scale_y_continuous(\n    limits=c(0,10),\n    breaks=seq(0,10,2),\n    minor_breaks=seq(0,10,1)\n  ) -&gt; production_viz"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#using-themes",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#using-themes",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Using Themes",
+    "text": "Using Themes\nOverall appearance of a visualization is controlled by themes\n\nThemes are customizable\nR has some built-in themes that combine common options\nEach is named theme_&lt;name&gt;()\nAdd to a visualization to apply\nDefault theme is theme_grey()"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#example-themes-theme_bw",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#example-themes-theme_bw",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Example Themes theme_bw()",
+    "text": "Example Themes theme_bw()\n\n\nCode\nproduction_viz +\n  theme_bw()"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#example-themes-theme_light",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#example-themes-theme_light",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Example Themes theme_light()",
+    "text": "Example Themes theme_light()\n\n\nCode\nproduction_viz +\n  theme_light()"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#example-themes-theme_dark",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#example-themes-theme_dark",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Example Themes theme_dark()",
+    "text": "Example Themes theme_dark()\n\n\nCode\nproduction_viz +\n  theme_dark()"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#example-themes-theme_minimal",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#example-themes-theme_minimal",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Example Themes theme_minimal()",
+    "text": "Example Themes theme_minimal()\n\n\nCode\nproduction_viz +\n  theme_minimal()"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#saving-visualizations-1",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#saving-visualizations-1",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Saving Visualizations",
+    "text": "Saving Visualizations\nVisualizations are most useful if you can share them\n\nR Studio’s Plots viewer allows saving visualizations\n\nSeveral steps\nNot Automated\nRequired every time you update the visualization\n\nYou can add code to save a visualization with ggsave()\n\nVisualization will be saved each time you run your R code\nApply specific options to the saved file (file format, size)"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#using-ggsave",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#using-ggsave",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Using ggsave",
+    "text": "Using ggsave\nTo save a visualization use\nggsave(&lt;output_path&gt;)\n\nR determines the output format using the file extension\n\ne.g., .png, .jpg, .pdf\n\nSome important optional arguments are:\n\nplot: A variable containing the plot to save\n\nOtherwise, the default is the last plot generated\n\nwidth: Width of the saved image in inches\nheight: Height of the saved image in inches"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#example-saving-a-visualization",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#example-saving-a-visualization",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Example Saving a Visualization",
+    "text": "Example Saving a Visualization\n\n# Set a path to a directory where you can save files\nhomedir_path = \"/home/username/Documents/AREC280\"\n\nggsave(\n  file.path(homedir_path,\"wine_production.png\"),\n  plot=production_viz,\n  width=16,\n  height=9\n)\n\n\n\n\n\n\n\nNo write permissions to the Data folder\n\n\nYou do not have permission to write files to the Data folder in the class Google drive. Attempting to save a file to that folder will result in a Permission Denied error.\nBe sure to save to a folder on your local computer."
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#choosing-a-visualization-file-format",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#choosing-a-visualization-file-format",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Choosing a Visualization File Format",
+    "text": "Choosing a Visualization File Format\nYou have several choices for file formats, which have advantages and disadvantages\n\nPDF files best for publication quality graphics\n\nAre vector images, they scale up flawlessly to very large image sizes\nComplicated visualizations make large output file that load slowly\n\nPNG files best for general use\n\nAre raster images, they will get blocky as you scale them up\nFiles will be a fixed size no matter how complicated the visualization\n\nJPG files best for websites/text messages\n\nAlso raster images but use Lossy Compression\nFiles tend to be very small, nearly anyone can view them\nUnderlying compression algorithm can lose details\n\nThere are other, more niche formats available too"
+  },
+  {
+    "objectID": "modules/data-visualization/02-customizing-visualizations.html#next-class",
+    "href": "modules/data-visualization/02-customizing-visualizations.html#next-class",
+    "title": "Data Visualization and Parquet Files",
+    "section": "Next Class",
+    "text": "Next Class\n\nMore Data Visualization"
+  }
+]

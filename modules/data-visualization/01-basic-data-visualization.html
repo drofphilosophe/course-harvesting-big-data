@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-c4e1171eb4281116019c604a711c5128.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="James Archsmith">
+  <title>AREC 280 - Harvesting Big Data – FAOSTAT Data and Visualization</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2; background-color: #2e3440; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #75715e; } /* Annotation */
+    code span.at { color: #f92672; } /* Attribute */
+    code span.bn { color: #ae81ff; } /* BaseN */
+    code span.bu { color: #66d9ef; } /* BuiltIn */
+    code span.cf { color: #f92672; } /* ControlFlow */
+    code span.ch { color: #e6db74; } /* Char */
+    code span.cn { color: #ae81ff; } /* Constant */
+    code span.co { color: #75715e; } /* Comment */
+    code span.cv { color: #75715e; } /* CommentVar */
+    code span.do { color: #75715e; } /* Documentation */
+    code span.dt { color: #66d9ef; font-style: italic; } /* DataType */
+    code span.dv { color: #ae81ff; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #a6e22e; font-weight: bold; } /* Extension */
+    code span.fl { color: #ae81ff; } /* Float */
+    code span.fu { color: #a6e22e; } /* Function */
+    code span.im { color: #f92672; } /* Import */
+    code span.in { color: #f1fa8c; } /* Information */
+    code span.kw { color: #f92672; } /* Keyword */
+    code span.op { color: #f8f8f2; } /* Operator */
+    code span.ot { color: #a6e22e; } /* Other */
+    code span.pp { color: #f92672; } /* Preprocessor */
+    code span.re { color: #75715e; } /* RegionMarker */
+    code span.sc { color: #ae81ff; } /* SpecialChar */
+    code span.ss { color: #e6db74; } /* SpecialString */
+    code span.st { color: #e6db74; } /* String */
+    code span.va { color: #f8f8f2; } /* Variable */
+    code span.vs { color: #e6db74; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-56f43c85262180b44f56c030b004c12f.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title"><p>FAOSTAT Data and Visualization</p></h1>
+  <p class="subtitle">AREC 280 - Harvesting Big Data</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+James Archsmith
+</div>
+        <p class="quarto-title-affiliation">
+            University of Maryland
+          </p>
+    </div>
+</div>
+
+</section>
+<section id="todays-goals" class="slide level2">
+<h2>Today’s Goals</h2>
+<p>Familiarize Ourselves with the FAO Crop &amp; Livestock Data</p>
+<ul>
+<li>Understand the content and methodology</li>
+<li>Load the data in R</li>
+<li>Examine the content</li>
+</ul>
+<p>Basic Data Visualization using <code>ggplot()</code></p>
+<ul>
+<li>Construct data visualization using <code>ggplot()</code></li>
+<li>Consider ggplot layers, aesthetics, and layer properties</li>
+<li>Save visualizations for use in other documents</li>
+</ul>
+<p>Look at the FAO data in</p>
+<p><code>AGNR-AREC280_Fall2026/Data/FAO</code></p>
+<p>Think about how you would load data in this folder into R</p>
+</section>
+<section>
+<section id="measuring-agricultural-productivity" class="title-slide slide level1 center">
+<h1>Measuring Agricultural Productivity</h1>
+
+</section>
+<section id="agricultural-productivity" class="slide level2 smaller">
+<h2>Agricultural Productivity</h2>
+<p>How should we measure agricultural productivity?</p>
+<div class="fragment">
+<ul>
+<li>Productivity is a measure of how inputs are converted into outputs</li>
+</ul>
+<p>What are inputs to agriculture?</p>
+</div>
+<div class="fragment">
+<ul>
+<li>Land</li>
+<li>Labor</li>
+<li>Water</li>
+<li>Machinery (capital)</li>
+<li>Fertilizer</li>
+<li>etc</li>
+</ul>
+</div>
+</section>
+<section id="measuring-agricultural-productivity-1" class="slide level2">
+<h2>Measuring Agricultural Productivity</h2>
+<p>How do we measure agricultural productivity?</p>
+<ul>
+<li>One measure is <strong>Total Factor Productivity</strong></li>
+<li>Index measuring how efficiently agricultural inputs are transformed into agricultural outputs</li>
+<li>Effectively a ratio of output to inputs</li>
+<li>Easy when there is one input</li>
+<li>More difficult when there are many</li>
+</ul>
+</section>
+<section id="tfp-in-practice" class="slide level2 smaller">
+<h2>TFP in Practice</h2>
+<p>In practice we measure TFP as a function</p>
+<ul>
+<li>Hold other inputs/factors constant</li>
+<li>TFP is the “left over” productivity</li>
+</ul>
+<p>What is the difficulty with this approach?</p>
+<div class="fragment">
+<ul>
+<li>How do we make sure farmers hold inputs constant? (we can’t)</li>
+<li>Other factors (e.g., weather) are impossible to hold constant</li>
+<li>Do we care about productivity in the lab or on real farms?</li>
+</ul>
+</div>
+</section>
+<section id="estimating-tfp" class="slide level2">
+<h2>Estimating TFP</h2>
+<p>Estimating TFP is an empirical modeling problem</p>
+<ul>
+<li>Collect data on all factors we think influence crop growth</li>
+<li>Across many farms and many years</li>
+<li>Use of inputs and other factors will vary across observations</li>
+<li>Use this variation to isolate the impact of each factor on output</li>
+<li>Combine this with actual input use to predict output for each observation</li>
+<li>TFP is the “residual” (true value minus prediction)</li>
+</ul>
+</section>
+<section id="total-factor-productivity-over-time" class="slide level2">
+<h2>Total Factor Productivity Over Time</h2>
+<p><img data-src="../../assets/images/productivity-2023.png" class="quarto-figure quarto-figure-center" height="550" alt="US TFP Over Time"><br>
+</p>
+</section>
+<section id="challenges-with-measuring-tfp" class="slide level2">
+<h2>Challenges with Measuring TFP</h2>
+<ul>
+<li>Suppose we want to compute the change in TFP for many countries over time</li>
+<li>We’ll use the method I outlined
+<ul>
+<li>Collect data on output, inputs, and other factors</li>
+<li>Use it to construct an empirical model of productivity</li>
+<li>TFP is the residual unexplained by the model</li>
+</ul></li>
+<li>What challenges might we encounter?</li>
+<li>What might you do to address those problems?</li>
+</ul>
+</section>
+<section id="some-challenges-measuring-tfp" class="slide level2">
+<h2>Some Challenges Measuring TFP</h2>
+<p>Some challenges measuring TFP using observational data</p>
+<ul>
+<li>Consistency in measurement both across <strong>time</strong> and <strong>space</strong></li>
+<li>Unmeasured factors (e.g., intensity of rain)</li>
+<li>Unmeasured quality of inputs and output</li>
+<li>Substitution between inputs</li>
+<li>Crop switching</li>
+<li>Many more!</li>
+</ul>
+</section>
+<section id="is-measuring-tfp-impossible" class="slide level2">
+<h2>Is Measuring TFP Impossible?</h2>
+<ul>
+<li>There are many ways our estimates of TFP could go wrong</li>
+<li>No set of estimates is “perfect”</li>
+<li>Should we just give up?</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>TFP estimates provide valuable information, even if not “perfect”</li>
+<li>Do the best job we can</li>
+<li>Continue to improve (better data, models, etc)</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="united-nations-faostat-crop-livestock-data" class="title-slide slide level1 center">
+<h1>United Nations FAOSTAT Crop &amp; Livestock Data</h1>
+
+</section>
+<section id="measuring-national-agricultural-production" class="slide level2">
+<h2>Measuring National Agricultural Production</h2>
+<p>Consistency of data is important for measuring TFP across countries and over time</p>
+<ul>
+<li>Ideally measure output using methods that allow for comparing measurements
+<ul>
+<li>Across all countries</li>
+<li>Across time</li>
+</ul></li>
+<li>Include the majority of countries</li>
+<li>Include a wide array of agricultural products</li>
+</ul>
+</section>
+<section id="united-nations-faostat-data" class="slide level2">
+<h2>United Nations FAOSTAT Data</h2>
+<p>The UN collects and reports the FAOSTAT Data</p>
+<ul>
+<li>Annual measurements of agricultural production</li>
+<li>Consistent methods across over 200 countries/territories</li>
+<li>Output measurements for nearly 300 types of output</li>
+<li>Long time series of measurements (starting in 1961)</li>
+</ul>
+<p>Available at <a href="https://www.fao.org/faostat" class="uri">https://www.fao.org/faostat</a></p>
+<p>On Google Drive in <code>Data/FAO</code></p>
+</section>
+<section id="summary-of-faostat" class="slide level2">
+<h2>Summary of FAOSTAT</h2>
+<p>Each observation is a combination of</p>
+<ul>
+<li>Year</li>
+<li>Country</li>
+<li>Agricultural output type</li>
+<li>Measurement</li>
+</ul>
+</section>
+<section id="faostat-measurements---crops" class="slide level2">
+<h2>FAOSTAT Measurements - Crops</h2>
+<p>FAOSTAT measures</p>
+<p><strong>Crops</strong></p>
+<ul>
+<li>Total area of land harvested (ha)</li>
+<li>Production quantity (mt)</li>
+<li>Yield (mt/ha)</li>
+</ul>
+<p>Measurements for both primary crops (soybeans) and refined goods (soybean oil)</p>
+</section>
+<section id="faostat-measurements---livestock" class="slide level2">
+<h2>FAOSTAT Measurements - Livestock</h2>
+<p>FAOSTAT Measures</p>
+<p><strong>Livestock</strong></p>
+<ul>
+<li>Number of animals</li>
+<li>Production quantity (mt)</li>
+<li>Yield (mt/animal)</li>
+</ul>
+</section>
+<section id="loading-faostat" class="slide level2 smaller">
+<h2>Loading FAOSTAT</h2>
+<p>Load the FAOSTAT data into R</p>
+<ul>
+<li>The Full FAOSTAT datafile is very large (over 300 MB)
+<ul>
+<li>It will take a long time to load</li>
+<li>WiFi will clog up with everyone downloading the file</li>
+</ul></li>
+<li>A second file (<code>FAO_crop_livestock-subsample.csv</code>) contains a limited set of observations
+<ul>
+<li>Brazil only</li>
+<li>Years 1990 - 2010</li>
+</ul></li>
+<li>Load this file into R for today</li>
+</ul>
+</section>
+<section id="loading-faostat-code" class="slide level2">
+<h2>Loading FAOSTAT Code</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a><span class="fu">read_csv</span>(</span>
+<span id="cb1-2"><a aria-label="2"></a>  <span class="fu">file.path</span>(data_path,<span class="st">"FAO"</span>,<span class="st">"csv"</span>,<span class="st">"FAO_crop_livestock-subsample.csv"</span>)</span>
+<span id="cb1-3"><a aria-label="3"></a>) <span class="ot">-&gt;</span> faostat</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>Here’s how I loaded the data</li>
+<li>What should I do next?</li>
+</ul>
+</section>
+<section id="exploring-the-faostat-data" class="slide level2">
+<h2>Exploring the FAOSTAT Data</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-label="1"></a><span class="fu">glimpse</span>(faostat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8,036
+Columns: 14
+$ ISO3166_1      &lt;chr&gt; "076", "076", "076", "076", "076", "076", "076", "076",…
+$ Area           &lt;chr&gt; "Brazil", "Brazil", "Brazil", "Brazil", "Brazil", "Braz…
+$ ItemCode       &lt;chr&gt; "01341", "01341", "01341", "01341", "01341", "01341", "…
+$ Item           &lt;chr&gt; "Apples", "Apples", "Apples", "Apples", "Apples", "Appl…
+$ `Area Code`    &lt;dbl&gt; 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,…
+$ `Item Code`    &lt;dbl&gt; 515, 515, 515, 515, 515, 515, 515, 515, 515, 515, 515, …
+$ `Element Code` &lt;dbl&gt; 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5…
+$ Element        &lt;chr&gt; "Area harvested", "Area harvested", "Area harvested", "…
+$ `Year Code`    &lt;dbl&gt; 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1…
+$ Year           &lt;dbl&gt; 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1…
+$ Unit           &lt;chr&gt; "ha", "ha", "ha", "ha", "ha", "ha", "ha", "ha", "ha", "…
+$ Value          &lt;dbl&gt; 22337.0, 25630.0, 24181.0, 25652.0, 27112.0, 26704.0, 2…
+$ Flag           &lt;chr&gt; "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", …
+$ Note           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…</code></pre>
+</div>
+</div>
+</section>
+<section id="understanding-the-faostat-data" class="slide level2">
+<h2>Understanding the FAOSTAT Data</h2>
+<p>What agricultural products are in this data set?</p>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-label="1"></a>faostat <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a aria-label="2"></a>  <span class="fu">distinct</span>(Item)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="focus-on-one-products" class="slide level2">
+<h2>Focus on one products</h2>
+<p>There are many products</p>
+<ul>
+<li>Choose one</li>
+<li>Create a new data frame containing only that product</li>
+</ul>
+<div class="fragment">
+<p>I choose <strong>Brazil nuts, in shell</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a>faostat <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a aria-label="2"></a>  <span class="fu">filter</span>(Item <span class="sc">==</span> <span class="st">"Brazil nuts, in shell"</span>) <span class="ot">-&gt;</span> faostat_brazilnuts</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="focus-on-one-product---result" class="slide level2">
+<h2>Focus on one product - Result</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 21 × 14
+   ISO3166_1 Area  ItemCode Item  `Area Code` `Item Code` `Element Code` Element
+   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;  
+ 1 076       Braz… 01377    Braz…          21         216           5510 Produc…
+ 2 076       Braz… 01377    Braz…          21         216           5510 Produc…
+ 3 076       Braz… 01377    Braz…          21         216           5510 Produc…
+ 4 076       Braz… 01377    Braz…          21         216           5510 Produc…
+ 5 076       Braz… 01377    Braz…          21         216           5510 Produc…
+ 6 076       Braz… 01377    Braz…          21         216           5510 Produc…
+ 7 076       Braz… 01377    Braz…          21         216           5510 Produc…
+ 8 076       Braz… 01377    Braz…          21         216           5510 Produc…
+ 9 076       Braz… 01377    Braz…          21         216           5510 Produc…
+10 076       Braz… 01377    Braz…          21         216           5510 Produc…
+# ℹ 11 more rows
+# ℹ 6 more variables: `Year Code` &lt;dbl&gt;, Year &lt;dbl&gt;, Unit &lt;chr&gt;, Value &lt;dbl&gt;,
+#   Flag &lt;chr&gt;, Note &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="focus-on-one-measurement" class="slide level2">
+<h2>Focus on one measurement</h2>
+<p>What are the possible values of <code>Element</code>?</p>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-label="1"></a>faostat_brazilnuts <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a aria-label="2"></a>  <span class="fu">distinct</span>(Element)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  Element   
+  &lt;chr&gt;     
+1 Production</code></pre>
+</div>
+</div>
+<ul>
+<li>Brazil nuts only have a “Production” measurement</li>
+<li>Other products might have more measurements</li>
+<li>You will need to filter down to a single measurement</li>
+</ul>
+</div>
+</section>
+<section id="plot-your-data-over-time" class="slide level2">
+<h2>Plot your data over time</h2>
+<p>Create a plot of your selected crop/measurement</p>
+<ul>
+<li><code>Year</code> on the horizontal axis</li>
+<li>Your measurement (<code>Value</code>) on the vertical</li>
+</ul>
+<p>How do you do this with <code>ggplot</code>?</p>
+</section>
+<section id="using-ggplot" class="slide level2">
+<h2>Using ggplot</h2>
+<ul>
+<li>You create visualizations with ggplot</li>
+<li>Always starts with the <code>ggplot()</code> function
+<ul>
+<li>Arguments to this function are <em>inherited</em> by all layers</li>
+</ul></li>
+<li>Add layers and other elements using the <code>+</code> operator</li>
+<li>Arguments to layers override inherited arguments</li>
+</ul>
+</section>
+<section id="common-ggplot-layers" class="slide level2">
+<h2>Common ggplot layers</h2>
+<p>Layers add visual elements to your visualization</p>
+<ul>
+<li>Scatter plot <code>geom_point()</code></li>
+<li>Line plot <code>geom_line()</code></li>
+<li>Smoothed line <code>geom_smooth()</code></li>
+<li>Many, many more</li>
+</ul>
+</section>
+<section id="create-a-visualization" class="slide level2">
+<h2>Create a visualization</h2>
+<ul>
+<li><code>Year</code> on the horizontal axis (<code>x</code> aesthetic)</li>
+<li>Your measurement (<code>Value</code>) on the vertical (<code>y</code> aesthetic)</li>
+</ul>
+<p>Provide data and aesthetics to <code>ggplot()</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-label="1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb9-2"><a aria-label="2"></a>  <span class="at">data=</span>faostat_brazilnuts,</span>
+<span id="cb9-3"><a aria-label="3"></a>  <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">x=</span>Year,<span class="at">y=</span>Value)</span>
+<span id="cb9-4"><a aria-label="4"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-5"><a aria-label="5"></a>  <span class="fu">geom_line</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="create-a-visualization-1" class="slide level2">
+<h2>Create a visualization</h2>
+<ul>
+<li><code>Year</code> on the horizontal axis (<code>x</code> aesthetic)</li>
+<li>Your measurement (<code>Value</code>) on the vertical (<code>y</code> aesthetic)</li>
+</ul>
+<p>Provide data and aesthetics to layers</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-label="1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb10-2"><a aria-label="2"></a>  <span class="at">data=</span>faostat_brazilnuts</span>
+<span id="cb10-3"><a aria-label="3"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-4"><a aria-label="4"></a>  <span class="fu">geom_line</span>(</span>
+<span id="cb10-5"><a aria-label="5"></a>    <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">x=</span>Year,<span class="at">y=</span>Value)</span>
+<span id="cb10-6"><a aria-label="6"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Both versions will produce the same visualization</p>
+</section>
+<section id="sample-visualization" class="slide level2">
+<h2>Sample visualization</h2>
+
+<img data-src="01-basic-data-visualization_files/figure-revealjs/first_viz-1.png" width="960" class="r-stretch"><ul>
+<li>Is this a good visualization?</li>
+<li>How could we improve it?</li>
+</ul>
+</section>
+<section id="improving-the-visualization" class="slide level2">
+<h2>Improving the visualization</h2>
+<p>Good visualizations are clear and self-contained</p>
+<ul>
+<li>Informative axis labels</li>
+<li>Clear what is being plotted</li>
+<li>Use a legend where appropraite</li>
+</ul>
+</section>
+<section id="an-improved-visualization" class="slide level2">
+<h2>An improved visualization</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb11-2"><a aria-label="2"></a>  <span class="at">data=</span>faostat_brazilnuts,</span>
+<span id="cb11-3"><a aria-label="3"></a>  <span class="fu">aes</span>(<span class="at">x=</span>Year,<span class="at">y=</span>Value)</span>
+<span id="cb11-4"><a aria-label="4"></a>) <span class="sc">+</span></span>
+<span id="cb11-5"><a aria-label="5"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb11-6"><a aria-label="6"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-7"><a aria-label="7"></a>    <span class="at">x=</span><span class="st">"Year"</span>,</span>
+<span id="cb11-8"><a aria-label="8"></a>    <span class="at">y=</span><span class="st">"Production (mt)"</span>,</span>
+<span id="cb11-9"><a aria-label="9"></a>    <span class="at">title=</span><span class="st">"Annual Brazil Nut Production"</span>,</span>
+<span id="cb11-10"><a aria-label="10"></a>    <span class="at">subtitle=</span><span class="st">"Brazil 1990 - 2010"</span>,</span>
+<span id="cb11-11"><a aria-label="11"></a>    <span class="at">caption=</span><span class="st">"Source: United Nations FAOSTAT"</span></span>
+<span id="cb11-12"><a aria-label="12"></a>  ) <span class="ot">-&gt;</span> viz_1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="look-at-an-improved-version" class="slide level2">
+<h2>Look at an improved version</h2>
+
+<img data-src="01-basic-data-visualization_files/figure-revealjs/show_second_viz-1.png" width="960" class="r-stretch"></section>
+<section id="adding-layers" class="slide level2">
+<h2>Adding layers</h2>
+<p>Adding Layers</p>
+<ul>
+<li>Add additional layers using the <code>+</code> operator</li>
+<li>Each stacks on top of the previous one</li>
+</ul>
+<p>Modifying Layers</p>
+<ul>
+<li>Modify the appearance of an entire layer with layer properties</li>
+<li>Arguments to layer functions outside the aesthetic</li>
+<li>Available properties depend on the layer type</li>
+</ul>
+</section>
+<section id="adding-layers---example" class="slide level2">
+<h2>Adding Layers - Example</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-label="1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb12-2"><a aria-label="2"></a>  <span class="at">data=</span>faostat_brazilnuts,</span>
+<span id="cb12-3"><a aria-label="3"></a>  <span class="fu">aes</span>(<span class="at">x=</span>Year,<span class="at">y=</span>Value)</span>
+<span id="cb12-4"><a aria-label="4"></a>) <span class="sc">+</span></span>
+<span id="cb12-5"><a aria-label="5"></a>  <span class="fu">geom_line</span>(<span class="at">color=</span><span class="st">"black"</span>,<span class="at">linewidth=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a aria-label="6"></a>  <span class="fu">geom_smooth</span>(<span class="at">color=</span><span class="st">"blue"</span>,<span class="at">linewidth=</span><span class="fl">1.2</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="adding-layers---new-visualization" class="slide level2">
+<h2>Adding Layers - New Visualization</h2>
+
+<img data-src="01-basic-data-visualization_files/figure-revealjs/show_third_viz-1.png" width="960" class="r-stretch"></section>
+<section id="next-class" class="slide level2">
+<h2>Next Class</h2>
+<ul>
+<li>More Data Visualization</li>
+<li>Reading and writing Parquet files</li>
+</ul>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>AREC 280 - Fall 2026</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"},{"title":"License","icon":"<span style=\"font-weight:bold; font-size:2.5em;\">©</span>","content":"<div style=\"padding: 1.5em; font-size: 0.9em; line-height: 1.6;\">\n  <h3 style=\"margin-top:0;\">License Notice</h3>\n  <p>This presentation and its underlying materials are Copyright © 2026 James Archsmith. All rights reserved.</p>\n  <p>University of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, \n  and use all print materials for any purposes related to their personal use for this course and may retain these materials\n  indefinitely after the course concludes. Unauthorized reproduction is expressly prohibited. </p>\n</div>\n"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+
+        height: 780,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 5.0e-2,
+
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.2,
+
+        maxScale: 4,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
