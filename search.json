@@ -26,290 +26,10 @@
     "href": "modules/data-visualization/index.html#in-class-materials",
     "title": "Data Visualization",
     "section": "🏫 In-Class Materials",
-    "text": "🏫 In-Class Materials\nSlide decks used during live lectures and interactive sessions.\n\n\n\n\n\n\n\nFAOSTAT Data and Visualization\n\n\nAREC 280 - Harvesting Big Data\n\n\n\n\n\n\n\n\n\nData Visualization and Parquet Files\n\n\nAREC 280 - Harvesting Big Data\n\n\n\n\n\nNo matching items",
+    "text": "🏫 In-Class Materials\nSlide decks used during live lectures and interactive sessions.\n\n\n\n\n\n\n\nFAOSTAT Data and Visualization\n\n\nAREC 280 - Harvesting Big Data\n\n\n\n\n\n\n\n\n\nData Visualization and Parquet Files\n\n\nAREC 280 - Harvesting Big Data\n\n\n\n\n\n\n\n\n\nData Visualization with Multiple Groups\n\n\nAREC 280 - Harvesting Big Data\n\n\n\n\n\nNo matching items",
     "crumbs": [
       "Modules",
       "1. Data Visualization"
-    ]
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#todays-goals",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#todays-goals",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Today’s Goals",
-    "text": "Today’s Goals\nFamiliarize Ourselves with the FAO Crop & Livestock Data\n\nUnderstand the content and methodology\nLoad the data in R\nExamine the content\n\nBasic Data Visualization using ggplot()\n\nConstruct data visualization using ggplot()\nConsider ggplot layers, aesthetics, and layer properties\nSave visualizations for use in other documents\n\nLook at the FAO data in\nAGNR-AREC280_Fall2026/Data/FAO\nThink about how you would load data in this folder into R"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#agricultural-productivity",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#agricultural-productivity",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Agricultural Productivity",
-    "text": "Agricultural Productivity\nHow should we measure agricultural productivity?\n\n\nProductivity is a measure of how inputs are converted into outputs\n\nWhat are inputs to agriculture?\n\n\n\nLand\nLabor\nWater\nMachinery (capital)\nFertilizer\netc"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#measuring-agricultural-productivity-1",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#measuring-agricultural-productivity-1",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Measuring Agricultural Productivity",
-    "text": "Measuring Agricultural Productivity\nHow do we measure agricultural productivity?\n\nOne measure is Total Factor Productivity\nIndex measuring how efficiently agricultural inputs are transformed into agricultural outputs\nEffectively a ratio of output to inputs\nEasy when there is one input\nMore difficult when there are many"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#tfp-in-practice",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#tfp-in-practice",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "TFP in Practice",
-    "text": "TFP in Practice\nIn practice we measure TFP as a function\n\nHold other inputs/factors constant\nTFP is the “left over” productivity\n\nWhat is the difficulty with this approach?\n\n\nHow do we make sure farmers hold inputs constant? (we can’t)\nOther factors (e.g., weather) are impossible to hold constant\nDo we care about productivity in the lab or on real farms?"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#estimating-tfp",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#estimating-tfp",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Estimating TFP",
-    "text": "Estimating TFP\nEstimating TFP is an empirical modeling problem\n\nCollect data on all factors we think influence crop growth\nAcross many farms and many years\nUse of inputs and other factors will vary across observations\nUse this variation to isolate the impact of each factor on output\nCombine this with actual input use to predict output for each observation\nTFP is the “residual” (true value minus prediction)"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#total-factor-productivity-over-time",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#total-factor-productivity-over-time",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Total Factor Productivity Over Time",
-    "text": "Total Factor Productivity Over Time"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#challenges-with-measuring-tfp",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#challenges-with-measuring-tfp",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Challenges with Measuring TFP",
-    "text": "Challenges with Measuring TFP\n\nSuppose we want to compute the change in TFP for many countries over time\nWe’ll use the method I outlined\n\nCollect data on output, inputs, and other factors\nUse it to construct an empirical model of productivity\nTFP is the residual unexplained by the model\n\nWhat challenges might we encounter?\nWhat might you do to address those problems?"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#some-challenges-measuring-tfp",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#some-challenges-measuring-tfp",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Some Challenges Measuring TFP",
-    "text": "Some Challenges Measuring TFP\nSome challenges measuring TFP using observational data\n\nConsistency in measurement both across time and space\nUnmeasured factors (e.g., intensity of rain)\nUnmeasured quality of inputs and output\nSubstitution between inputs\nCrop switching\nMany more!"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#is-measuring-tfp-impossible",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#is-measuring-tfp-impossible",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Is Measuring TFP Impossible?",
-    "text": "Is Measuring TFP Impossible?\n\nThere are many ways our estimates of TFP could go wrong\nNo set of estimates is “perfect”\nShould we just give up?\n\n\n\nTFP estimates provide valuable information, even if not “perfect”\nDo the best job we can\nContinue to improve (better data, models, etc)"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#measuring-national-agricultural-production",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#measuring-national-agricultural-production",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Measuring National Agricultural Production",
-    "text": "Measuring National Agricultural Production\nConsistency of data is important for measuring TFP across countries and over time\n\nIdeally measure output using methods that allow for comparing measurements\n\nAcross all countries\nAcross time\n\nInclude the majority of countries\nInclude a wide array of agricultural products"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#united-nations-faostat-data",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#united-nations-faostat-data",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "United Nations FAOSTAT Data",
-    "text": "United Nations FAOSTAT Data\nThe UN collects and reports the FAOSTAT Data\n\nAnnual measurements of agricultural production\nConsistent methods across over 200 countries/territories\nOutput measurements for nearly 300 types of output\nLong time series of measurements (starting in 1961)\n\nAvailable at https://www.fao.org/faostat\nOn Google Drive in Data/FAO"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#summary-of-faostat",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#summary-of-faostat",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Summary of FAOSTAT",
-    "text": "Summary of FAOSTAT\nEach observation is a combination of\n\nYear\nCountry\nAgricultural output type\nMeasurement"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---crops",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---crops",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "FAOSTAT Measurements - Crops",
-    "text": "FAOSTAT Measurements - Crops\nFAOSTAT measures\nCrops\n\nTotal area of land harvested (ha)\nProduction quantity (mt)\nYield (mt/ha)\n\nMeasurements for both primary crops (soybeans) and refined goods (soybean oil)"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---livestock",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---livestock",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "FAOSTAT Measurements - Livestock",
-    "text": "FAOSTAT Measurements - Livestock\nFAOSTAT Measures\nLivestock\n\nNumber of animals\nProduction quantity (mt)\nYield (mt/animal)"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Loading FAOSTAT",
-    "text": "Loading FAOSTAT\nLoad the FAOSTAT data into R\n\nThe Full FAOSTAT datafile is very large (over 300 MB)\n\nIt will take a long time to load\nWiFi will clog up with everyone downloading the file\n\nA second file (FAO_crop_livestock-subsample.csv) contains a limited set of observations\n\nBrazil only\nYears 1990 - 2010\n\nLoad this file into R for today"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat-code",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat-code",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Loading FAOSTAT Code",
-    "text": "Loading FAOSTAT Code\n\nread_csv(\n  file.path(data_path,\"FAO\",\"csv\",\"FAO_crop_livestock-subsample.csv\")\n) -&gt; faostat\n\n\nHere’s how I loaded the data\nWhat should I do next?"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#exploring-the-faostat-data",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#exploring-the-faostat-data",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Exploring the FAOSTAT Data",
-    "text": "Exploring the FAOSTAT Data\n\nglimpse(faostat)\n\nRows: 8,036\nColumns: 14\n$ ISO3166_1      &lt;chr&gt; \"076\", \"076\", \"076\", \"076\", \"076\", \"076\", \"076\", \"076\",…\n$ Area           &lt;chr&gt; \"Brazil\", \"Brazil\", \"Brazil\", \"Brazil\", \"Brazil\", \"Braz…\n$ ItemCode       &lt;chr&gt; \"01341\", \"01341\", \"01341\", \"01341\", \"01341\", \"01341\", \"…\n$ Item           &lt;chr&gt; \"Apples\", \"Apples\", \"Apples\", \"Apples\", \"Apples\", \"Appl…\n$ `Area Code`    &lt;dbl&gt; 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,…\n$ `Item Code`    &lt;dbl&gt; 515, 515, 515, 515, 515, 515, 515, 515, 515, 515, 515, …\n$ `Element Code` &lt;dbl&gt; 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5…\n$ Element        &lt;chr&gt; \"Area harvested\", \"Area harvested\", \"Area harvested\", \"…\n$ `Year Code`    &lt;dbl&gt; 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1…\n$ Year           &lt;dbl&gt; 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1…\n$ Unit           &lt;chr&gt; \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"…\n$ Value          &lt;dbl&gt; 22337.0, 25630.0, 24181.0, 25652.0, 27112.0, 26704.0, 2…\n$ Flag           &lt;chr&gt; \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", …\n$ Note           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#understanding-the-faostat-data",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#understanding-the-faostat-data",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Understanding the FAOSTAT Data",
-    "text": "Understanding the FAOSTAT Data\nWhat agricultural products are in this data set?\n\n\nfaostat |&gt;\n  distinct(Item)"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-products",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-products",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Focus on one products",
-    "text": "Focus on one products\nThere are many products\n\nChoose one\nCreate a new data frame containing only that product\n\n\nI choose Brazil nuts, in shell\n\nfaostat |&gt;\n  filter(Item == \"Brazil nuts, in shell\") -&gt; faostat_brazilnuts"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-product---result",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-product---result",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Focus on one product - Result",
-    "text": "Focus on one product - Result\n\n\n# A tibble: 21 × 14\n   ISO3166_1 Area  ItemCode Item  `Area Code` `Item Code` `Element Code` Element\n   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;  \n 1 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 2 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 3 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 4 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 5 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 6 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 7 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 8 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 9 076       Braz… 01377    Braz…          21         216           5510 Produc…\n10 076       Braz… 01377    Braz…          21         216           5510 Produc…\n# ℹ 11 more rows\n# ℹ 6 more variables: `Year Code` &lt;dbl&gt;, Year &lt;dbl&gt;, Unit &lt;chr&gt;, Value &lt;dbl&gt;,\n#   Flag &lt;chr&gt;, Note &lt;chr&gt;"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-measurement",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-measurement",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Focus on one measurement",
-    "text": "Focus on one measurement\nWhat are the possible values of Element?\n\n\nfaostat_brazilnuts |&gt;\n  distinct(Element)\n\n# A tibble: 1 × 1\n  Element   \n  &lt;chr&gt;     \n1 Production\n\n\n\nBrazil nuts only have a “Production” measurement\nOther products might have more measurements\nYou will need to filter down to a single measurement"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#plot-your-data-over-time",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#plot-your-data-over-time",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Plot your data over time",
-    "text": "Plot your data over time\nCreate a plot of your selected crop/measurement\n\nYear on the horizontal axis\nYour measurement (Value) on the vertical\n\nHow do you do this with ggplot?"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#using-ggplot",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#using-ggplot",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Using ggplot",
-    "text": "Using ggplot\n\nYou create visualizations with ggplot\nAlways starts with the ggplot() function\n\nArguments to this function are inherited by all layers\n\nAdd layers and other elements using the + operator\nArguments to layers override inherited arguments"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#common-ggplot-layers",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#common-ggplot-layers",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Common ggplot layers",
-    "text": "Common ggplot layers\nLayers add visual elements to your visualization\n\nScatter plot geom_point()\nLine plot geom_line()\nSmoothed line geom_smooth()\nMany, many more"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Create a visualization",
-    "text": "Create a visualization\n\nYear on the horizontal axis (x aesthetic)\nYour measurement (Value) on the vertical (y aesthetic)\n\nProvide data and aesthetics to ggplot()\n\nggplot(\n  data=faostat_brazilnuts,\n  mapping=aes(x=Year,y=Value)\n  ) +\n  geom_line()"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization-1",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization-1",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Create a visualization",
-    "text": "Create a visualization\n\nYear on the horizontal axis (x aesthetic)\nYour measurement (Value) on the vertical (y aesthetic)\n\nProvide data and aesthetics to layers\n\nggplot(\n  data=faostat_brazilnuts\n  ) +\n  geom_line(\n    mapping=aes(x=Year,y=Value)\n  )\n\nBoth versions will produce the same visualization"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#sample-visualization",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#sample-visualization",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Sample visualization",
-    "text": "Sample visualization\n\n\nIs this a good visualization?\nHow could we improve it?"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#improving-the-visualization",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#improving-the-visualization",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Improving the visualization",
-    "text": "Improving the visualization\nGood visualizations are clear and self-contained\n\nInformative axis labels\nClear what is being plotted\nUse a legend where appropraite"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#an-improved-visualization",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#an-improved-visualization",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "An improved visualization",
-    "text": "An improved visualization\n\nggplot(\n  data=faostat_brazilnuts,\n  aes(x=Year,y=Value)\n) +\n  geom_line() +\n  labs(\n    x=\"Year\",\n    y=\"Production (mt)\",\n    title=\"Annual Brazil Nut Production\",\n    subtitle=\"Brazil 1990 - 2010\",\n    caption=\"Source: United Nations FAOSTAT\"\n  ) -&gt; viz_1"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#look-at-an-improved-version",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#look-at-an-improved-version",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Look at an improved version",
-    "text": "Look at an improved version"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Adding layers",
-    "text": "Adding layers\nAdding Layers\n\nAdd additional layers using the + operator\nEach stacks on top of the previous one\n\nModifying Layers\n\nModify the appearance of an entire layer with layer properties\nArguments to layer functions outside the aesthetic\nAvailable properties depend on the layer type"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---example",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---example",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Adding Layers - Example",
-    "text": "Adding Layers - Example\n\nggplot(\n  data=faostat_brazilnuts,\n  aes(x=Year,y=Value)\n) +\n  geom_line(color=\"black\",linewidth=1) +\n  geom_smooth(color=\"blue\",linewidth=1.2)"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---new-visualization",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---new-visualization",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Adding Layers - New Visualization",
-    "text": "Adding Layers - New Visualization"
-  },
-  {
-    "objectID": "modules/data-visualization/01-basic-data-visualization.html#next-class",
-    "href": "modules/data-visualization/01-basic-data-visualization.html#next-class",
-    "title": "FAOSTAT Data and Visualization",
-    "section": "Next Class",
-    "text": "Next Class\n\nMore Data Visualization\nReading and writing Parquet files"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "AREC 280: Harvesting Big Data",
-    "section": "",
-    "text": "NoteWelcome to the Course!\n\n\n\nClasses meet Tuesdays & Thursdays from 12:30 - 1:45 PM.",
-    "crumbs": [
-      "Course Overview"
-    ]
-  },
-  {
-    "objectID": "index.html#office-hours",
-    "href": "index.html#office-hours",
-    "title": "AREC 280: Harvesting Big Data",
-    "section": "🗓️ Office Hours",
-    "text": "🗓️ Office Hours\n\nInstructor: Prof. James Archsmith (archsmit@umd.edu)\nOffice Hours:\n\nIn-Person Drop-in Hours: Wednesdays 11 AM - 12 PM in 2216 Symons Hall\nZoom Office Hours: Fridays 10 AM - 11 AM By Appointment",
-    "crumbs": [
-      "Course Overview"
-    ]
-  },
-  {
-    "objectID": "LICENSE.html",
-    "href": "LICENSE.html",
-    "title": "AREC 280: Harvesting Big Data",
-    "section": "",
-    "text": "All materials on this site are Copyright © 2026 James Archsmith. All rights reserved.\n\n\nUniversity of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, and use all print materials for any purposes related to their personal use for this course and may retain these materials indefinitely after the course concludes.\nUnauthorized reproduction is expressly prohibited.",
-    "crumbs": [
-      "About",
-      "License Notice"
-    ]
-  },
-  {
-    "objectID": "LICENSE.html#license-notice",
-    "href": "LICENSE.html#license-notice",
-    "title": "AREC 280: Harvesting Big Data",
-    "section": "",
-    "text": "All materials on this site are Copyright © 2026 James Archsmith. All rights reserved.\n\n\nUniversity of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, and use all print materials for any purposes related to their personal use for this course and may retain these materials indefinitely after the course concludes.\nUnauthorized reproduction is expressly prohibited.",
-    "crumbs": [
-      "About",
-      "License Notice"
     ]
   },
   {
@@ -612,5 +332,544 @@
     "title": "Data Visualization and Parquet Files",
     "section": "Next Class",
     "text": "Next Class\n\nMore Data Visualization"
+  },
+  {
+    "objectID": "LICENSE.html",
+    "href": "LICENSE.html",
+    "title": "AREC 280: Harvesting Big Data",
+    "section": "",
+    "text": "All materials on this site are Copyright © 2026 James Archsmith. All rights reserved.\n\n\nUniversity of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, and use all print materials for any purposes related to their personal use for this course and may retain these materials indefinitely after the course concludes.\nUnauthorized reproduction is expressly prohibited.",
+    "crumbs": [
+      "About",
+      "License Notice"
+    ]
+  },
+  {
+    "objectID": "LICENSE.html#license-notice",
+    "href": "LICENSE.html#license-notice",
+    "title": "AREC 280: Harvesting Big Data",
+    "section": "",
+    "text": "All materials on this site are Copyright © 2026 James Archsmith. All rights reserved.\n\n\nUniversity of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, and use all print materials for any purposes related to their personal use for this course and may retain these materials indefinitely after the course concludes.\nUnauthorized reproduction is expressly prohibited.",
+    "crumbs": [
+      "About",
+      "License Notice"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "AREC 280: Harvesting Big Data",
+    "section": "",
+    "text": "NoteWelcome to the Course!\n\n\n\nClasses meet Tuesdays & Thursdays from 12:30 - 1:45 PM.",
+    "crumbs": [
+      "Course Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#office-hours",
+    "href": "index.html#office-hours",
+    "title": "AREC 280: Harvesting Big Data",
+    "section": "🗓️ Office Hours",
+    "text": "🗓️ Office Hours\n\nInstructor: Prof. James Archsmith (archsmit@umd.edu)\nOffice Hours:\n\nIn-Person Drop-in Hours: Wednesdays 11 AM - 12 PM in 2216 Symons Hall\nZoom Office Hours: Fridays 10 AM - 11 AM By Appointment",
+    "crumbs": [
+      "Course Overview"
+    ]
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#todays-goals",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#todays-goals",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Today’s Goals",
+    "text": "Today’s Goals\nFamiliarize Ourselves with the FAO Crop & Livestock Data\n\nUnderstand the content and methodology\nLoad the data in R\nExamine the content\n\nBasic Data Visualization using ggplot()\n\nConstruct data visualization using ggplot()\nConsider ggplot layers, aesthetics, and layer properties\nSave visualizations for use in other documents\n\nLook at the FAO data in\nAGNR-AREC280_Fall2026/Data/FAO\nThink about how you would load data in this folder into R"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#agricultural-productivity",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#agricultural-productivity",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Agricultural Productivity",
+    "text": "Agricultural Productivity\nHow should we measure agricultural productivity?\n\n\nProductivity is a measure of how inputs are converted into outputs\n\nWhat are inputs to agriculture?\n\n\n\nLand\nLabor\nWater\nMachinery (capital)\nFertilizer\netc"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#measuring-agricultural-productivity-1",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#measuring-agricultural-productivity-1",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Measuring Agricultural Productivity",
+    "text": "Measuring Agricultural Productivity\nHow do we measure agricultural productivity?\n\nOne measure is Total Factor Productivity\nIndex measuring how efficiently agricultural inputs are transformed into agricultural outputs\nEffectively a ratio of output to inputs\nEasy when there is one input\nMore difficult when there are many"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#tfp-in-practice",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#tfp-in-practice",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "TFP in Practice",
+    "text": "TFP in Practice\nIn practice we measure TFP as a function\n\nHold other inputs/factors constant\nTFP is the “left over” productivity\n\nWhat is the difficulty with this approach?\n\n\nHow do we make sure farmers hold inputs constant? (we can’t)\nOther factors (e.g., weather) are impossible to hold constant\nDo we care about productivity in the lab or on real farms?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#estimating-tfp",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#estimating-tfp",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Estimating TFP",
+    "text": "Estimating TFP\nEstimating TFP is an empirical modeling problem\n\nCollect data on all factors we think influence crop growth\nAcross many farms and many years\nUse of inputs and other factors will vary across observations\nUse this variation to isolate the impact of each factor on output\nCombine this with actual input use to predict output for each observation\nTFP is the “residual” (true value minus prediction)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#total-factor-productivity-over-time",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#total-factor-productivity-over-time",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Total Factor Productivity Over Time",
+    "text": "Total Factor Productivity Over Time"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#challenges-with-measuring-tfp",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#challenges-with-measuring-tfp",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Challenges with Measuring TFP",
+    "text": "Challenges with Measuring TFP\n\nSuppose we want to compute the change in TFP for many countries over time\nWe’ll use the method I outlined\n\nCollect data on output, inputs, and other factors\nUse it to construct an empirical model of productivity\nTFP is the residual unexplained by the model\n\nWhat challenges might we encounter?\nWhat might you do to address those problems?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#some-challenges-measuring-tfp",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#some-challenges-measuring-tfp",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Some Challenges Measuring TFP",
+    "text": "Some Challenges Measuring TFP\nSome challenges measuring TFP using observational data\n\nConsistency in measurement both across time and space\nUnmeasured factors (e.g., intensity of rain)\nUnmeasured quality of inputs and output\nSubstitution between inputs\nCrop switching\nMany more!"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#is-measuring-tfp-impossible",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#is-measuring-tfp-impossible",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Is Measuring TFP Impossible?",
+    "text": "Is Measuring TFP Impossible?\n\nThere are many ways our estimates of TFP could go wrong\nNo set of estimates is “perfect”\nShould we just give up?\n\n\n\nTFP estimates provide valuable information, even if not “perfect”\nDo the best job we can\nContinue to improve (better data, models, etc)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#measuring-national-agricultural-production",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#measuring-national-agricultural-production",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Measuring National Agricultural Production",
+    "text": "Measuring National Agricultural Production\nConsistency of data is important for measuring TFP across countries and over time\n\nIdeally measure output using methods that allow for comparing measurements\n\nAcross all countries\nAcross time\n\nInclude the majority of countries\nInclude a wide array of agricultural products"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#united-nations-faostat-data",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#united-nations-faostat-data",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "United Nations FAOSTAT Data",
+    "text": "United Nations FAOSTAT Data\nThe UN collects and reports the FAOSTAT Data\n\nAnnual measurements of agricultural production\nConsistent methods across over 200 countries/territories\nOutput measurements for nearly 300 types of output\nLong time series of measurements (starting in 1961)\n\nAvailable at https://www.fao.org/faostat\nOn Google Drive in Data/FAO"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#summary-of-faostat",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#summary-of-faostat",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Summary of FAOSTAT",
+    "text": "Summary of FAOSTAT\nEach observation is a combination of\n\nYear\nCountry\nAgricultural output type\nMeasurement"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---crops",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---crops",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "FAOSTAT Measurements - Crops",
+    "text": "FAOSTAT Measurements - Crops\nFAOSTAT measures\nCrops\n\nTotal area of land harvested (ha)\nProduction quantity (mt)\nYield (mt/ha)\n\nMeasurements for both primary crops (soybeans) and refined goods (soybean oil)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---livestock",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#faostat-measurements---livestock",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "FAOSTAT Measurements - Livestock",
+    "text": "FAOSTAT Measurements - Livestock\nFAOSTAT Measures\nLivestock\n\nNumber of animals\nProduction quantity (mt)\nYield (mt/animal)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Loading FAOSTAT",
+    "text": "Loading FAOSTAT\nLoad the FAOSTAT data into R\n\nThe Full FAOSTAT datafile is very large (over 300 MB)\n\nIt will take a long time to load\nWiFi will clog up with everyone downloading the file\n\nA second file (FAO_crop_livestock-subsample.csv) contains a limited set of observations\n\nBrazil only\nYears 1990 - 2010\n\nLoad this file into R for today"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat-code",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#loading-faostat-code",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Loading FAOSTAT Code",
+    "text": "Loading FAOSTAT Code\n\nread_csv(\n  file.path(data_path,\"FAO\",\"csv\",\"FAO_crop_livestock-subsample.csv\")\n) -&gt; faostat\n\n\nHere’s how I loaded the data\nWhat should I do next?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#exploring-the-faostat-data",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#exploring-the-faostat-data",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Exploring the FAOSTAT Data",
+    "text": "Exploring the FAOSTAT Data\n\nglimpse(faostat)\n\nRows: 8,036\nColumns: 14\n$ ISO3166_1      &lt;chr&gt; \"076\", \"076\", \"076\", \"076\", \"076\", \"076\", \"076\", \"076\",…\n$ Area           &lt;chr&gt; \"Brazil\", \"Brazil\", \"Brazil\", \"Brazil\", \"Brazil\", \"Braz…\n$ ItemCode       &lt;chr&gt; \"01341\", \"01341\", \"01341\", \"01341\", \"01341\", \"01341\", \"…\n$ Item           &lt;chr&gt; \"Apples\", \"Apples\", \"Apples\", \"Apples\", \"Apples\", \"Appl…\n$ `Area Code`    &lt;dbl&gt; 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,…\n$ `Item Code`    &lt;dbl&gt; 515, 515, 515, 515, 515, 515, 515, 515, 515, 515, 515, …\n$ `Element Code` &lt;dbl&gt; 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5…\n$ Element        &lt;chr&gt; \"Area harvested\", \"Area harvested\", \"Area harvested\", \"…\n$ `Year Code`    &lt;dbl&gt; 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1…\n$ Year           &lt;dbl&gt; 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1…\n$ Unit           &lt;chr&gt; \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"…\n$ Value          &lt;dbl&gt; 22337.0, 25630.0, 24181.0, 25652.0, 27112.0, 26704.0, 2…\n$ Flag           &lt;chr&gt; \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", …\n$ Note           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#understanding-the-faostat-data",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#understanding-the-faostat-data",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Understanding the FAOSTAT Data",
+    "text": "Understanding the FAOSTAT Data\nWhat agricultural products are in this data set?\n\n\nfaostat |&gt;\n  distinct(Item)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-products",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-products",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Focus on one products",
+    "text": "Focus on one products\nThere are many products\n\nChoose one\nCreate a new data frame containing only that product\n\n\nI choose Brazil nuts, in shell\n\nfaostat |&gt;\n  filter(Item == \"Brazil nuts, in shell\") -&gt; faostat_brazilnuts"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-product---result",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-product---result",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Focus on one product - Result",
+    "text": "Focus on one product - Result\n\n\n# A tibble: 21 × 14\n   ISO3166_1 Area  ItemCode Item  `Area Code` `Item Code` `Element Code` Element\n   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;  \n 1 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 2 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 3 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 4 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 5 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 6 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 7 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 8 076       Braz… 01377    Braz…          21         216           5510 Produc…\n 9 076       Braz… 01377    Braz…          21         216           5510 Produc…\n10 076       Braz… 01377    Braz…          21         216           5510 Produc…\n# ℹ 11 more rows\n# ℹ 6 more variables: `Year Code` &lt;dbl&gt;, Year &lt;dbl&gt;, Unit &lt;chr&gt;, Value &lt;dbl&gt;,\n#   Flag &lt;chr&gt;, Note &lt;chr&gt;"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-measurement",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#focus-on-one-measurement",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Focus on one measurement",
+    "text": "Focus on one measurement\nWhat are the possible values of Element?\n\n\nfaostat_brazilnuts |&gt;\n  distinct(Element)\n\n# A tibble: 1 × 1\n  Element   \n  &lt;chr&gt;     \n1 Production\n\n\n\nBrazil nuts only have a “Production” measurement\nOther products might have more measurements\nYou will need to filter down to a single measurement"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#plot-your-data-over-time",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#plot-your-data-over-time",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Plot your data over time",
+    "text": "Plot your data over time\nCreate a plot of your selected crop/measurement\n\nYear on the horizontal axis\nYour measurement (Value) on the vertical\n\nHow do you do this with ggplot?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#using-ggplot",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#using-ggplot",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Using ggplot",
+    "text": "Using ggplot\n\nYou create visualizations with ggplot\nAlways starts with the ggplot() function\n\nArguments to this function are inherited by all layers\n\nAdd layers and other elements using the + operator\nArguments to layers override inherited arguments"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#common-ggplot-layers",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#common-ggplot-layers",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Common ggplot layers",
+    "text": "Common ggplot layers\nLayers add visual elements to your visualization\n\nScatter plot geom_point()\nLine plot geom_line()\nSmoothed line geom_smooth()\nMany, many more"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Create a visualization",
+    "text": "Create a visualization\n\nYear on the horizontal axis (x aesthetic)\nYour measurement (Value) on the vertical (y aesthetic)\n\nProvide data and aesthetics to ggplot()\n\nggplot(\n  data=faostat_brazilnuts,\n  mapping=aes(x=Year,y=Value)\n  ) +\n  geom_line()"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization-1",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#create-a-visualization-1",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Create a visualization",
+    "text": "Create a visualization\n\nYear on the horizontal axis (x aesthetic)\nYour measurement (Value) on the vertical (y aesthetic)\n\nProvide data and aesthetics to layers\n\nggplot(\n  data=faostat_brazilnuts\n  ) +\n  geom_line(\n    mapping=aes(x=Year,y=Value)\n  )\n\nBoth versions will produce the same visualization"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#sample-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#sample-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Sample visualization",
+    "text": "Sample visualization\n\n\nIs this a good visualization?\nHow could we improve it?"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#improving-the-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#improving-the-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Improving the visualization",
+    "text": "Improving the visualization\nGood visualizations are clear and self-contained\n\nInformative axis labels\nClear what is being plotted\nUse a legend where appropraite"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#an-improved-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#an-improved-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "An improved visualization",
+    "text": "An improved visualization\n\nggplot(\n  data=faostat_brazilnuts,\n  aes(x=Year,y=Value)\n) +\n  geom_line() +\n  labs(\n    x=\"Year\",\n    y=\"Production (mt)\",\n    title=\"Annual Brazil Nut Production\",\n    subtitle=\"Brazil 1990 - 2010\",\n    caption=\"Source: United Nations FAOSTAT\"\n  ) -&gt; viz_1"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#look-at-an-improved-version",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#look-at-an-improved-version",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Look at an improved version",
+    "text": "Look at an improved version"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Adding layers",
+    "text": "Adding layers\nAdding Layers\n\nAdd additional layers using the + operator\nEach stacks on top of the previous one\n\nModifying Layers\n\nModify the appearance of an entire layer with layer properties\nArguments to layer functions outside the aesthetic\nAvailable properties depend on the layer type"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---example",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---example",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Adding Layers - Example",
+    "text": "Adding Layers - Example\n\nggplot(\n  data=faostat_brazilnuts,\n  aes(x=Year,y=Value)\n) +\n  geom_line(color=\"black\",linewidth=1) +\n  geom_smooth(color=\"blue\",linewidth=1.2)"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---new-visualization",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#adding-layers---new-visualization",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Adding Layers - New Visualization",
+    "text": "Adding Layers - New Visualization"
+  },
+  {
+    "objectID": "modules/data-visualization/01-basic-data-visualization.html#next-class",
+    "href": "modules/data-visualization/01-basic-data-visualization.html#next-class",
+    "title": "FAOSTAT Data and Visualization",
+    "section": "Next Class",
+    "text": "Next Class\n\nMore Data Visualization\nReading and writing Parquet files"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#todays-goals-1",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#todays-goals-1",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Today’s Goals",
+    "text": "Today’s Goals\nToday we will\n\nConstruct a subset of the FAO data with multiple countries\nConstruct visualizations that compare value across countries\nUnderstand options for customizing legends and color schemes in ggplot\n\nWe will continue to use the FAO data in\nAGNR-AREC280_Fall2026/Data/FAO"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#expanding-our-fao-subset",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#expanding-our-fao-subset",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Expanding our FAO subset",
+    "text": "Expanding our FAO subset\nToday we’re going to create visualizations that compare data across different groups using the FAO data\n\nPreviously we’d created a subset of the data for a single country-product\nToday we’ll need multiple groups to compare\nWe will construct a subset of the FAO data\n\nA single product\nA single measurement\nMultiple countries"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#create-a-subset-of-the-fao-data",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#create-a-subset-of-the-fao-data",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Create a subset of the FAO data",
+    "text": "Create a subset of the FAO data\nCreate a subset of the FAO data limited to\n\nWheat as the commodity\nProduction as the measurement\nFor the following countries:\n\nSweden\nNorway\nFinland\n\n\nSave the subset to a variable named fao_wheat.\nAfter you have created it, use data summary commands to check whether your new dataset contains what you expect."
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#loading-the-fao-data",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#loading-the-fao-data",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Loading the FAO Data",
+    "text": "Loading the FAO Data\nFirst load the FAO data from the Parquet file\n\n\nCode\n# Load required libraries\nlibrary(tidyverse)\nlibrary(arrow)\n\n# Load the full fao dataset\nread_parquet(\n  file.path(data_path,\"FAO\",\"parquet\",\"FAO_crop_livestock.parquet\")\n) -&gt; faostat\n\n# glimpse to be sure we've loaded the data\nglimpse(faostat)\n\n\nRows: 4,209,110\nColumns: 15\n$ ISO3166_1      &lt;chr&gt; \"004\", \"004\", \"004\", \"004\", \"004\", \"004\", \"004\", \"004\",…\n$ Area           &lt;chr&gt; \"Afghanistan\", \"Afghanistan\", \"Afghanistan\", \"Afghanist…\n$ ItemCode       &lt;chr&gt; \"01371\", \"01371\", \"01371\", \"01371\", \"01371\", \"01371\", \"…\n$ Item           &lt;chr&gt; \"Almonds, in shell\", \"Almonds, in shell\", \"Almonds, in …\n$ `Area Code`    &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2…\n$ `Item Code`    &lt;int&gt; 221, 221, 221, 221, 221, 221, 221, 221, 221, 221, 221, …\n$ `Element Code` &lt;int&gt; 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5312, 5…\n$ Element        &lt;chr&gt; \"Area harvested\", \"Area harvested\", \"Area harvested\", \"…\n$ `Year Code`    &lt;int&gt; 1961, 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1…\n$ Year           &lt;int&gt; 1961, 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1…\n$ Unit           &lt;chr&gt; \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"ha\", \"…\n$ Value          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5900, 6000…\n$ Flag           &lt;chr&gt; \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", …\n$ Note           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…\n$ ISO3           &lt;chr&gt; \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\",…"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#creating-the-fao_wheat-subset",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#creating-the-fao_wheat-subset",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Creating the fao_wheat subset",
+    "text": "Creating the fao_wheat subset\n\n\nCode\n# Create the subset\nfaostat |&gt;\n  # Limit to Wheat as the commodity\n  filter(Item == \"Wheat\") |&gt;\n  # Limit to Production as the measurement\n  filter(Element == \"Production\") |&gt;\n  # Limit to Sweden, Norway, and Finland\n  filter(Area %in% c(\"Sweden\",\"Norway\",\"Finland\")) -&gt; fao_wheat\n\n# glimpse a few rows\nglimpse(fao_wheat)\n\n\nRows: 192\nColumns: 15\n$ ISO3166_1      &lt;chr&gt; \"246\", \"246\", \"246\", \"246\", \"246\", \"246\", \"246\", \"246\",…\n$ Area           &lt;chr&gt; \"Finland\", \"Finland\", \"Finland\", \"Finland\", \"Finland\", …\n$ ItemCode       &lt;chr&gt; \"0111\", \"0111\", \"0111\", \"0111\", \"0111\", \"0111\", \"0111\",…\n$ Item           &lt;chr&gt; \"Wheat\", \"Wheat\", \"Wheat\", \"Wheat\", \"Wheat\", \"Wheat\", \"…\n$ `Area Code`    &lt;int&gt; 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67,…\n$ `Item Code`    &lt;int&gt; 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,…\n$ `Element Code` &lt;int&gt; 5510, 5510, 5510, 5510, 5510, 5510, 5510, 5510, 5510, 5…\n$ Element        &lt;chr&gt; \"Production\", \"Production\", \"Production\", \"Production\",…\n$ `Year Code`    &lt;int&gt; 1961, 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1…\n$ Year           &lt;int&gt; 1961, 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1…\n$ Unit           &lt;chr&gt; \"t\", \"t\", \"t\", \"t\", \"t\", \"t\", \"t\", \"t\", \"t\", \"t\", \"t\", …\n$ Value          &lt;dbl&gt; 460792, 421500, 397000, 462500, 500700, 367800, 506800,…\n$ Flag           &lt;chr&gt; \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", …\n$ Note           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…\n$ ISO3           &lt;chr&gt; \"FIN\", \"FIN\", \"FIN\", \"FIN\", \"FIN\", \"FIN\", \"FIN\", \"FIN\",…"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#check-our-work",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#check-our-work",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Check our work",
+    "text": "Check our work\n\nThere are many things you could do to check you’ve done what you expected\nHere I’ll count observations by country\n\n\n\nCode\nfao_wheat |&gt;\n  count(Area)\n\n\n# A tibble: 3 × 2\n  Area        n\n  &lt;chr&gt;   &lt;int&gt;\n1 Finland    64\n2 Norway     64\n3 Sweden     64\n\n\nWhat other checks could you perform?"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#a-first-visualization",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#a-first-visualization",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "A first visualization",
+    "text": "A first visualization\nCreate a visualization like in previous classes\n\nYear on the horizontal axis\nProduction on the vertical axis\n\nDoes it make sense, what has gone wrong?"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#visualization-over-groups---bad",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#visualization-over-groups---bad",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Visualization over groups - Bad",
+    "text": "Visualization over groups - Bad\n\n\nCode\nggplot(\n  data=fao_wheat,\n  mapping=aes(x=Year,y=Value/1000000)\n) +\n  geom_line(color=\"black\",linewidth=1) +\n  labs(\n    title=\"Nordic Wheat Production\",\n    x=\"Year\",\n    y=\"Production (million mt)\",\n    caption=\"Source: United Nations FAOSTAT\"\n  ) +\n  theme_bw()"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#visualization-over-groups---what-went-wrong",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#visualization-over-groups---what-went-wrong",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Visualization over groups - What went wrong",
+    "text": "Visualization over groups - What went wrong\n\nOur new data has three observations for each year\nOne for each country\nPlots each point but doesn’t differentiate by country"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#visualization-over-groups---set-aesthetics",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#visualization-over-groups---set-aesthetics",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Visualization over groups - Set aesthetics",
+    "text": "Visualization over groups - Set aesthetics\nYou can tell ggplot how to group data using aesthetics\n\nThe group=&lt;var&gt; aesthetic will create a new layer for each unique value of &lt;var&gt;\nThe color=&lt;var&gt; aesthetic will use a different color for observations depending on the value of &lt;var&gt;\n\nModify the previous visualization to add a color=Area aesthetic"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#visualization-over-groups---color-aesthetic",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#visualization-over-groups---color-aesthetic",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Visualization over groups - color aesthetic",
+    "text": "Visualization over groups - color aesthetic\n\n\nCode\nggplot(\n  data=fao_wheat,\n  mapping=aes(x=Year,y=Value/1000000,color=Area)\n) +\n  geom_line(linewidth=1) +\n  labs(\n    title=\"Nordic Wheat Production\",\n    x=\"Year\",\n    y=\"Production (million mt)\",\n    caption=\"Source: United Nations FAOSTAT\"\n  ) +\n  theme_bw() -&gt; viz_wheat_color\n\nprint(viz_wheat_color)"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#recap---color-aesthetic",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#recap---color-aesthetic",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Recap - color aesthetic",
+    "text": "Recap - color aesthetic\nAdding the color=Area aesthetic\n\nCreates separate lines for each value of Area\nAssigns a different color for each value of Area\nCreates a legend showing the colors corresponding to each value of Area\n\nAre these good colors to use?"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors-1",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors-1",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Setting custom colors",
+    "text": "Setting custom colors\n\nR uses a default color palate for colors\nIt is not ideal\nYou can override default colors with\n\nscale_color_manual(): You define the colors\nscale_color_brewer(): Use color scales from RColorBrewer\nscale_color_viridis_&lt;b|c|d&gt;(): Use color scales from viridis"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors---brewer",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors---brewer",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Setting custom colors - Brewer",
+    "text": "Setting custom colors - Brewer\nBy default Brewer uses blue colors and intensity\n\n\nCode\nviz_wheat_color + \n  scale_color_brewer()"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#brewer-palates",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#brewer-palates",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Brewer palates",
+    "text": "Brewer palates\nThe RColorBrewer is optimized for maps and has a variety of palates set using palette=\"&lt;palate&gt;\"\n\nSequential (e.g., YlOrRd, PuRd)\nQualitative (e.g., Set3, Dark2)\nDiverging (e.g., Spectral, PuOr)\n\nA gallery is available in the R Graph Gallery"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors---brewer-set3",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors---brewer-set3",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Setting custom colors - Brewer Set3",
+    "text": "Setting custom colors - Brewer Set3\nSet3 is a categorical scale\n\n\nCode\nviz_wheat_color + \n  scale_color_brewer(palette=\"Set3\")"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors---viridis",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors---viridis",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Setting custom colors - Viridis",
+    "text": "Setting custom colors - Viridis\nHere is Viridis D\n\n\nCode\nviz_wheat_color + \n  scale_color_viridis_d()"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#viridis-palettes",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#viridis-palettes",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Viridis Palettes",
+    "text": "Viridis Palettes\nViridis palates are designed\n\nTo be clear even if the viewer has common forms of colorblindness\nTo be clear when converted to greyscale\nTo have strongly contrasting colors with a logical order of progression"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#viridis-scales",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#viridis-scales",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Viridis Scales",
+    "text": "Viridis Scales\nThe correct Viridis scale to use depends on your data:\n\nscale_color_viridis_b()\n\nBinned: Discrete with a defined order/ranking\nAdjacent values have similar colors\n\nscale_color_viridis_c()\n\nContinuous: A range where any value is possible\n\nscale_color_viridis_d()\n\nDiscrete: Discrete but unordered\nMaximizes contrast between colors\n\n\nWhat type of data do we have here?"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#viridis-colors",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#viridis-colors",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Viridis Colors",
+    "text": "Viridis Colors\nViridis has several color range options\n\nSet using option=\"&lt;name&gt;\"\nPossible names include magma, inferno, viridis, rocket, etc.\n\nSee all the options in the Viridis Documentation"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#other-important-viridis-options",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#other-important-viridis-options",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Other Important Viridis Options",
+    "text": "Other Important Viridis Options\nThe Viridis scale functions also have some other important options:\n\ndirection=[-1|1]\n\nSets the order of the colors. -1 reverses them\n\nna.value=\"&lt;color&gt;\"\n\nSets the color used when a value is NA\nSet to NA for transparent"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors---manual",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-custom-colors---manual",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Setting Custom Colors - Manual",
+    "text": "Setting Custom Colors - Manual\nYou may occasionally want to set manual colors\n\nUse scale_color_manual()\nSet the value= argument to a named vector\nEach element of the vector is a \"&lt;value&gt;\"=\"&lt;color&gt;\" pair\ne.g., \"Sweden\"=\"yellow\""
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-customs-colors---manual-easy",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-customs-colors---manual-easy",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Setting Customs Colors - Manual, easy",
+    "text": "Setting Customs Colors - Manual, easy\nSet colors for each country to a color like one in their flag.\n\n\nCode\nviz_wheat_color + \n  scale_color_manual(\n    values=c(\n      # Each pair is a country name (from the data)\n      # And the the name of color in their flag\n      \"Finland\" = \"blue\", #Finland blue\n      \"Sweden\" = \"yellow\", #Sweden Yellow\n      \"Norway\" = \"red\" #Norway Red\n    )\n  )"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-customs-colors---manual-hard",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#setting-customs-colors---manual-hard",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Setting Customs Colors - Manual, hard",
+    "text": "Setting Customs Colors - Manual, hard\nSet colors for each country to a color in their flag using web colors.\n\n\nCode\nviz_wheat_color + \n  scale_color_manual(\n    values=c(\n      # Each pair is a country name (from the data)\n      # And the hex code for a color in their flag\n      \"Finland\" = \"#002F6C\", #Finland blue\n      \"Sweden\" = \"#FECB00\", #Sweden Yellow\n      \"Norway\" = \"#BA0C2F\" #Norway Red\n    )\n  )"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#best-practices-for-setting-colors",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#best-practices-for-setting-colors",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Best practices for setting colors",
+    "text": "Best practices for setting colors\n\nR’s default color choices are not ideal, particularly if more than a few colors\nBoth RColorBrewer and Viridis were designed by professionals\nUse their palettes when possible\nOnly manually define colors if a specific color is important"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#legend-defaults",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#legend-defaults",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Legend Defaults",
+    "text": "Legend Defaults\nBy default, ggplot\n\nTitles the legend after the corresponding aesthetic (e.g., “color”)\nPlaces it on the right in vertical format\n\nThese defaults are not always optimal"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#changing-the-legend-title",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#changing-the-legend-title",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Changing the legend title",
+    "text": "Changing the legend title\n\nYou can change the legend title in labs()\nThe label name is the name of the corresponding aesthetic (e.g., “color”)\ne.g., labs(color=\"Country\")\n\nChange the legend title to “Country” in your visualization"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#updated-legend-name",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#updated-legend-name",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Updated Legend name",
+    "text": "Updated Legend name\n\n\nCode\nviz_wheat_color +\n  scale_color_viridis_d() +\n  labs(color=\"Country\")"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#starting-from-scratch",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#starting-from-scratch",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Starting from scratch",
+    "text": "Starting from scratch\n\n\nCode\nggplot(\n  data=fao_wheat,\n  mapping=aes(x=Year,y=Value/1000000,color=Area)\n) +\n  geom_line(linewidth=1) +\n  labs(\n    title=\"Nordic Wheat Production\",\n    x=\"Year\",\n    y=\"Production (million mt)\",\n    caption=\"Source: United Nations FAOSTAT\",\n    color=\"Country\"\n  ) +\n  scale_color_viridis_d() +\n  theme_bw() -&gt; viz_wheat_color\n\nprint(viz_wheat_color)"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#adjusting-legend-attributes",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#adjusting-legend-attributes",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Adjusting Legend Attributes",
+    "text": "Adjusting Legend Attributes\nMany attributes of the way a legend is displayed are controlled by the plot theme\n\nChange individual settings of the theme with theme()\nTheme takes a series of named argument-value pairs\nNamed arguments define attributes of the theme\nMore complicated options controlled by guides()\n\nSee Tidyverse ggplot2 3.5.0: Legends for many examples"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#changing-the-legend-position-1",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#changing-the-legend-position-1",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Changing the legend position",
+    "text": "Changing the legend position\nThe legend placement is controlled by theme attribute legend.position=\n\nPossible values \"left\", \"right\", \"bottom\", \"top\"\n\"none\" turns off the legend\n\"inside\" requires legend.position.inside=c(x,y)\n\nPlaces the legend inside at the specified x and y coordinates\n\n\nMove the legend to the bottom of your visualization.\n\nHow does it change?"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#move-the-legend-to-the-bottom",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#move-the-legend-to-the-bottom",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Move the legend to the bottom",
+    "text": "Move the legend to the bottom\n\n\nCode\nviz_wheat_color +\n  theme(\n    legend.position = \"bottom\"\n  )"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#group-level-calculations",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#group-level-calculations",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Group-level calculations",
+    "text": "Group-level calculations\n\nRecall that you can place mathematical expressions in aesthetics\nR will evauluate them and use the result to define the data displayed\nYou can use summary functions like mean()\nBy default R will compute the summary over the full dataset\nAdd the group= aesthetic to perform the calculation over each group"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#group-level-calculations-1",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#group-level-calculations-1",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Group-level Calculations",
+    "text": "Group-level Calculations\nThere may be occasions where you would like to perform a calculation specific to each group and visualize that result\n\nA few options\n\nUse mutate() combined with if_else() or case_when()\nUse group_by() and summary functions\nUse group= along with calculations in an aesthetic\n\n\nLet’s think about implementing the group= method"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#example-of-a-group-level-calculation",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#example-of-a-group-level-calculation",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Example of a Group-Level Calculation",
+    "text": "Example of a Group-Level Calculation\nWhat will the following code do?\n\nggplot(data=fao_wheat) +\n  geom_line(mapping=aes(\n    x=Year,\n    y=(Value - mean(Value))/sd(Value),\n    group=Area,\n    color=Area\n  ))"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#group-level-calculation-in-a-visualization",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#group-level-calculation-in-a-visualization",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Group-level Calculation in a Visualization",
+    "text": "Group-level Calculation in a Visualization\n\n\nCode\nggplot(data=fao_wheat) +\n  geom_line(mapping=aes(\n    x=Year,\n    y=(Value - mean(Value))/sd(Value),\n    group=Area,\n    color=Area\n  )) +\n  theme_bw() + \n  theme(legend.position = \"bottom\") +\n  labs(\n    title=\"Nordic Wheat Production\",\n    x=\"Year\",\n    y=\"Relative Production (z-score)\",\n    caption=\"Source: United Nations FAOSTAT\",\n    color=\"Country\"\n  ) +\n  scale_color_manual(\n    values=c(\n      \"Finland\" = \"#002F6C\", #Finland blue\n      \"Sweden\" = \"#FECB00\", #Sweden Yellow\n      \"Norway\" = \"#BA0C2F\" #Norway Red\n    )\n  )"
+  },
+  {
+    "objectID": "modules/data-visualization/03-grouping-data-in-visualizations.html#next-class",
+    "href": "modules/data-visualization/03-grouping-data-in-visualizations.html#next-class",
+    "title": "Data Visualization with Multiple Groups",
+    "section": "Next Class",
+    "text": "Next Class\n\nData Transformations: Reshaping Data"
   }
 ]
