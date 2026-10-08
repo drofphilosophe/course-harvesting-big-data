@@ -4,7 +4,7 @@ title: |
 editor: source
 categories: ["Class Materials"]
 format: revealjs
-order: 1
+date: 2026-09-29
 ---
 
 ```{r setup}

@@ -1,0 +1,9 @@
+---
+title: "Class Materials"
+listing:
+  contents: "/class-materials/*/index.qmd"  
+  type: grid              # Visual options: grid, default, or table
+  sort: "date asc"       # Sorts by the 'order:' frontmatter field in each module's index.qmd
+  fields: [date, title, description]
+format: html
+---

@@ -1,0 +1,528 @@
+---
+title: |
+  Data Visualization with Multiple Groups
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-10-08
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals
+
+Today we will
+
+- Construct a subset of the FAO data with multiple countries
+- Construct visualizations that compare value across countries
+- Understand options for customizing legends and color schemes in ggplot
+
+We will continue to use the FAO data in
+
+`AGNR-AREC280_Fall2026/Data/FAO`
+
+
+
+
+
+# Construct an FAO Subset with multiple countries
+
+## Expanding our FAO subset
+
+Today we're going to create visualizations that compare data across different 
+groups using the FAO data
+
+- Previously we'd created a subset of the data for a single country-product
+- Today we'll need multiple groups to compare
+- We will construct a subset of the FAO data 
+  - A single product
+  - A single measurement
+  - Multiple countries
+
+## Create a subset of the FAO data {.smaller}
+
+Create a subset of the FAO data limited to
+
+- **Wheat** as the commodity
+- **Production** as the measurement
+- For the following countries:
+  - **Sweden**
+  - **Norway**
+  - **Finland**
+  
+Save the subset to a variable named `fao_wheat`. 
+
+After you have created it, use data summary commands to check whether your 
+new dataset contains what you expect. 
+  
+## Loading the FAO Data
+
+First load the FAO data from the Parquet file
+
+```{r load_fao}
+#| echo: true
+#| code-fold: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"FAO","parquet","FAO_crop_livestock.parquet")
+) -> faostat
+
+# glimpse to be sure we've loaded the data
+glimpse(faostat)
+```
+
+## Creating the `fao_wheat` subset
+
+```{r create_subset}
+#| echo: true
+#| code-fold: true
+# Create the subset
+faostat |>
+  # Limit to Wheat as the commodity
+  filter(Item == "Wheat") |>
+  # Limit to Production as the measurement
+  filter(Element == "Production") |>
+  # Limit to Sweden, Norway, and Finland
+  filter(Area %in% c("Sweden","Norway","Finland")) -> fao_wheat
+
+# glimpse a few rows
+glimpse(fao_wheat)
+```
+
+## Check our work
+
+- There are many things you could do to check you've done what you expected
+- Here I'll count observations by country
+
+```{r check_countries}
+#| echo: true
+#| code-fold: true
+fao_wheat |>
+  count(Area)
+```
+
+What other checks could you perform?
+
+
+# Visualizations over groups
+
+## A first visualization
+
+Create a visualization like in previous classes
+
+- Year on the horizontal axis
+- Production on the vertical axis
+
+Does it make sense, what has gone wrong?
+
+
+## Visualization over groups - Bad
+
+```{r viz_1}
+#| echo: true
+#| code-fold: true
+ggplot(
+  data=fao_wheat,
+  mapping=aes(x=Year,y=Value/1000000)
+) +
+  geom_line(color="black",linewidth=1) +
+  labs(
+    title="Nordic Wheat Production",
+    x="Year",
+    y="Production (million mt)",
+    caption="Source: United Nations FAOSTAT"
+  ) +
+  theme_bw()
+```
+
+## Visualization over groups - What went wrong
+
+- Our new data has three observations for each year
+- One for each country
+- Plots each point but doesn't differentiate by country
+
+## Visualization over groups - Set aesthetics
+
+You can tell ggplot how to group data using aesthetics
+
+- The `group=<var>` aesthetic will create a new layer for each unique value of `<var>`
+- The `color=<var>` aesthetic will use a different color for observations depending on the value of `<var>`
+
+Modify the previous visualization to add a `color=Area` aesthetic
+
+## Visualization over groups - `color` aesthetic
+
+```{r viz_1_color}
+#| echo: true
+#| code-fold: true
+ggplot(
+  data=fao_wheat,
+  mapping=aes(x=Year,y=Value/1000000,color=Area)
+) +
+  geom_line(linewidth=1) +
+  labs(
+    title="Nordic Wheat Production",
+    x="Year",
+    y="Production (million mt)",
+    caption="Source: United Nations FAOSTAT"
+  ) +
+  theme_bw() -> viz_wheat_color
+
+print(viz_wheat_color)
+```
+
+
+## Recap - `color` aesthetic
+
+Adding the `color=Area` aesthetic
+
+- Creates separate lines for each value of `Area`
+- Assigns a different color for each value of `Area`
+- Creates a legend showing the colors corresponding to each value of `Area`
+
+Are these good colors to use?
+
+
+# Setting Custom Colors
+
+## Setting custom colors
+
+- R uses a default color palate for colors
+- It is not ideal
+- You can override default colors with 
+  - `scale_color_manual()`: You define the colors
+  - `scale_color_brewer()`: Use color scales from `RColorBrewer`
+  - `scale_color_viridis_<b|c|d>()`: Use color scales from `viridis`
+  
+## Setting custom colors - Brewer
+
+By default Brewer uses blue colors and intensity
+```{r viz_1_color_brewer}
+#| echo: true
+#| code-fold: true
+viz_wheat_color + 
+  scale_color_brewer()
+```
+
+## Brewer palates
+
+The RColorBrewer is optimized for maps and has a variety of palates set using `palette="<palate>"`
+
+- Sequential (e.g., `YlOrRd`, `PuRd`)
+- Qualitative (e.g., `Set3`, `Dark2`)
+- Diverging (e.g., `Spectral`, `PuOr`)
+
+A gallery is available in the [R Graph Gallery](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html)
+
+## Setting custom colors - Brewer Set3
+
+`Set3` is a categorical scale
+```{r viz_1_color_brewer_set3}
+#| echo: true
+#| code-fold: true
+viz_wheat_color + 
+  scale_color_brewer(palette="Set3")
+```
+
+
+## Setting custom colors - Viridis
+
+Here is Viridis D
+
+```{r viz_1_color_viridis_d}
+#| echo: true
+#| code-fold: true
+viz_wheat_color + 
+  scale_color_viridis_d()
+```
+## Viridis Palettes
+
+Viridis palates are designed 
+
+- To be clear even if the viewer has common forms of colorblindness
+- To be clear when converted to greyscale
+- To have strongly contrasting colors with a logical order of progression
+
+## Viridis Scales {.smaller}
+
+The correct Viridis scale to use depends on your data:
+
+- `scale_color_viridis_b()`
+  - **Binned**: Discrete *with a defined order/ranking*
+  - Adjacent values have similar colors
+- `scale_color_viridis_c()` 
+  - **Continuous**: A range where any value is possible
+- `scale_color_viridis_d()` 
+  - **Discrete**: Discrete *but unordered*
+  - Maximizes contrast between colors
+
+What type of data do we have here?
+
+## Viridis Colors
+
+Viridis has several color range options
+
+- Set using `option="<name>"`
+- Possible names include `magma`, `inferno`, `viridis`, `rocket`, etc.
+
+See all the options in the [Viridis Documentation](https://search.r-project.org/CRAN/refmans/viridisLite/html/viridis.html)
+
+## Other Important Viridis Options
+
+The Viridis scale functions also have some other important options:
+
+- `direction=[-1|1]`
+  - Sets the order of the colors. `-1` reverses them
+- `na.value="<color>"`
+  - Sets the color used when a value is `NA`
+  - Set to `NA` for transparent
+
+
+## Setting Custom Colors - Manual
+
+You may occasionally want to set manual colors
+
+- Use `scale_color_manual()`
+- Set the `value=` argument to a **named vector**
+- Each element of the vector is a `"<value>"="<color>"` pair
+- e.g., `"Sweden"="yellow"`
+
+
+## Setting Customs Colors - Manual, easy
+
+Set colors for each country to a color like one in their flag.
+
+```{r viz_1_color_manual_easy}
+#| echo: true
+#| code-fold: true
+viz_wheat_color + 
+  scale_color_manual(
+    values=c(
+      # Each pair is a country name (from the data)
+      # And the the name of color in their flag
+      "Finland" = "blue", #Finland blue
+      "Sweden" = "yellow", #Sweden Yellow
+      "Norway" = "red" #Norway Red
+    )
+  )
+```
+
+## Setting Customs Colors - Manual, hard
+
+Set colors for each country to a color in their flag using [web colors](https://en.wikipedia.org/wiki/Web_colors).
+
+```{r viz_1_color_manual_hard}
+#| echo: true
+#| code-fold: true
+viz_wheat_color + 
+  scale_color_manual(
+    values=c(
+      # Each pair is a country name (from the data)
+      # And the hex code for a color in their flag
+      "Finland" = "#002F6C", #Finland blue
+      "Sweden" = "#FECB00", #Sweden Yellow
+      "Norway" = "#BA0C2F" #Norway Red
+    )
+  )
+```
+
+## Best practices for setting colors
+
+- R's default color choices are not ideal, particularly if more than a few colors
+- Both RColorBrewer and Viridis were designed by professionals
+- Use their palettes when possible
+- Only manually define colors if a specific color is important
+
+# Adjusting the legend appearance
+
+## Legend Defaults
+
+By default, ggplot
+
+- Titles the legend after the corresponding aesthetic (e.g., "color")
+- Places it on the right in vertical format
+
+These defaults are not always optimal
+
+## Changing the legend title
+
+- You can change the legend title in `labs()`
+- The label name is the name of the corresponding aesthetic (e.g., "color")
+- e.g., `labs(color="Country")`
+
+Change the legend title to "Country" in your visualization
+
+
+## Updated Legend name
+```{r update_legend_title}
+#| echo: true
+#| code-fold: true
+viz_wheat_color +
+  scale_color_viridis_d() +
+  labs(color="Country")
+```
+
+## Starting from scratch
+```{r add_legend_title}
+#| echo: true
+#| code-fold: true
+ggplot(
+  data=fao_wheat,
+  mapping=aes(x=Year,y=Value/1000000,color=Area)
+) +
+  geom_line(linewidth=1) +
+  labs(
+    title="Nordic Wheat Production",
+    x="Year",
+    y="Production (million mt)",
+    caption="Source: United Nations FAOSTAT",
+    color="Country"
+  ) +
+  scale_color_viridis_d() +
+  theme_bw() -> viz_wheat_color
+
+print(viz_wheat_color)
+```
+
+# Changing the Legend Position
+
+## Adjusting Legend Attributes
+
+Many attributes of the way a legend is displayed are controlled by the plot theme
+
+- Change individual settings of the theme with `theme()`
+- Theme takes a series of named argument-value pairs
+- Named arguments define attributes of the theme
+- More complicated options controlled by `guides()`
+
+See [Tidyverse ggplot2 3.5.0: Legends](https://tidyverse.org/blog/2024/02/ggplot2-3-5-0-legends/)
+for many examples
+
+## Changing the legend position
+
+The legend placement is controlled by theme attribute `legend.position=`
+
+- Possible values `"left"`, `"right"`, `"bottom"`, `"top"`
+- `"none"` turns off the legend
+- `"inside"` requires `legend.position.inside=c(x,y)`
+  - Places the legend inside at the specified `x` and `y` coordinates
+  
+Move the legend to the bottom of your visualization.
+
+- How does it change?
+
+
+## Move the legend to the bottom
+
+```{r legend_bottom}
+#| echo: true
+#| code-fold: true
+viz_wheat_color +
+  theme(
+    legend.position = "bottom"
+  )
+```
+
+
+# Using groups for calculations
+
+## Group-level calculations
+
+- Recall that you can place mathematical expressions in aesthetics
+- R will evauluate them and use the result to define the data displayed
+- You can use summary functions like `mean()`
+- By default R will compute the summary over the full dataset
+- Add the `group=` aesthetic to perform the calculation over each group
+
+## Group-level Calculations
+
+There may be occasions where you would like to perform a calculation
+specific to each group and visualize that result
+
+- A few options
+  - Use `mutate()` combined with `if_else()` or `case_when()`
+  - Use `group_by()` and summary functions
+  - Use `group=` along with calculations in an aesthetic
+
+Let's think about implementing the `group=` method
+
+## Example of a Group-Level Calculation
+
+What will the following code do?
+```{r}
+#| eval: false
+#| echo: true
+
+ggplot(data=fao_wheat) +
+  geom_line(mapping=aes(
+    x=Year,
+    y=(Value - mean(Value))/sd(Value),
+    group=Area,
+    color=Area
+  ))
+```
+
+## Group-level Calculation in a Visualization
+
+```{r viz_z_score}
+#| code-fold: true
+#| echo: true
+
+ggplot(data=fao_wheat) +
+  geom_line(mapping=aes(
+    x=Year,
+    y=(Value - mean(Value))/sd(Value),
+    group=Area,
+    color=Area
+  )) +
+  theme_bw() + 
+  theme(legend.position = "bottom") +
+  labs(
+    title="Nordic Wheat Production",
+    x="Year",
+    y="Relative Production (z-score)",
+    caption="Source: United Nations FAOSTAT",
+    color="Country"
+  ) +
+  scale_color_manual(
+    values=c(
+      "Finland" = "#002F6C", #Finland blue
+      "Sweden" = "#FECB00", #Sweden Yellow
+      "Norway" = "#BA0C2F" #Norway Red
+    )
+  )
+  
+```
+
+# Wrap up {visibility="hidden"}
+
+## Next Class
+
+- **Data Transformations:** Reshaping Data

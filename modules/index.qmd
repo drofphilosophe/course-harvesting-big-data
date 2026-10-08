@@ -1,0 +1,9 @@
+---
+title: "Modules"
+listing:
+  contents: "*/index.qmd"  
+  type: grid              # Visual options: grid, default, or table
+  sort: "order asc"       # Sorts by the 'order:' frontmatter field in each module's index.qmd
+  fields: [title]
+format: html
+---

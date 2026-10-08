@@ -17,6 +17,7 @@ course:
   number_title: &course_number_title "AREC 280 - Harvesting Big Data"
   term: &course_term "Fall 2026"
   number_term: &course_number_term "AREC 280 - Fall 2026"
+  number_term_hyperlink: &course_number_term_hyperlink '<a href="/index.html">AREC 280 - Fall 2026</a>'
   short_name: &course_short_name "Harvesting Big Data"
   full_name: &course_long_name "Harvesting Big Data to Examine Agriculture and Climate Change"
   instructor_email: archsmit@umd.edu
@@ -40,13 +41,16 @@ format:
     show-slide-number: all
     chalkboard: false
     preview-links: auto
-    footer: *course_number_term
+    footer: *course_number_term_hyperlink
     
     # Code display options for classrooms
     code-line-numbers: true
     code-copy: true
     highlight-style: monokai # High-contrast theme for dark backgrounds
     
+    # Figure parameters
+    fig-format: svg
+
     # PDF printing configuration
     pdf-separate-fragments: false
 
@@ -59,6 +63,8 @@ format:
     auto-stretch: true   # Automatically resizes plots, tables, and code outputs to fit
     scrollable: false    # The slide viewport is not scrollable if content overflows
 
+    #embed-resources: true
+    #self-contained-math: true   
     # Custom additions to the hamburger menu
     menu:
       custom:
@@ -72,7 +78,7 @@ format:
               <p>University of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, 
               and use all print materials for any purposes related to their personal use for this course and may retain these materials
               indefinitely after the course concludes. Unauthorized reproduction is expressly prohibited. </p>
-            </div>
+            </div>          
   html:
     theme: [_extensions/umd-theme/umd-theme-html.scss]
     toc: true
@@ -89,10 +95,10 @@ website:
     contents:  
       - text: "Course Overview"  
         href: index.qmd  
-      - section: "Modules"
+      - section: "Course Content"
         contents: 
-        - text: "1. Data Visualization"  
-          href: modules/data-visualization/index.qmd
+          - auto: class-materials
+          - auto: modules
       - "---"
       - section: "About"
         contents:

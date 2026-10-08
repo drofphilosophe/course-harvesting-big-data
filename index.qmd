@@ -1,6 +1,6 @@
 ---
 title: "AREC 280: Harvesting Big Data"
-subtitle: "Course Syllabus & Lecture Material Hub"
+subtitle: "Class Material Hub"
 format: html
 ---
 
