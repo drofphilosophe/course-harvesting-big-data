@@ -1,27 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/data-visualization/index.html</loc>
-    <lastmod>2026-10-07T19:45:45.181Z</lastmod>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/index.html</loc>
+    <lastmod>2026-10-08T18:50:59.462Z</lastmod>
   </url>
   <url>
-    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/data-visualization/02-customizing-visualizations.html</loc>
-    <lastmod>2026-10-07T19:45:45.181Z</lastmod>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/data-visualization/03-grouping-data-in-visualizations.html</loc>
+    <lastmod>2026-10-08T18:40:33.744Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/data-visualization/01-basic-data-visualization.html</loc>
+    <lastmod>2026-10-08T18:40:16.497Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/index.html</loc>
+    <lastmod>2026-10-08T18:27:00.182Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/class-materials/week-07/index.html</loc>
+    <lastmod>2026-10-08T14:27:31.401Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/class-materials/week-06/index.html</loc>
+    <lastmod>2026-10-08T14:27:31.401Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/class-materials/week-05/W5C1-basic-data-visualization.html</loc>
+    <lastmod>2026-10-08T18:28:57.677Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/class-materials/index.html</loc>
+    <lastmod>2026-10-08T19:42:37.945Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/class-materials/week-05/index.html</loc>
+    <lastmod>2026-10-08T14:27:38.296Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/class-materials/week-05/W5C2-customizing-visualizations.html</loc>
+    <lastmod>2026-10-08T18:29:13.308Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/class-materials/week-06/W6C2-grouping-in-visualizations.html</loc>
+    <lastmod>2026-10-08T18:29:29.921Z</lastmod>
+  </url>
+  <url>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/class-materials/week-07/W7C2-more-data-wrangling.html</loc>
+    <lastmod>2026-10-14T19:56:31.396Z</lastmod>
   </url>
   <url>
     <loc>https://drofphilosophe.github.io/course-harvesting-big-data/LICENSE.html</loc>
     <lastmod>2026-10-07T19:45:45.164Z</lastmod>
   </url>
   <url>
-    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/index.html</loc>
-    <lastmod>2026-10-07T19:45:45.173Z</lastmod>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/data-visualization/02-customizing-visualizations.html</loc>
+    <lastmod>2026-10-08T18:39:57.525Z</lastmod>
   </url>
   <url>
-    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/data-visualization/01-basic-data-visualization.html</loc>
-    <lastmod>2026-10-07T19:45:45.179Z</lastmod>
-  </url>
-  <url>
-    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/data-visualization/03-grouping-data-in-visualizations.html</loc>
-    <lastmod>2026-10-07T20:39:47.747Z</lastmod>
+    <loc>https://drofphilosophe.github.io/course-harvesting-big-data/modules/data-visualization/index.html</loc>
+    <lastmod>2026-10-07T19:45:45.181Z</lastmod>
   </url>
 </urlset>

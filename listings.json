@@ -1,5 +1,38 @@
 [
   {
+    "listing": "/modules/index.html",
+    "items": [
+      "/modules/data-visualization/index.html"
+    ]
+  },
+  {
+    "listing": "/class-materials/week-07/index.html",
+    "items": [
+      "/class-materials/week-07/W7C2-more-data-wrangling.html"
+    ]
+  },
+  {
+    "listing": "/class-materials/week-06/index.html",
+    "items": [
+      "/class-materials/week-06/W6C2-grouping-in-visualizations.html"
+    ]
+  },
+  {
+    "listing": "/class-materials/index.html",
+    "items": [
+      "/class-materials/week-05/index.html",
+      "/class-materials/week-06/index.html",
+      "/class-materials/week-07/index.html"
+    ]
+  },
+  {
+    "listing": "/class-materials/week-05/index.html",
+    "items": [
+      "/class-materials/week-05/W5C2-customizing-visualizations.html",
+      "/class-materials/week-05/W5C1-basic-data-visualization.html"
+    ]
+  },
+  {
     "listing": "/modules/data-visualization/index.html",
     "items": [
       "/modules/data-visualization/01-basic-data-visualization.html",

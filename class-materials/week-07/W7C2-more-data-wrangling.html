@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-c4e1171eb4281116019c604a711c5128.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="James Archsmith">
+  <meta name="dcterms.date" content="2026-10-15">
+  <title>AREC 280 - Harvesting Big Data – More Data Wrangling</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2; background-color: #2e3440; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #75715e; } /* Annotation */
+    code span.at { color: #f92672; } /* Attribute */
+    code span.bn { color: #ae81ff; } /* BaseN */
+    code span.bu { color: #66d9ef; } /* BuiltIn */
+    code span.cf { color: #f92672; } /* ControlFlow */
+    code span.ch { color: #e6db74; } /* Char */
+    code span.cn { color: #ae81ff; } /* Constant */
+    code span.co { color: #75715e; } /* Comment */
+    code span.cv { color: #75715e; } /* CommentVar */
+    code span.do { color: #75715e; } /* Documentation */
+    code span.dt { color: #66d9ef; font-style: italic; } /* DataType */
+    code span.dv { color: #ae81ff; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #a6e22e; font-weight: bold; } /* Extension */
+    code span.fl { color: #ae81ff; } /* Float */
+    code span.fu { color: #a6e22e; } /* Function */
+    code span.im { color: #f92672; } /* Import */
+    code span.in { color: #f1fa8c; } /* Information */
+    code span.kw { color: #f92672; } /* Keyword */
+    code span.op { color: #f8f8f2; } /* Operator */
+    code span.ot { color: #a6e22e; } /* Other */
+    code span.pp { color: #f92672; } /* Preprocessor */
+    code span.re { color: #75715e; } /* RegionMarker */
+    code span.sc { color: #ae81ff; } /* SpecialChar */
+    code span.ss { color: #e6db74; } /* SpecialString */
+    code span.st { color: #e6db74; } /* String */
+    code span.va { color: #f8f8f2; } /* Variable */
+    code span.vs { color: #e6db74; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-56f43c85262180b44f56c030b004c12f.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title"><p>More Data Wrangling</p></h1>
+  <p class="subtitle">AREC 280 - Harvesting Big Data</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+James Archsmith
+</div>
+        <p class="quarto-title-affiliation">
+            University of Maryland
+          </p>
+    </div>
+</div>
+
+  <p class="date">2026-10-15</p>
+</section>
+<section>
+
+<section id="todays-goals-1" class="slide level2 smaller">
+<h2>Today’s Goals</h2>
+<p>Today we will</p>
+<ul>
+<li>Perform additional data wrangling operations
+<ul>
+<li>Combining values from many columns (<code>unite</code>)</li>
+<li>Separating values into many columns (<code>separate</code>)</li>
+<li>Combining multiple data files (<code>bind_rows</code> and <code>bind_cols</code>)</li>
+</ul></li>
+<li>Reshape Data
+<ul>
+<li>Making data longer and narrower (<code>pivot_longer</code>)</li>
+<li>Making data wider and shorter (<code>pivot_wider</code>)</li>
+</ul></li>
+</ul>
+<p>We will use the <strong>Parquet</strong> version of the CRU data in</p>
+<p><code>AGNR-AREC280_Fall2026/Data/CRU/parquet</code></p>
+</section>
+<section id="create-a-monthly-cru-data-file" class="slide level2">
+<h2>Create a Monthly CRU Data File</h2>
+<p>We will work on a monthly CRU data file</p>
+<ul>
+<li>Load data from the Parquet file</li>
+<li>The CRU data have multiple time levels</li>
+<li>Need to keep <code>Period</code> values of <code>JAN</code>,<code>FEB</code>, …</li>
+</ul>
+<p>What do we need to do?</p>
+</section>
+<section id="create-a-monthly-cru-data-file-1" class="slide level2">
+<h2>Create a Monthly CRU Data File</h2>
+<ul>
+<li>Load the Parquet file</li>
+<li>Filter based on Period</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a><span class="co"># Load required libraries</span></span>
+<span id="cb1-2"><a aria-label="2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a aria-label="3"></a><span class="fu">library</span>(arrow)</span>
+<span id="cb1-4"><a aria-label="4"></a></span>
+<span id="cb1-5"><a aria-label="5"></a><span class="co"># Load the full fao dataset</span></span>
+<span id="cb1-6"><a aria-label="6"></a><span class="fu">read_parquet</span>(</span>
+<span id="cb1-7"><a aria-label="7"></a>  <span class="fu">file.path</span>(data_path,<span class="st">"CRU"</span>,<span class="st">"parquet"</span>,<span class="st">"tmp_w_ISO3.parquet"</span>)</span>
+<span id="cb1-8"><a aria-label="8"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb1-9"><a aria-label="9"></a>  <span class="fu">filter</span>(</span>
+<span id="cb1-10"><a aria-label="10"></a>    Period <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb1-11"><a aria-label="11"></a>      <span class="st">"JAN"</span>,<span class="st">"FEB"</span>,<span class="st">"MAR"</span>,<span class="st">"APR"</span>,<span class="st">"MAY"</span>,<span class="st">"JUN"</span>,</span>
+<span id="cb1-12"><a aria-label="12"></a>      <span class="st">"JUL"</span>,<span class="st">"AUG"</span>,<span class="st">"SEP"</span>,<span class="st">"OCT"</span>,<span class="st">"NOV"</span>,<span class="st">"DEC"</span></span>
+<span id="cb1-13"><a aria-label="13"></a>    )</span>
+<span id="cb1-14"><a aria-label="14"></a>  )<span class="ot">-&gt;</span> cru_tmp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="displaying-loaded-data" class="slide level2">
+<h2>Displaying Loaded Data</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-label="1"></a><span class="fu">glimpse</span>(cru_tmp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 438,000
+Columns: 7
+$ Year          &lt;int&gt; 1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908, 1909, 19…
+$ Country       &lt;chr&gt; "Actaeon_Group", "Actaeon_Group", "Actaeon_Group", "Acta…
+$ Variable      &lt;chr&gt; "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", …
+$ Period        &lt;chr&gt; "JAN", "JAN", "JAN", "JAN", "JAN", "JAN", "JAN", "JAN", …
+$ Value         &lt;dbl&gt; 26.1, 26.1, 26.2, 26.1, 26.1, 26.1, 26.1, 26.1, 26.1, 26…
+$ Country_Clean &lt;chr&gt; "Actaeon Group", "Actaeon Group", "Actaeon Group", "Acta…
+$ ISO3          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="combining-columns" class="title-slide slide level1 center">
+<h1>Combining Columns</h1>
+
+</section>
+<section id="combining-data-from-multiple-columns" class="slide level2">
+<h2>Combining Data from Multiple Columns</h2>
+<ul>
+<li>Sometimes information we want are spread across multiple columns</li>
+<li>We want to combine that info into a single column</li>
+<li>How can we do this in R?</li>
+</ul>
+<div class="fragment">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-label="1"></a>data <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a aria-label="2"></a>  <span class="fu">unite</span>(</span>
+<span id="cb4-3"><a aria-label="3"></a>  <span class="sc">&lt;</span>new_colname<span class="sc">&gt;</span>,</span>
+<span id="cb4-4"><a aria-label="4"></a>  <span class="sc">&lt;</span>cols_to_combine<span class="sc">&gt;</span>,</span>
+<span id="cb4-5"><a aria-label="5"></a>  <span class="at">sep=</span><span class="st">"&lt;separator&gt;"</span></span>
+<span id="cb4-6"><a aria-label="6"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="combine-columns-in-cru" class="slide level2">
+<h2>Combine Columns in CRU</h2>
+<ul>
+<li>CRU contains <code>Year</code> and <code>Period</code> columns</li>
+<li>Suppose you wanted a new text column named <code>MonthYear</code>
+<ul>
+<li>Contains <code>&lt;month&gt;-&lt;year&gt;</code></li>
+<li>e.g., <code>"JAN-2005"</code></li>
+</ul></li>
+<li>How can you do that with <code>unite()</code>?</li>
+<li>Create this column and save it to your data frame</li>
+</ul>
+</section>
+<section id="combine-columns-in-cru---result" class="slide level2">
+<h2>Combine Columns in CRU - Result</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a>cru_tmp <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a aria-label="2"></a>  <span class="fu">unite</span>(</span>
+<span id="cb5-3"><a aria-label="3"></a>    <span class="co"># New colname</span></span>
+<span id="cb5-4"><a aria-label="4"></a>    MonthYear,</span>
+<span id="cb5-5"><a aria-label="5"></a>    <span class="co"># Columns to combine</span></span>
+<span id="cb5-6"><a aria-label="6"></a>    <span class="fu">c</span>(Period,Year),</span>
+<span id="cb5-7"><a aria-label="7"></a>    <span class="co"># Separator</span></span>
+<span id="cb5-8"><a aria-label="8"></a>    <span class="at">sep=</span><span class="st">"-"</span></span>
+<span id="cb5-9"><a aria-label="9"></a>  ) <span class="ot">-&gt;</span> cru_tmp</span>
+<span id="cb5-10"><a aria-label="10"></a></span>
+<span id="cb5-11"><a aria-label="11"></a><span class="fu">glimpse</span>(cru_tmp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 438,000
+Columns: 6
+$ MonthYear     &lt;chr&gt; "JAN-1901", "JAN-1902", "JAN-1903", "JAN-1904", "JAN-190…
+$ Country       &lt;chr&gt; "Actaeon_Group", "Actaeon_Group", "Actaeon_Group", "Acta…
+$ Variable      &lt;chr&gt; "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", …
+$ Value         &lt;dbl&gt; 26.1, 26.1, 26.2, 26.1, 26.1, 26.1, 26.1, 26.1, 26.1, 26…
+$ Country_Clean &lt;chr&gt; "Actaeon Group", "Actaeon Group", "Actaeon Group", "Acta…
+$ ISO3          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p>What happened to <code>Period</code> and <code>Year</code>?</p>
+</div>
+</section>
+<section id="combining-columns---saving-the-originals" class="slide level2">
+<h2>Combining Columns - Saving the originals</h2>
+<ul>
+<li>By default, <code>unite()</code> removes the original columns it united</li>
+<li>You can override by setting <code>remove=FALSE</code></li>
+<li>Technically not a destructive operation</li>
+<li>All the original data are still there!</li>
+</ul>
+<p>What if we want it back?</p>
+</section></section>
+<section>
+<section id="separating-data-in-columns" class="title-slide slide level1 center">
+<h1>Separating data in columns</h1>
+
+</section>
+<section id="separating-data-in-columns-1" class="slide level2">
+<h2>Separating data in columns</h2>
+<ul>
+<li>We have the month and year smashed together in a column</li>
+<li>What if we wanted separate <code>Year</code> and <code>Month</code> columns?</li>
+<li>There is additional text in the column</li>
+<li>A delimiter (separator)</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-label="1"></a>data <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a aria-label="2"></a>  <span class="fu">separate</span>(</span>
+<span id="cb7-3"><a aria-label="3"></a>    <span class="sc">&lt;</span>col_to_separate<span class="sc">&gt;</span>,</span>
+<span id="cb7-4"><a aria-label="4"></a>    <span class="sc">&lt;</span>new_colnames<span class="sc">&gt;</span>,</span>
+<span id="cb7-5"><a aria-label="5"></a>    <span class="at">sep=</span><span class="st">"&lt;separator&gt;"</span>,</span>
+<span id="cb7-6"><a aria-label="6"></a>    <span class="at">remove=</span>[<span class="cn">TRUE</span><span class="sc">|</span><span class="cn">FALSE</span>]</span>
+<span id="cb7-7"><a aria-label="7"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="separating-a-combined-column" class="slide level2">
+<h2>Separating a Combined Column</h2>
+<ul>
+<li>Use the <code>separate()</code> verb to separate <code>MonthYear</code>
+<ul>
+<li>Separate <code>Year</code> and <code>Month</code> columns</li>
+<li>Keep the <code>MonthYear</code> column</li>
+</ul></li>
+</ul>
+</section>
+<section id="separating-a-column---example" class="slide level2">
+<h2>Separating a column - Example</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-label="1"></a>cru_tmp <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a aria-label="2"></a>  <span class="fu">separate</span>(</span>
+<span id="cb8-3"><a aria-label="3"></a>    <span class="co"># Column to separate</span></span>
+<span id="cb8-4"><a aria-label="4"></a>    MonthYear,</span>
+<span id="cb8-5"><a aria-label="5"></a>    <span class="co"># New columns. Provided as text</span></span>
+<span id="cb8-6"><a aria-label="6"></a>    <span class="fu">c</span>(<span class="st">"Month"</span>,<span class="st">"Year"</span>),</span>
+<span id="cb8-7"><a aria-label="7"></a>    <span class="co"># Separator</span></span>
+<span id="cb8-8"><a aria-label="8"></a>    <span class="at">sep=</span><span class="st">"-"</span>,</span>
+<span id="cb8-9"><a aria-label="9"></a>    <span class="co"># Don't remove</span></span>
+<span id="cb8-10"><a aria-label="10"></a>    <span class="at">remove=</span><span class="cn">FALSE</span></span>
+<span id="cb8-11"><a aria-label="11"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 438,000 × 8
+   MonthYear Month Year  Country       Variable Value Country_Clean ISO3 
+   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;         &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;
+ 1 JAN-1901  JAN   1901  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+ 2 JAN-1902  JAN   1902  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+ 3 JAN-1903  JAN   1903  Actaeon_Group tmp       26.2 Actaeon Group &lt;NA&gt; 
+ 4 JAN-1904  JAN   1904  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+ 5 JAN-1905  JAN   1905  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+ 6 JAN-1906  JAN   1906  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+ 7 JAN-1907  JAN   1907  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+ 8 JAN-1908  JAN   1908  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+ 9 JAN-1909  JAN   1909  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+10 JAN-1910  JAN   1910  Actaeon_Group tmp       26.1 Actaeon Group &lt;NA&gt; 
+# ℹ 437,990 more rows</code></pre>
+</div>
+</div>
+<p>Do you notice a problem with the new columns?</p>
+</section>
+<section id="separating-columns---data-types" class="slide level2">
+<h2>Separating columns - Data Types</h2>
+<p>By default <code>separate</code> creates text (<code>&lt;chr&gt;</code>) columns</p>
+<ul>
+<li>In our original data <code>Year</code> is numeric</li>
+<li>We think of years as numeric</li>
+<li>What can we do?</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Convert after the fact using <code>mutate</code></li>
+<li>Tell <code>separate</code> to attempt to convert columns with <code>convert=TRUE</code></li>
+</ul>
+<p>Let’s do the latter</p>
+</div>
+</section>
+<section id="separating-a-column-with-conversion" class="slide level2">
+<h2>Separating a column with Conversion</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-label="1"></a>cru_tmp <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a aria-label="2"></a>  <span class="fu">separate</span>(</span>
+<span id="cb10-3"><a aria-label="3"></a>    <span class="co"># Column to separate</span></span>
+<span id="cb10-4"><a aria-label="4"></a>    MonthYear,</span>
+<span id="cb10-5"><a aria-label="5"></a>    <span class="co"># New columns. Provided as text</span></span>
+<span id="cb10-6"><a aria-label="6"></a>    <span class="fu">c</span>(<span class="st">"Month"</span>,<span class="st">"Year"</span>),</span>
+<span id="cb10-7"><a aria-label="7"></a>    <span class="co"># Separator</span></span>
+<span id="cb10-8"><a aria-label="8"></a>    <span class="at">sep=</span><span class="st">"-"</span>,</span>
+<span id="cb10-9"><a aria-label="9"></a>    <span class="co"># Don't remove</span></span>
+<span id="cb10-10"><a aria-label="10"></a>    <span class="at">remove=</span><span class="cn">FALSE</span>,</span>
+<span id="cb10-11"><a aria-label="11"></a>    <span class="co"># Attempt to convert columns</span></span>
+<span id="cb10-12"><a aria-label="12"></a>    <span class="at">convert =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-13"><a aria-label="13"></a>  ) <span class="ot">-&gt;</span> cru_tmp</span>
+<span id="cb10-14"><a aria-label="14"></a></span>
+<span id="cb10-15"><a aria-label="15"></a><span class="fu">glimpse</span>(cru_tmp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 438,000
+Columns: 8
+$ MonthYear     &lt;chr&gt; "JAN-1901", "JAN-1902", "JAN-1903", "JAN-1904", "JAN-190…
+$ Month         &lt;chr&gt; "JAN", "JAN", "JAN", "JAN", "JAN", "JAN", "JAN", "JAN", …
+$ Year          &lt;int&gt; 1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908, 1909, 19…
+$ Country       &lt;chr&gt; "Actaeon_Group", "Actaeon_Group", "Actaeon_Group", "Acta…
+$ Variable      &lt;chr&gt; "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", "tmp", …
+$ Value         &lt;dbl&gt; 26.1, 26.1, 26.2, 26.1, 26.1, 26.1, 26.1, 26.1, 26.1, 26…
+$ Country_Clean &lt;chr&gt; "Actaeon Group", "Actaeon Group", "Actaeon Group", "Acta…
+$ ISO3          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</code></pre>
+</div>
+</div>
+</section>
+<section id="other-arguments-to-separate" class="slide level2">
+<h2>Other arguments to <code>separate()</code></h2>
+<p>Separate has a few other important optional arguments</p>
+<p><code>extra="&lt;warn|drop|merge&gt;"</code></p>
+<ul>
+<li>Determines how to handle cases where there are extra pieces to separate</li>
+</ul>
+<p><code>fill="&lt;warn|left|right&gt;"</code></p>
+<ul>
+<li>Determines how to handle cases when there are too few pieces</li>
+</ul>
+</section></section>
+<section>
+<section id="combining-data" class="title-slide slide level1 center">
+<h1>Combining data</h1>
+
+</section>
+<section id="combining-data-from-multiple-data-frames" class="slide level2">
+<h2>Combining Data from Multiple Data Frames</h2>
+<p>Think about <strong>two</strong> data frames that may contain similar information</p>
+<ul>
+<li>Separate files for different measurements (e.g., CRU)</li>
+<li>Separate files for different time periods</li>
+<li>Separate files for different places</li>
+</ul>
+</section>
+<section id="tidyverse-methods-for-combining-data" class="slide level2">
+<h2>Tidyverse methods for combining data</h2>
+<p>The tidyverse has several methods of combining data frames</p>
+<ul>
+<li><code>bind_rows()</code> stacks rows of data frames</li>
+<li><code>bind_cols()</code> stacks columns of data frames</li>
+<li><strong>Joins</strong> use more complicated logic to match rows between datasets
+<ul>
+<li>Covered next week</li>
+</ul></li>
+</ul>
+</section>
+<section id="stacking-rows" class="slide level2">
+<h2>Stacking Rows</h2>
+<p><code>bind_rows()</code> stacks rows of multiple data frames</p>
+<ul>
+<li>Each data frame is added to the bottom of the previous data frame</li>
+<li>Useful when you have multiple data frames with the same layout
+<ul>
+<li>Identical column names</li>
+<li>Identical data types</li>
+</ul></li>
+<li>e.g.,
+<ul>
+<li>One data frame for each year of data</li>
+<li>Otherwise identical</li>
+</ul></li>
+</ul>
+</section>
+<section id="stacking-rows-1" class="slide level2">
+<h2>Stacking Rows</h2>
+<p><code>bind_rows()</code></p>
+<ul>
+<li>Returns a single data frame, aligning columns by name</li>
+<li>Fills in with <code>NA</code> when a column doesn’t exist</li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Watch out for inconsistent data types!</strong></p>
+</div>
+<div class="callout-content">
+<p>Each column needs a single data type. R will attempt to <em>coerce</em> values of each column to a single data type, but won’t convert numbers to text or vice versa. This can lead to unexpected <code>NA</code> values if you try to stack a column that switches between text and numeric data!</p>
+</div>
+</div>
+</div>
+</section>
+<section id="two-ways-to-use-bind_rows" class="slide level2">
+<h2>Two ways to use <code>bind_rows()</code></h2>
+<div class="columns">
+<div class="column text-left" style="width:45%;">
+<p>Just stack data frames</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-label="1"></a><span class="fu">bind_rows</span>(data_2000,data_2001)</span>
+<span id="cb12-2"><a aria-label="2"></a></span>
+<span id="cb12-3"><a aria-label="3"></a></span>
+<span id="cb12-4"><a aria-label="4"></a></span>
+<span id="cb12-5"><a aria-label="5"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Stack rows from each data fame</p>
+<p>But otherwise no way to tell them apart</p>
+</div><div class="column text-right" style="width:10%;">
+
+</div><div class="column text-right" style="width:45%;">
+<p>Stack with identifier column</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-label="1"></a><span class="fu">bind_rows</span>(</span>
+<span id="cb13-2"><a aria-label="2"></a>  <span class="fu">list</span>(</span>
+<span id="cb13-3"><a aria-label="3"></a>    <span class="st">"2000"</span> <span class="ot">=</span> data_2000, </span>
+<span id="cb13-4"><a aria-label="4"></a>    <span class="st">"2001"</span> <span class="ot">=</span> data_2001</span>
+<span id="cb13-5"><a aria-label="5"></a>  ),</span>
+<span id="cb13-6"><a aria-label="6"></a>  <span class="at">.id=</span><span class="st">"Year"</span></span>
+<span id="cb13-7"><a aria-label="7"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Adds a <code>Year</code> column with the corresponding name from the <code>list()</code></p>
+</div></div>
+</section>
+<section id="stacking-columns" class="slide level2">
+<h2>Stacking Columns</h2>
+<p><code>bind_cols()</code> stacks columns of multiple data frames</p>
+<ul>
+<li>Each data frame is added to the right of the previous data frame</li>
+<li>Useful when you have multiple data frames of information for the same observations
+<ul>
+<li>Observations align perfectly across each data frame</li>
+<li>Column names do not overlap</li>
+</ul></li>
+<li>e.g., a wide table was split up into multiple files</li>
+</ul>
+</section>
+<section id="stacking-columns-1" class="slide level2">
+<h2>Stacking Columns</h2>
+<p>In general you won’t use <code>bind_rows()</code></p>
+<ul>
+<li>Few cases where you need to combine columns across data frames by matching rows</li>
+<li>Only useful when you have full knowledge of the provenance of each data frame, e.g.,
+<ul>
+<li>You intentionally split off columns from a data frame</li>
+<li>Want to combine back later</li>
+</ul></li>
+<li>No checks for whether observations are correctly aligned</li>
+<li>Usually use <strong>Joins</strong> to match observations across dataframes (next week)</li>
+</ul>
+</section></section>
+<section>
+<section id="reshaping-data" class="title-slide slide level1 center">
+<h1>Reshaping Data</h1>
+
+</section>
+<section id="reshaping-data-overview" class="slide level2">
+<h2>Reshaping Data Overview</h2>
+<p>What does it mean to reshape (pivot) data?</p>
+<div class="fragment">
+<ul>
+<li>Take information organized by columns and reorganize in rows or vice-versa</li>
+<li>Will change the <em>shape</em> of your data frame</li>
+</ul>
+<p><strong><code>pivot_longer()</code></strong></p>
+<ul>
+<li>New data are longer and narrower</li>
+<li>More rows, fewer columns</li>
+<li>Column information translated into rows</li>
+</ul>
+</div>
+</section>
+<section id="reshaping-data-overview-1" class="slide level2">
+<h2>Reshaping Data Overview</h2>
+<p>What does it mean to reshape (pivot) data?</p>
+<p><strong><code>pivot_wider()</code></strong></p>
+<ul>
+<li>New data are wider and narrower</li>
+<li>More columns, fewer rows</li>
+<li>Row information is translated into columns</li>
+</ul>
+</section>
+<section id="reshaping-data---the-old-way" class="slide level2">
+<h2>Reshaping Data - The Old Way</h2>
+<ul>
+<li>The pivot functions are relatively new</li>
+<li>The tidyverse previously used <code>gather</code> and <code>spread</code></li>
+<li>They have the <strong>superseded</strong> lifecycle tag</li>
+<li>No new features will be added, but won’t be removed soon</li>
+<li>Harder to use, Fewer features</li>
+<li>Avoid using them</li>
+</ul>
+</section></section>
+<section>
+<section id="pivoting-wider" class="title-slide slide level1 center">
+<h1>Pivoting Wider</h1>
+
+</section>
+<section id="using-pivot_wider" class="slide level2">
+<h2>Using <code>pivot_wider()</code></h2>
+<p>When you use <code>pivot_wider()</code> you should ask yourself three questions:</p>
+<ol type="1">
+<li>Which column(s) will <strong>uniquely identify</strong> observation in my new data frame? <code>id_cols</code></li>
+<li>Which column(s) contain information that will be used to construct new column names? <code>names_from</code></li>
+<li>Which column(s) contain values that will populate those new columns? <code>values_from</code></li>
+</ol>
+<p>Each answer tells you what to use for each of the required arguments!</p>
+</section>
+<section id="example-pivot_wider" class="slide level2">
+<h2>Example <code>pivot_wider()</code></h2>
+<p>I would like to create a new version of the CRU data frame</p>
+<ul>
+<li>One row for each Country-Year</li>
+<li>Columns for the temperature in each month</li>
+</ul>
+<p>How can I do this?</p>
+</section>
+<section id="example-pivot_wider-1" class="slide level2">
+<h2>Example <code>pivot_wider()</code></h2>
+<ul>
+<li>One row for each Country-Year</li>
+<li>Columns for the temperature in each month</li>
+</ul>
+<ol type="1">
+<li>Which column(s) will <strong>uniquely identify</strong> observation in my new data frame? <code>id_cols</code></li>
+<li>Which column(s) contain information that will be used to construct new column names? <code>names_from</code></li>
+<li>Which column(s) contain values that will populate those new columns? <code>values_from</code></li>
+</ol>
+</section>
+<section id="example-pivot_wider-2" class="slide level2">
+<h2>Example <code>pivot_wider()</code></h2>
+<ul>
+<li><code>id_cols = c(Year,Country)</code></li>
+<li><code>names_from = Period</code></li>
+<li><code>values_from = Value</code></li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Remove extra columns before pivoting</strong></p>
+</div>
+<div class="callout-content">
+<p>When <code>pivot_wider()</code> rearranges your data frame it needs to know what to do with information in each column. This is ambiguous for any column that doesn’t show up in one of the three arguments. You should remove columns that aren’t needed with <code>select()</code> before pivoting.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="implement-pivot_wider" class="slide level2">
+<h2>Implement <code>pivot_wider()</code></h2>
+<p>Reshape the CRU data to make month columns</p>
+<ul>
+<li>Remember to remove unneeded columns</li>
+<li><code>id_cols = c(Year,Country)</code></li>
+<li><code>names_from = Month</code></li>
+<li><code>values_from = Value</code></li>
+</ul>
+</section>
+<section id="example-pivot_wider-3" class="slide level2">
+<h2>Example <code>pivot_wider()</code></h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-label="1"></a>cru_tmp <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a aria-label="2"></a>  <span class="co"># Keep only columns needed for the pivot</span></span>
+<span id="cb14-3"><a aria-label="3"></a>  <span class="fu">select</span>(Year,Country,Month,Value) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a aria-label="4"></a>  <span class="co"># Pivot to wider and shorter</span></span>
+<span id="cb14-5"><a aria-label="5"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb14-6"><a aria-label="6"></a>    <span class="co"># Columns that uniquely identify observations</span></span>
+<span id="cb14-7"><a aria-label="7"></a>    <span class="at">id_cols=</span><span class="fu">c</span>(Country,Year),</span>
+<span id="cb14-8"><a aria-label="8"></a>    <span class="co"># Column used to create names</span></span>
+<span id="cb14-9"><a aria-label="9"></a>    <span class="at">names_from=</span>Month,</span>
+<span id="cb14-10"><a aria-label="10"></a>    <span class="co"># Column used to fill values</span></span>
+<span id="cb14-11"><a aria-label="11"></a>    <span class="at">values_from=</span>Value</span>
+<span id="cb14-12"><a aria-label="12"></a>  ) <span class="ot">-&gt;</span> cru_tmp_wide</span>
+<span id="cb14-13"><a aria-label="13"></a></span>
+<span id="cb14-14"><a aria-label="14"></a><span class="fu">glimpse</span>(cru_tmp_wide)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 36,500
+Columns: 14
+$ Country &lt;chr&gt; "Actaeon_Group", "Actaeon_Group", "Actaeon_Group", "Actaeon_Gr…
+$ Year    &lt;int&gt; 1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908, 1909, 1910, 19…
+$ JAN     &lt;dbl&gt; 26.1, 26.1, 26.2, 26.1, 26.1, 26.1, 26.1, 26.1, 26.1, 26.1, 26…
+$ FEB     &lt;dbl&gt; 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26…
+$ MAR     &lt;dbl&gt; 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26.5, 26…
+$ APR     &lt;dbl&gt; 25.9, 25.9, 25.9, 25.9, 25.9, 25.9, 25.9, 25.9, 25.9, 25.9, 25…
+$ MAY     &lt;dbl&gt; 24.6, 24.6, 24.6, 24.6, 24.6, 24.6, 24.6, 24.6, 24.6, 24.6, 24…
+$ JUN     &lt;dbl&gt; 23.5, 23.5, 23.5, 23.5, 23.5, 23.5, 23.5, 23.5, 23.5, 23.5, 23…
+$ JUL     &lt;dbl&gt; 22.9, 22.9, 22.9, 22.9, 22.9, 22.9, 22.9, 22.9, 22.9, 22.9, 22…
+$ AUG     &lt;dbl&gt; 22.6, 22.5, 22.6, 22.5, 22.5, 22.5, 22.5, 22.5, 22.5, 22.5, 22…
+$ SEP     &lt;dbl&gt; 22.8, 22.8, 22.8, 22.8, 22.8, 22.8, 22.8, 22.8, 22.8, 22.8, 22…
+$ OCT     &lt;dbl&gt; 23.5, 23.5, 23.5, 23.4, 23.5, 23.5, 23.5, 23.5, 23.5, 23.5, 23…
+$ NOV     &lt;dbl&gt; 24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 24.4, 24…
+$ DEC     &lt;dbl&gt; 25.2, 25.3, 25.2, 25.2, 25.2, 25.2, 25.2, 25.2, 25.2, 25.2, 25…</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="visualizing-the-result" class="title-slide slide level1 center">
+<h1>Visualizing the result</h1>
+
+</section>
+<section id="visualizing-the-result-of-pivot_wider" class="slide level2">
+<h2>Visualizing the result of <code>pivot_wider()</code></h2>
+<p>Using the pivoted data</p>
+<ul>
+<li>Choose a single country</li>
+<li>Create a visualization
+<ul>
+<li><code>Year</code> on the horizontal axis</li>
+<li>A line plot of the January temperature in blue</li>
+<li>A line plot of the July temperature in dark red</li>
+</ul></li>
+<li>Informative labels</li>
+<li>What is this visualization missing?</li>
+</ul>
+</section>
+<section id="example-visualization" class="slide level2">
+<h2>Example visualization</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-label="1"></a><span class="co"># Filter to one country</span></span>
+<span id="cb16-2"><a aria-label="2"></a>cru_tmp_wide <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a aria-label="3"></a>  <span class="fu">filter</span>(Country <span class="sc">==</span> <span class="st">"Spain"</span>) <span class="ot">-&gt;</span> cru_spain</span>
+<span id="cb16-4"><a aria-label="4"></a></span>
+<span id="cb16-5"><a aria-label="5"></a><span class="fu">ggplot</span>(cru_spain,<span class="fu">aes</span>(<span class="at">x=</span>Year)) <span class="sc">+</span></span>
+<span id="cb16-6"><a aria-label="6"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>JAN),<span class="at">color=</span><span class="st">"blue"</span>,<span class="at">linewidth=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb16-7"><a aria-label="7"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>JUL),<span class="at">color=</span><span class="st">"red"</span>,<span class="at">linewidth=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb16-8"><a aria-label="8"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb16-9"><a aria-label="9"></a>  <span class="fu">labs</span>(</span>
+<span id="cb16-10"><a aria-label="10"></a>    <span class="at">x=</span><span class="st">"Year"</span>,</span>
+<span id="cb16-11"><a aria-label="11"></a>    <span class="at">y=</span><span class="st">"Average Temperature (C)"</span>,</span>
+<span id="cb16-12"><a aria-label="12"></a>    <span class="at">title=</span><span class="st">"Seasonal Temperature by Year"</span>,</span>
+<span id="cb16-13"><a aria-label="13"></a>    <span class="at">subtitle=</span><span class="st">"Spain"</span></span>
+<span id="cb16-14"><a aria-label="14"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="W7C2-more-data-wrangling_files/figure-revealjs/viz_1-1.svg" class="r-stretch"></section>
+<section id="adding-a-manual-legend" class="slide level2">
+<h2>Adding a manual legend</h2>
+<p>The visualization doesn’t contain a legend</p>
+<ul>
+<li>R only creates a legend when you provide a <code>color</code> aesthetic</li>
+<li>Here color is a layer property</li>
+<li>To create a legend, you need to use aesthetics</li>
+<li>What goes in the aesthetic? <strong>Data</strong></li>
+<li>What is the <strong>data</strong> that corresponds to the blue line? <strong>“January”</strong></li>
+</ul>
+</section>
+<section id="adding-a-manual-legend-1" class="slide level2">
+<h2>Adding a manual legend</h2>
+<p>You can add a manual legend by</p>
+<ul>
+<li>Adding the <code>color</code> aesthetic to each layer</li>
+<li>Setting the <code>color</code> aesthetic value to the <strong>label text</strong> you want in the legend</li>
+<li>Using a scale color function to set the specific colors</li>
+</ul>
+</section>
+<section id="adding-a-manual-legend---example" class="slide level2">
+<h2>Adding a manual legend - Example</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-label="1"></a><span class="co"># Filter to one country</span></span>
+<span id="cb17-2"><a aria-label="2"></a>cru_tmp_wide <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a aria-label="3"></a>  <span class="fu">filter</span>(Country <span class="sc">==</span> <span class="st">"Spain"</span>) <span class="ot">-&gt;</span> cru_spain</span>
+<span id="cb17-4"><a aria-label="4"></a></span>
+<span id="cb17-5"><a aria-label="5"></a><span class="fu">ggplot</span>(cru_spain,<span class="fu">aes</span>(<span class="at">x=</span>Year)) <span class="sc">+</span></span>
+<span id="cb17-6"><a aria-label="6"></a>  <span class="co"># Add the legend text as the color aesthetic</span></span>
+<span id="cb17-7"><a aria-label="7"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>JAN,<span class="at">color=</span><span class="st">"January"</span>),<span class="at">linewidth=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb17-8"><a aria-label="8"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>JUL,<span class="at">color=</span><span class="st">"July"</span>),<span class="at">linewidth=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb17-9"><a aria-label="9"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb17-10"><a aria-label="10"></a>  <span class="fu">labs</span>(</span>
+<span id="cb17-11"><a aria-label="11"></a>    <span class="at">x=</span><span class="st">"Year"</span>,</span>
+<span id="cb17-12"><a aria-label="12"></a>    <span class="at">y=</span><span class="st">"Average Temperature (C)"</span>,</span>
+<span id="cb17-13"><a aria-label="13"></a>    <span class="at">title=</span><span class="st">"Seasonal Temperature by Year"</span>,</span>
+<span id="cb17-14"><a aria-label="14"></a>    <span class="at">subtitle=</span><span class="st">"Spain"</span>,</span>
+<span id="cb17-15"><a aria-label="15"></a>    <span class="at">color=</span><span class="st">"Month"</span></span>
+<span id="cb17-16"><a aria-label="16"></a>  ) <span class="sc">+</span></span>
+<span id="cb17-17"><a aria-label="17"></a>  <span class="co"># Discrete Viridis Scale</span></span>
+<span id="cb17-18"><a aria-label="18"></a>  <span class="fu">scale_color_viridis_d</span>() <span class="sc">+</span></span>
+<span id="cb17-19"><a aria-label="19"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="W7C2-more-data-wrangling_files/figure-revealjs/viz_2-1.svg" class="r-stretch"></section></section>
+<section>
+<section id="pivoting-longer" class="title-slide slide level1 center">
+<h1>Pivoting Longer</h1>
+
+</section>
+<section id="using-pivot_longer" class="slide level2">
+<h2>Using <code>pivot_longer</code></h2>
+<p><code>pivot_longer</code> will make your data longer and narrower</p>
+<ul>
+<li>Converts information stored in columns to information stored in rows</li>
+<li>Effectively the reverse of <code>pivot_wider</code></li>
+</ul>
+</section>
+<section id="pivot_longer-questions" class="slide level2">
+<h2><code>pivot_longer</code> Questions</h2>
+<p>Whenever you use <code>pivot_longer</code> ask yourself the following questions</p>
+<ol type="1">
+<li>Which column(s) do I want to transform (pivot)? <code>cols</code></li>
+<li>In what new column(s) should I put the names of these columns? <code>names_to</code></li>
+<li>In what new column(s) should I put the values from these columns? <code>values_to</code></li>
+</ol>
+</section>
+<section id="challenge---pivot_longer" class="slide level2">
+<h2>Challenge - <code>pivot_longer</code></h2>
+<p>Use <code>pivot_longer</code> on the wide dataframe we created earlier to undo the previous <code>pivot_wider</code></p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Specifying columns in <code>pivot_longer</code></strong></p>
+</div>
+<div class="callout-content">
+<p>The <code>cols</code> argument may consist of many columns. In this example it’s all 12 month names. You can use the tidy-select syntax to save yourself typing.</p>
+<p>You want to pivot everything except <code>Year</code> and <code>Country</code> so you could use</p>
+<p><code>cols=-c(Year,Country)</code></p>
+<p>Alternatively, the month names are 3 capital letters and you can match each with a <a href="https://en.wikipedia.org/wiki/Regular_expression">Regular Expression</a> and the <code>matches</code> tidy-select function</p>
+<p><code>cols=matches("^[A-Z]{3}$")</code></p>
+</div>
+</div>
+</div>
+</section>
+<section id="challenge---pivot_longer-1" class="slide level2">
+<h2>Challenge - <code>pivot_longer</code></h2>
+<ol type="1">
+<li>Ask yourself the three questions in the previous slide</li>
+<li>Use answers to construct the arguments</li>
+<li>Use <code>pivot_longer</code> to transform the data frame</li>
+<li>Compare it to the original. Has anything changed?</li>
+</ol>
+</section>
+<section id="solution---pivot_longer" class="slide level2">
+<h2>Solution - <code>pivot_longer</code></h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-label="1"></a>cru_tmp_wide <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a aria-label="2"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb18-3"><a aria-label="3"></a>    <span class="at">cols=</span><span class="fu">matches</span>(<span class="st">"^[A-Z]{3}$"</span>),</span>
+<span id="cb18-4"><a aria-label="4"></a>    <span class="at">names_to=</span><span class="st">"Month"</span>,</span>
+<span id="cb18-5"><a aria-label="5"></a>    <span class="at">values_to=</span><span class="st">"Value"</span></span>
+<span id="cb18-6"><a aria-label="6"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 438,000 × 4
+   Country        Year Month Value
+   &lt;chr&gt;         &lt;int&gt; &lt;chr&gt; &lt;dbl&gt;
+ 1 Actaeon_Group  1901 JAN    26.1
+ 2 Actaeon_Group  1901 FEB    26.5
+ 3 Actaeon_Group  1901 MAR    26.5
+ 4 Actaeon_Group  1901 APR    25.9
+ 5 Actaeon_Group  1901 MAY    24.6
+ 6 Actaeon_Group  1901 JUN    23.5
+ 7 Actaeon_Group  1901 JUL    22.9
+ 8 Actaeon_Group  1901 AUG    22.6
+ 9 Actaeon_Group  1901 SEP    22.8
+10 Actaeon_Group  1901 OCT    23.5
+# ℹ 437,990 more rows</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+
+<section id="next-class" class="slide level2">
+<h2>Next Class</h2>
+<ul>
+<li><strong>Data Joins:</strong> Combining datasets</li>
+</ul>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p><a href="../../index.html">AREC 280 - Fall 2026</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"},{"title":"License","icon":"<span style=\"font-weight:bold; font-size:2.5em;\">©</span>","content":"<div style=\"padding: 1.5em; font-size: 0.9em; line-height: 1.6;\">\n  <h3 style=\"margin-top:0;\">License Notice</h3>\n  <p>This presentation and its underlying materials are Copyright © 2026 James Archsmith. All rights reserved.</p>\n  <p>University of Maryland students enrolled in AREC 280 in Fall 2026 are free to download, print, \n  and use all print materials for any purposes related to their personal use for this course and may retain these materials\n  indefinitely after the course concludes. Unauthorized reproduction is expressly prohibited. </p>\n</div>          \n"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+
+        height: 780,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 5.0e-2,
+
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.2,
+
+        maxScale: 4,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/drofphilosophe\.github\.io\/course-harvesting-big-data\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
