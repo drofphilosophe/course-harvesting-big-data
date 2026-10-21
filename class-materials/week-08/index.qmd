@@ -1,0 +1,7 @@
+---
+title: "Week 8"
+listing:
+  contents: "*.qmd"
+  type: default
+format: html
+---

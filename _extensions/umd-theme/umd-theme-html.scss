@@ -125,8 +125,8 @@ h3 {
   .active {
     color: $umd-red !important;
     font-weight: 700;
-    border-left: 3px solid $umd-gold;
-    padding-left: 0.5rem;
+    border-left: none !important;
+    padding-left: 0;
   }
 }
 

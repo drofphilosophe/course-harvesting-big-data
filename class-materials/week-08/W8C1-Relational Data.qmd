@@ -1,0 +1,440 @@
+---
+title: |
+  Relational Data
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-10-20
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- Discuss concepts in **relational data**
+- consider applications for relational data methods in this class
+- Perform a basic join of two datasets
+
+We will use the CRU **and** FAO data
+
+`AGNR-AREC280_Fall2026/Data/CRU/parquet`
+
+`AGNR-AREC280_Fall2026/Data/FAO/parquet`
+
+
+
+
+  
+## Loading Datasets
+
+First load the CRU and FAO data from Parquet Files
+
+```{r load_fao}
+#| echo: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"FAO","parquet","FAO_crop_livestock.parquet")
+) -> faostat
+
+read_parquet(
+  file.path(data_path,"CRU","parquet","tmp_w_ISO3.parquet")
+) -> cru_tmp
+```
+
+# Leveraging our existing data
+
+## Using these data together
+
+We've become familiar with two datasets so far
+
+- **CRU** - Monthly weather data by country over many years
+- **FAO** - Monthly agricultural production by country and crop for many years
+
+. . . 
+
+- This is a class about agricultural production, extreme weather, and climate
+- Can either of these datasets answer questions on this topic?
+
+
+## Questions in Agriculture, Climate, and Weather
+
+There are many questions we can thing about addressing:
+
+- How have changing weather patterns impacted agricultural productivity?
+- Which places/crops have been the most impacted by changes in climate over time?
+- Which climate factors have the largest impacts on agricultural productivity?
+
+How can we use the data we have now to answer these questions?
+
+
+## Combining Data
+
+The datasets you've used so far
+
+- Contain different components we would need to answer these questions
+- Difficult to leverage the data when they are in separate files
+- Better to have a single file combining both weather and productivity
+- These data files are created and maintained by different people
+
+What can we do?
+
+
+## Combining Data 
+
+::::{.columns}
+
+:::{.column width="45%"}
+CRU Columns
+```{r show-cru}
+#| echo: false
+for(c in colnames(cru_tmp)) writeLines(c)
+```
+:::
+
+:::{.column width="10%"}
+
+:::
+
+:::{.column width="45%"}
+FAO Columns
+```{r show-fao}
+#| echo: false
+for(c in colnames(faostat)) writeLines(c)
+```
+:::
+
+::::
+
+How might you combine these files?
+
+
+
+## Combining Data
+
+FAO and CRU have things in common
+
+- Data for each country (`Country` or `Area`)
+- Data for many years (`Year`)
+
+Suppose we matched up observations for each country and year
+
+- What problems might we run in to?
+
+
+# Matching Text Data
+
+## Challenges - Matching Text Data
+
+Consider the United States
+
+- What value does CRU use in `Country` to denote the United States? 
+  - `USA`
+- What value foes FAO use in `Area` to denote the United States?
+  - `United States of America`
+
+Does this pose a challenge for combining these data files?
+
+## Joins on Text Data
+
+There are multiple ways to write out the name of each country
+
+- Matching between these datasets requires knowing when countries are identical
+- R doesn't infer meaning from text, sequences of `0/1` values
+  - Values match when sequences are **identical**
+- When different datasets use different conventions you need to know how to resolve the conflicts
+- This is generally a problem with freeform text data
+
+In practice what can you do?
+
+
+
+## Crosswalks for Joins
+
+When combining files using text columns you frequently construct a **crosswalk**
+
+- A data file separate from the files you are combining
+- Contains two columns
+- Each row matches names from one file to names from another
+- When you combine the data, use the crosswalk in between
+
+## Crosswalks for Joins
+
+![Example Join Crosswalk](/assets/images/crosswalk.jpg)
+## Standardization
+
+Instead of making a crosswalk, you can standardize text fields
+
+- Choose an objective, uniform way of representing information in the text field
+- Each unique entity has *exactly one* representation under your standard
+- Anyone who follows your standard can determine what that representation is
+- Standardized text fields can be joined without a crosswalk
+
+## Best practices for text data
+
+Crosswalks require that you 
+
+- Examine all the cases in your data
+- Check that a crosswalk entry exists for each
+- Reevalutate as your data are updated
+
+## Best practices for text data
+
+Standardization requires that you 
+
+- Decide on a clear, objective standard
+- Ensure all entries in the column align with the standard
+- Confirm data aligns with the standard as it is updated
+
+
+## Standardizing Country Names
+
+How should we standardize country names?
+
+- Countries can have multiple ways of referring to themselves
+- Multiple ways to spell some country names
+- Proper names or common names?
+- What if a country's name changes?
+
+A lot of decisions! It would be nice if someone made them for us
+
+
+## Standardizing Country Names
+
+A best practice when compiling country data is to use [ISO 3166 Country Codes](https://www.iso.org/iso-3166-country-codes.html)
+
+- A **standard** created by the International Standards Organization
+- Country codes are defined in ISO 3166
+- Codes uniquely identify a specific country
+- Each country has exactly one code of each type
+- Two flavors (Alpha-2, Alpha-3)
+
+## Standardized Country Names in FAO an CRU
+
+- The original CRU data do not provide ISO country codes
+- The FAO data provide numeric codes that are not in common use
+- I have added a column named `ISO3` to each of the Parquet files
+- Contains the ISO 3166 Alpha-3 code for each country
+- Some regions in the data are not countries and do not have an ISO3 code
+  - These have `NA` for `ISO3`
+
+## Advantages of ISO 3166 Country Codes
+
+- ISO 3166 provides an objective standard for identifying countries
+- Anyone who wants to standardize country references knows which codes to use
+- Unambiguously identify countries
+- If you add ISO 3166 codes, easy to join any other dataset using ISO 3166 codes
+- You don't need to talk to the creator of the dataset to make this work
+
+## Combining Data
+
+FAO and CRU have things in common
+
+- Data for each country (`Country` or `Area`)
+- Data for many years (`Year`)
+
+Suppose we matched up observations for each country and year
+
+- What problems might we run in to?
+
+
+# Cross Joins
+
+## Combining Data - Cross Joins
+
+Suppose we match the CRU and FAO data on `ISO3` and `Year`
+
+- Think about just the United States in 1990
+- What observatons in the CRU data will we have?
+- What observations in the FAO data will we have?
+
+
+
+## Combining Data - Cross Joins
+
+Suppose we match the CRU and FAO data on `ISO3` and `Year`
+
+- Think about just the United States in 1990
+- What observations in the CRU data will we have?
+  - One observation for each month, season, and an annual observation
+- What observations in the FAO data will we have?
+  - One observation for each commodity-measurement
+  
+What happens when we try to match observations between these two datasets?
+
+
+## Cross Joins
+
+The **join** commands we've covered for this class are *greedy*
+
+- Look at the provided matching columns for observations with identical values
+- Form *all possible matches* between the datasets
+- This is a many-to-many or **cross join**
+- Can lead to new datasets with many more observations that you expect
+
+
+## Cross Join Example
+
+![Cross Join Example](/assets/images/cross-join.jpg){fig-align="center"}
+
+## Cross Join Problems
+
+Cross joins can be problematic
+
+- Can lead to double-counting of information
+- Throw off calculations when aggregating
+- Explode memory usage
+
+## Avoiding Many-to-Many Joins
+
+There are some best practices for avoiding many-to-many joins
+
+- Aim for joins that are `1:1`,`1:m` or `m:1`
+- In one table, each row is uniquely identified by the matching columns
+- If the above doesn't hold, understand why
+
+# Joins in R
+
+## Joining Data Frames in R
+
+Perform joins in R using 
+
+`join_*(<left_df>,<right_df>,by=<relationships>)`
+
+- `<left_df>` - The "left" data frame
+- `<right_df>` - The "right" data frame
+- `<relationships>` - Vector of relationships
+  - Columns that define how to match observations
+  - Column names must be in quotes
+  - Form a match whenever relationships have identical values
+  
+## Types of Joins
+
+R has the following primary types of joins
+
+- `inner_join` keep only observations that match in both data frames
+- `left_join` keep all observations from the left data frame and matches from the right
+- `right_join` keep all observations from the right data frame and matches from the left
+- `full_join` keep all observations from both left and right data frame
+
+
+## Types of Joins
+
+R has the following additional joins
+
+- `semi_join` keep all observations from the left data frame that have a match in the right
+  - Does not duplicate observations from the left data frame
+  - Does not include columns from the right data frame
+- `anti_join` keep all observations from the left data frame that **do not** have a match in the right
+  - Does not duplicate observations from the left data frame
+  - Does not include columns from the right data frame
+  - Useful for tracking down join errors
+  
+## Other Useful Arguments
+
+Sometimes column names overlap between your files
+
+- Both FAO and CRU contain a `Value` column (and it's the most important!)
+- Column names must be unique
+- By default R will disambiguate the columns by appending
+  - `.x` to the column name from the left table
+  - `.y` to the column name from the right table
+- Alternatively use 
+
+`suffix=c("<left_suffix>","<right_suffix>")`
+
+
+## Performing a Join
+
+Implement the following steps to join the FAO and CRU data
+
+- Filter the CRU data to include only annual mean temperature (`Period == "ANN"`)
+- Filter the FAO data to include only Avocado yield (`Item == "Avocados" & Element == "Yield"`)
+- Remove observations with `NA` values of ISO3
+- Join the datasets by `ISO3` and `Year` (which join?)
+  - Is there a problem with column names?
+- Create a scatter plot of average temperature against yeild
+  - Color code dots by country
+  
+  
+## Example Join
+
+```{r first-join}
+#| echo: true
+#| code-fold: true
+
+cru_tmp |>
+  # Filter to annual temperatures
+  filter(Period == "ANN") |>
+  # Drop NA ISO3
+  drop_na(ISO3)-> cru_temp_ann
+
+faostat |>
+  # Filter to Avocado Yields
+  filter(Item == "Avocados") |>
+  filter(Element == "Yield") |>
+  # Drop NA ISO3
+  drop_na(ISO3) -> fao_avocado
+
+# Join
+cru_temp_ann |>
+  inner_join(
+    fao_avocado, 
+    by=c("ISO3","Year"),
+    # Both datasets have "Value" columns. Disambiguate
+    suffix=c("_cru","_fao")
+  ) -> cru_fao
+
+ggplot(data=cru_fao,aes(x=Value_cru,y=Value_fao)) +
+  geom_point(aes(color=ISO3)) +
+  theme_bw() +
+  labs(
+    x="Annual Average Temperature (C)",
+    y="Yeild (mt/ha)",
+    title="Avocado Yeilds by Country",
+    color="Country"
+  ) +
+  scale_color_viridis_d()
+```
+
+
+
+
+
+
+
+
+# Wrap up {visibility="hidden"}
+
+## Next Class
+
+- Advanced Joins
+  - The `join_by()` syntax
+  - Rolling Joins

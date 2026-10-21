@@ -63,7 +63,7 @@ format:
     auto-stretch: true   # Automatically resizes plots, tables, and code outputs to fit
     scrollable: false    # The slide viewport is not scrollable if content overflows
 
-    #embed-resources: true
+    embed-resources: true
     #self-contained-math: true   
     # Custom additions to the hamburger menu
     menu:
@@ -82,10 +82,14 @@ format:
   html:
     theme: [_extensions/umd-theme/umd-theme-html.scss]
     toc: true
+    # Remove the Author/Affiliation headers in the HTML pages
+    author: ""
 
 website:
   title: *course_number_title  
   sidebar:
+    id: "main-sidebar"
+    title: "Navigation"
     style: "docked"        # Options: "docked" (pinned left) or "floating"
     search: true           # Enables a search bar at the top of the sidebar
     collapse-level: 1      # Automatically collapses sub-sections deeper than level 1
@@ -95,6 +99,7 @@ website:
     contents:  
       - text: "Course Overview"  
         href: index.qmd  
+      - "---"
       - section: "Course Content"
         contents: 
           - auto: class-materials

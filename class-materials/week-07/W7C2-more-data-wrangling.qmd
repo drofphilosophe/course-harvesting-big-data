@@ -1,0 +1,630 @@
+---
+title: |
+  More Data Wrangling
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-10-15
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- Perform additional data wrangling operations
+  - Combining values from many columns (`unite`)
+  - Separating values into many columns (`separate`)
+  - Combining multiple data files (`bind_rows` and `bind_cols`)
+- Reshape Data
+  - Making data longer and narrower (`pivot_longer`)
+  - Making data wider and shorter (`pivot_wider`)
+
+We will use the **Parquet** version of the CRU data in
+
+`AGNR-AREC280_Fall2026/Data/CRU/parquet`
+
+
+## Create a Monthly CRU Data File
+
+We will work on a monthly CRU data file
+
+- Load data from the Parquet file
+- The CRU data have multiple time levels
+- Need to keep `Period` values of `JAN`,`FEB`, ...
+
+What do we need to do?
+
+## Create a Monthly CRU Data File
+
+- Load the Parquet file
+- Filter based on Period
+
+```{r load_cru_tmp}
+#| echo: true
+#| code-fold: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"CRU","parquet","tmp_w_ISO3.parquet")
+) |>
+  filter(
+    Period %in% c(
+      "JAN","FEB","MAR","APR","MAY","JUN",
+      "JUL","AUG","SEP","OCT","NOV","DEC"
+    )
+  )-> cru_tmp
+```
+
+## Displaying Loaded Data
+
+```{r show_cru_tmp}
+#| echo: true
+#| code-fold: true
+glimpse(cru_tmp)
+```
+
+
+# Combining Columns
+
+## Combining Data from Multiple Columns
+
+- Sometimes information we want are spread across multiple columns
+- We want to combine that info into a single column
+- How can we do this in R?
+
+. . .
+
+```r
+data |>
+  unite(
+  <new_colname>,
+  <cols_to_combine>,
+  sep="<separator>"
+)
+```
+
+## Combine Columns in CRU
+
+- CRU contains `Year` and `Period` columns
+- Suppose you wanted a new text column named `MonthYear`
+  - Contains `<month>-<year>`
+  - e.g., `"JAN-2005"`
+- How can you do that with `unite()`?
+- Create this column and save it to your data frame
+
+## Combine Columns in CRU - Result
+
+```{r combine_cru_cols}
+#| echo: true
+#| code-fold: true
+cru_tmp |>
+  unite(
+    # New colname
+    MonthYear,
+    # Columns to combine
+    c(Period,Year),
+    # Separator
+    sep="-"
+  ) -> cru_tmp
+
+glimpse(cru_tmp)
+```
+
+. . .
+
+What happened to `Period` and `Year`?
+
+## Combining Columns - Saving the originals
+
+- By default, `unite()` removes the original columns it united
+- You can override by setting `remove=FALSE`
+- Technically not a destructive operation
+- All the original data are still there!
+
+What if we want it back?
+
+# Separating data in columns
+
+## Separating data in columns
+
+- We have the month and year smashed together in a column
+- What if we wanted separate `Year` and `Month` columns?
+- There is additional text in the column
+- A delimiter (separator)
+
+```r
+data |>
+  separate(
+    <col_to_separate>,
+    <new_colnames>,
+    sep="<separator>",
+    remove=[TRUE|FALSE]
+  )
+```
+
+## Separating a Combined Column
+
+- Use the `separate()` verb to separate `MonthYear`
+  - Separate `Year` and `Month` columns
+  - Keep the `MonthYear` column
+  
+  
+## Separating a column - Example
+
+```{r separate_cru_tmp}
+#| echo: true
+#| code-fold: true
+cru_tmp |>
+  separate(
+    # Column to separate
+    MonthYear,
+    # New columns. Provided as text
+    c("Month","Year"),
+    # Separator
+    sep="-",
+    # Don't remove
+    remove=FALSE
+  )
+```
+Do you notice a problem with the new columns?
+
+## Separating columns - Data Types
+
+By default `separate` creates text (`<chr>`) columns
+
+- In our original data `Year` is numeric
+- We think of years as numeric
+- What can we do?
+
+. . .
+
+- Convert after the fact using `mutate`
+- Tell `separate` to attempt to convert columns with `convert=TRUE`
+
+Let's do the latter
+
+## Separating a column with Conversion
+
+```{r convert_cru_tmp}
+#| echo: true
+#| code-fold: true
+cru_tmp |>
+  separate(
+    # Column to separate
+    MonthYear,
+    # New columns. Provided as text
+    c("Month","Year"),
+    # Separator
+    sep="-",
+    # Don't remove
+    remove=FALSE,
+    # Attempt to convert columns
+    convert = TRUE
+  ) -> cru_tmp
+
+glimpse(cru_tmp)
+```
+
+## Other arguments to `separate()`
+
+Separate has a few other important optional arguments
+
+`extra="<warn|drop|merge>"`
+
+- Determines how to handle cases where there are extra pieces to separate
+
+`fill="<warn|left|right>"`
+
+- Determines how to handle cases when there are too few pieces
+
+
+
+# Combining data
+
+## Combining Data from Multiple Data Frames
+
+Think about **two** data frames that may contain similar information
+
+- Separate files for different measurements (e.g., CRU)
+- Separate files for different time periods
+- Separate files for different places
+
+## Tidyverse methods for combining data 
+
+The tidyverse has several methods of combining data frames
+
+- `bind_rows()` stacks rows of data frames
+- `bind_cols()` stacks columns of data frames
+- **Joins** use more complicated logic to match rows between datasets
+  - Covered next week
+  
+
+## Stacking Rows
+
+`bind_rows()` stacks rows of multiple data frames
+
+- Each data frame is added to the bottom of the previous data frame
+- Useful when you have multiple data frames with the same layout
+  - Identical column names
+  - Identical data types
+- e.g., 
+  - One data frame for each year of data
+  - Otherwise identical
+
+
+## Stacking Rows
+
+`bind_rows()`
+
+- Returns a single data frame, aligning columns by name
+- Fills in with `NA` when a column doesn't exist
+
+:::{.callout-warning}
+### Watch out for inconsistent data types!
+
+Each column needs a single data type. R will attempt to *coerce* values of each 
+column to a single data type, but won't convert numbers to text or vice versa.
+This can lead to unexpected `NA` values if you try to stack a column that 
+switches between text and numeric data!
+
+:::
+
+
+## Two ways to use `bind_rows()`
+
+::::{.columns}
+
+:::{.column width="45%" .text-left}
+Just stack data frames
+
+```r
+bind_rows(data_2000,data_2001)
+
+
+
+
+
+```
+
+Stack rows from each data fame
+
+But otherwise no way to tell them apart
+:::
+
+:::{.column width="10%" .text-right}
+
+:::
+
+:::{.column width="45%" .text-right}
+Stack with identifier column
+
+```r
+bind_rows(
+  list(
+    "2000" = data_2000, 
+    "2001" = data_2001
+  ),
+  .id="Year"
+)
+```
+
+Adds a `Year` column with the corresponding
+name from the `list()`
+
+:::
+
+::::
+
+
+## Stacking Columns
+
+`bind_cols()` stacks columns of multiple data frames
+
+- Each data frame is added to the right of the previous data frame
+- Useful when you have multiple data frames of information for the same observations
+  - Observations align perfectly across each data frame
+  - Column names do not overlap
+- e.g., a wide table was split up into multiple files
+
+
+## Stacking Columns
+
+In general you won't use `bind_rows()`
+
+- Few cases where you need to combine columns across data frames by matching rows
+- Only useful when you have full knowledge of the provenance of each data frame, e.g., 
+  - You intentionally split off columns from a data frame
+  - Want to combine back later
+- No checks for whether observations are correctly aligned
+- Usually use **Joins** to match observations across dataframes (next week)
+
+
+# Reshaping Data
+
+## Reshaping Data Overview
+
+What does it mean to reshape (pivot) data?
+
+. . .
+
+- Take information organized by columns and reorganize in rows or vice-versa
+- Will change the *shape* of your data frame
+
+**`pivot_longer()`**  
+
+- New data are longer and narrower
+- More rows, fewer columns
+- Column information translated into rows
+
+
+## Reshaping Data Overview
+
+What does it mean to reshape (pivot) data?
+
+**`pivot_wider()`**
+
+- New data are wider and narrower
+- More columns, fewer rows
+- Row information is translated into columns
+
+## Reshaping Data - The Old Way
+
+- The pivot functions are relatively new
+- The tidyverse previously used `gather` and `spread`
+- They have the **superseded** lifecycle tag
+- No new features will be added, but won't be removed soon
+- Harder to use, Fewer features
+- Avoid using them
+
+# Pivoting Wider
+
+## Using `pivot_wider()`
+
+When you use `pivot_wider()` you should ask yourself three questions:
+
+1. Which column(s) will **uniquely identify** observation in my new data frame? `id_cols`
+1. Which column(s) contain information that will be used to construct new column names? `names_from`
+1. Which column(s) contain values that will populate those new columns? `values_from`
+
+Each answer tells you what to use for each of the required arguments!
+
+
+
+## Example `pivot_wider()`
+
+I would like to create a new version of the CRU data frame
+
+- One row for each Country-Year
+- Columns for the temperature in each month
+
+How can I do this?
+
+
+## Example `pivot_wider()`
+
+- One row for each Country-Year
+- Columns for the temperature in each month
+
+1. Which column(s) will **uniquely identify** observation in my new data frame? `id_cols`
+1. Which column(s) contain information that will be used to construct new column names? `names_from`
+1. Which column(s) contain values that will populate those new columns? `values_from`
+
+## Example `pivot_wider()`
+
+- `id_cols = c(Year,Country)`
+- `names_from = Period`
+- `values_from = Value`
+
+:::{.callout-warning}
+### Remove extra columns before pivoting
+
+When `pivot_wider()` rearranges your data frame it needs to know what to do with information
+in each column. This is ambiguous for any column that doesn't show up in one of the 
+three arguments. You should remove columns that aren't needed with `select()` before pivoting. 
+
+:::
+
+## Implement `pivot_wider()`
+
+Reshape the CRU data to make month columns
+
+- Remember to remove unneeded columns
+- `id_cols = c(Year,Country)`
+- `names_from = Month`
+- `values_from = Value`
+
+
+
+## Example `pivot_wider()`
+```{r pivot_wider_cru}
+#| echo: true
+#| code-fold: true
+cru_tmp |>
+  # Keep only columns needed for the pivot
+  select(Year,Country,Month,Value) |>
+  # Pivot to wider and shorter
+  pivot_wider(
+    # Columns that uniquely identify observations
+    id_cols=c(Country,Year),
+    # Column used to create names
+    names_from=Month,
+    # Column used to fill values
+    values_from=Value
+  ) -> cru_tmp_wide
+
+glimpse(cru_tmp_wide)
+```
+
+
+# Visualizing the result
+
+## Visualizing the result of `pivot_wider()`
+
+Using the pivoted data
+
+- Choose a single country
+- Create a visualization
+  - `Year` on the horizontal axis
+  - A line plot of the January temperature in blue
+  - A line plot of the July temperature in dark red
+- Informative labels
+- What is this visualization missing?
+
+
+## Example visualization
+
+```{r viz_1}
+#| echo: true
+#| code-fold: true
+# Filter to one country
+cru_tmp_wide |>
+  filter(Country == "Spain") -> cru_spain
+
+ggplot(cru_spain,aes(x=Year)) +
+  geom_line(aes(y=JAN),color="blue",linewidth=1) +
+  geom_line(aes(y=JUL),color="red",linewidth=1) +
+  theme_bw() +
+  labs(
+    x="Year",
+    y="Average Temperature (C)",
+    title="Seasonal Temperature by Year",
+    subtitle="Spain"
+  )
+```
+
+## Adding a manual legend
+
+The visualization doesn't contain a legend
+
+- R only creates a legend when you provide a `color` aesthetic
+- Here color is a layer property
+- To create a legend, you need to use aesthetics
+- What goes in the aesthetic? **Data**
+- What is the **data** that corresponds to the blue line? **"January"**
+
+## Adding a manual legend
+
+You can add a manual legend by
+
+- Adding the `color` aesthetic to each layer
+- Setting the `color` aesthetic value to the **label text** you want in the legend
+- Using a scale color function to set the specific colors
+
+## Adding a manual legend - Example
+
+```{r viz_2}
+#| echo: true
+#| code-fold: true
+# Filter to one country
+cru_tmp_wide |>
+  filter(Country == "Spain") -> cru_spain
+
+ggplot(cru_spain,aes(x=Year)) +
+  # Add the legend text as the color aesthetic
+  geom_line(aes(y=JAN,color="January"),linewidth=1) +
+  geom_line(aes(y=JUL,color="July"),linewidth=1) +
+  theme_bw() +
+  labs(
+    x="Year",
+    y="Average Temperature (C)",
+    title="Seasonal Temperature by Year",
+    subtitle="Spain",
+    color="Month"
+  ) +
+  # Discrete Viridis Scale
+  scale_color_viridis_d() +
+  theme(legend.position = "bottom")
+```
+
+# Pivoting Longer
+
+## Using `pivot_longer`
+
+`pivot_longer` will make your data longer and narrower
+
+- Converts information stored in columns to information stored in rows
+- Effectively the reverse of `pivot_wider`
+
+## `pivot_longer` Questions
+
+Whenever you use `pivot_longer` ask yourself the following questions
+
+1. Which column(s) do I want to transform (pivot)? `cols`
+1. In what new column(s) should I put the names of these columns? `names_to`
+1. In what new column(s) should I put the values from these columns? `values_to`
+
+## Challenge - `pivot_longer`
+
+Use `pivot_longer` on the wide dataframe we created earlier to undo the previous 
+`pivot_wider`
+
+:::{.callout-tip}
+### Specifying columns in `pivot_longer`
+
+The `cols` argument may consist of many columns. In this example it's all 12 month
+names. You can use the tidy-select syntax to save yourself typing.
+
+You want to pivot everything except `Year` and `Country` so you could use
+
+`cols=-c(Year,Country)`
+
+Alternatively, the month names are 3 capital letters and you can match each with a 
+[Regular Expression](https://en.wikipedia.org/wiki/Regular_expression) and the `matches`
+tidy-select function
+
+`cols=matches("^[A-Z]{3}$")`
+:::
+
+## Challenge - `pivot_longer`
+
+1. Ask yourself the three questions in the previous slide
+1. Use answers to construct the arguments 
+1. Use `pivot_longer` to transform the data frame
+1. Compare it to the original. Has anything changed?
+
+## Solution - `pivot_longer`
+
+```{r cru_longer}
+#| echo: true
+#| code-fold: true
+cru_tmp_wide |>
+  pivot_longer(
+    cols=matches("^[A-Z]{3}$"),
+    names_to="Month",
+    values_to="Value"
+  )
+```
+
+# Wrap up {visibility="hidden"}
+
+## Next Class
+
+- **Data Joins:** Combining datasets
