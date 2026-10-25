@@ -1,0 +1,572 @@
+---
+title: |
+  Advanced Joins
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-10-22
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- Introduce the `join_by()` syntax
+- Discuss inequality joins
+- Implement rolling joins
+
+We will use the CRU **and** FAO data
+
+`AGNR-AREC280_Fall2026/Data/CRU/parquet`
+
+- Filter to annual data
+
+`AGNR-AREC280_Fall2026/Data/FAO/parquet`
+
+- Filter to Avocado Yields
+
+
+  
+## Loading Datasets
+
+First load the CRU and FAO data from Parquet Files
+
+```{r load_fao}
+#| echo: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"FAO","parquet","FAO_crop_livestock.parquet")
+) |>
+  filter(Item == "Avocados" & Element == "Yield") -> faostat_avocado
+
+read_parquet(
+  file.path(data_path,"CRU","parquet","tmp_w_ISO3.parquet")
+) |>
+  filter(Period == "ANN") -> cru_tmp_ann
+```
+
+# Avoiding Cross Joins
+
+## What are Cross Joins?
+
+In the last class we discussed **Cross Joins** (many-to-many)
+
+- Joins form all possible matches of data between the two data frames
+- If an row in the left table matches multiple rows in the right table
+  - R creates one copy of the left table row for each match
+- Same for rows in the right table matching multiple rows in the left table
+
+## Cross Join Example
+
+Suppose your relationships are on columns `Year` and `ISO3`
+
+- **Left**: 5 rows with `Year == 1990 & ISO3 == "USA"`
+- **Right**: 3 rows with `Year == 1990 & ISO3 == "USA"`
+
+A join will form all possible matches
+
+- Resulting table will have **15** rows with `Year == 1990 & ISO3 == "USA"`
+
+## Cross Joins are problematic
+
+Unintentionally implementing a cross join can be problematic
+
+Resulting dataset contains **multiple copies** of the same information
+
+- No longer a clear *unit of observation* for each row
+- Odd visualizations
+- Double-counting of information
+
+## Avoiding cross joins
+
+How do we avoid cross joins in practice?
+
+- Ensure relationships **uniquely identify rows** in one of the tables
+- When you combine the relationships, no combination of values occurs more than once
+- How can we know when relationships uniquely identify rows?
+
+## Validating unique relationship values
+
+How can we determine when relationships uniquely identify rows?
+
+. . .
+
+- **Understand your data**
+- **Determine what defines an "observation"**
+- **Validate your assumptions** How?
+
+
+## Validating unique relationship values
+
+How can we validate that relationships uniquely identify rows?
+
+:::{.callout-tip}
+
+### Counting occurrences of value combinations
+
+`count(<tidy-select>)` counts the number of times each combination of 
+values in `<tidy-select>` occur in your data
+:::
+
+. . .
+
+- If a combination appears more than once, it **does not uniquely identify a row**
+
+:::{.callout-tip}
+
+### Identifying non-unique combinations
+
+`count(<tidy-select>)` creates a dataframe with the columns in `<tidy-select>` and
+a column named `n` with the count of the number 
+that particular combination of values in occurs in your data
+:::
+
+
+
+## Validating unique relationship values - Example
+
+Check if `Year` and `ISO3` uniquely identify rows in CRU
+
+What does this code do?
+```{r}
+#| echo: true
+#| eval: false
+cru_tmp_ann |>
+  count(Year,ISO3) |>
+  filter(n > 1)
+
+```
+
+## Validating unique relationship values - Example
+
+Do `Year` and `ISO3` uniquely identify rows in CRU?
+```{r cru-check-unique-1}
+#| echo: true
+#| eval: true
+cru_tmp_ann |>
+  count(Year,ISO3) |>
+  filter(n > 1)
+
+```
+
+
+
+# Dealing with data problems
+
+## CRU Data Issue - `NA` values in ISO3
+
+When we check for repeated values we see `NA` values for `ISO3`
+
+What can we do?
+
+- We know `NA` values of `ISO3` represent non-countries
+- Dropping them is a good strategy
+- We can use `drop_na(ISO3)`
+
+## Validating unique relationship values - Example 2
+
+Does dropping `NA`s solve our problem?
+
+```{r cru-check-unique-nona-2}
+#| echo: true
+#| eval: true
+cru_tmp_ann |>
+  drop_na(ISO3) -> cru_tmp_ann
+
+cru_tmp_ann |>
+  count(Year,ISO3) |>
+  filter(n > 1)
+```
+
+## CRU Data Issue - Some repeated `ISO3` values
+
+There seem to be some `ISO3` values that show up more than once
+
+What can we do?
+
+- Just roll with it (can cause many problems)
+- Drop all of them (what if they're important?)
+- Try to figure out what is going on
+  - How?
+  
+  
+## Diagnosing a problem
+
+Let's look at some of the full country names for the repeated `ISO3` values
+
+Here's one appraoch. What does it do?
+
+```{r}
+#| echo: true
+#| eval: false
+cru_tmp_ann |>
+  count(Year,ISO3) |>
+  filter(n > 1) -> repeated_iso3
+
+cru_tmp_ann |>
+  semi_join(repeated_iso3,by=c("ISO3")) |>
+  distinct(ISO3,Country) |>
+  arrange(ISO3)
+```
+
+## Diagnosing a problem - Example
+
+```{r}
+#| echo: true
+#| code-fold: true
+cru_tmp_ann |>
+  count(Year,ISO3) |>
+  filter(n > 1) -> repeated_iso3
+
+cru_tmp_ann |>
+  semi_join(repeated_iso3,by=c("ISO3")) |>
+  distinct(ISO3,Country) |>
+  arrange(ISO3)
+```
+
+Is there an explanation for what is going on here?
+
+## Diagnosing a problem - Wrap up
+
+The CRU data sometimes also assign a `ISO3` value to [geographic exclaves](https://en.wikipedia.org/wiki/Enclave_and_exclave)
+
+- There are only a few
+- They are small
+- Probably safe to ignore
+- Probably safe to drop them
+- There are other potential solutions!
+
+## Diagnosing a problem - Takeaways
+
+Our assumptions about the CRU dataset were wrong
+
+- Could have resulted in overcounting output in some countries
+- Our methods seemed reasonable and this error could have been hard to detect
+- Emphasizes the importance of 
+  - Validating your assumptions
+  - Checking your work
+- Accomplish this validation with R code
+
+
+# Alternative Join Syntax
+
+## The `join_by()` syntax for joins
+
+DataCamp covers the syntax for joins used in dplyr version 1.0
+
+- Specify joins as a vector of relationship column names (in quotes)
+- dplyr 2.0 introduced a new syntax called `join_by()`
+  - **Do not quote** column names
+  - Column names don't need to match between tables
+  - Allows for **inequality** and **rolling** joins
+- The version 1.0 syntax will continue to work
+
+## Using the `join_by()` syntax
+
+In the newer syntax you put relationships in the `join_by()` function
+
+`join_by(<rel_1>,<rel_2>,...<rel_n>)`
+
+- Provide a series of relationships separated by commas
+- Relationships can be
+  - A column name (that exists in both data frames)
+  - A equality relationship expression
+  
+  `<left_col> == <right_col>`
+  - A more complicated inequality or rolling expression (later)
+- R knows `join_by()` defines relationships, so it doesn't need `by=`
+
+## `join_by()` example
+
+You can use just column names when they are the same in both tables
+```{r basic-joinby}
+#| echo: true
+#| code-fold: true
+
+cru_tmp_ann |>
+  inner_join(
+    faostat_avocado,
+    join_by(Year,ISO3)
+  )
+```
+
+
+## `join_by()` example
+
+You use different columns with the `==` sign
+```{r basic-joinby-2}
+#| echo: true
+#| code-fold: true
+
+cru_tmp_ann |>
+  # Make it so column names don't match
+  rename(
+    Yr = Year,
+    ISO_3 = ISO3
+  ) |>
+  inner_join(
+    faostat_avocado,
+    join_by(Yr == Year, ISO_3 == ISO3)
+  )
+```
+Note, we get the **left** table column names
+
+# Inequality Joins
+
+## Inequality Joins
+
+Up until this point joins match observations by
+
+- Looking at relationship variables
+- Forming all possible matches where the relationship variables are **exactly equal**
+
+You may want to use other logic to match observations between your data
+
+## Types of inequality joins: Pure Inequality
+
+**Inequality Conditions**
+
+- Match when the value in the left table is `<`, `<=`, `>`, `>=` to the value 
+in the right table
+- The join expression is e.g., 
+
+`<left_col> >= <right_col>`
+
+
+## Types of inequality joins: Pure Inequality
+
+**Inequality Conditions**
+
+- Will form **every possible combination** that satisfies this condition
+- e.g., `join_by(ISO3,Year >= Year)` will
+  - Require exact matches of `ISO3`
+  - Match all observations where left Year is greater than or equal to right year
+- Can lead to cross-join like explosions of observations
+
+## Types of inequality joins: Rolling 
+
+- Sometimes you'd like to find the **closest** unequal match
+- e.g., Dates don't precisely match between left and right table
+  - For each date in the left table
+  - Find the observation in the right table with the closest date on or after 
+  the date in the left table
+- The `closest()` helper restricts a relationship to the **single** closest match
+- Place the relationship expression inside `closest()`
+- If no observation satisfies the inequality, there is no match
+
+## Types of inequality joins: Rolling
+
+**Setup:**
+
+Make a version of the FAO data that doesn't have every year
+
+What does this do?
+```{r setup-closest-join}
+#| echo: true
+
+faostat_avocado |>
+  filter(Year %in% seq(1900,2100,by=2)) -> faostat_evenonly
+```
+  
+## Types of inequality joins: Rolling
+
+- Join the CRU data and `faostat_evenonly` on `ISO3` and `Year`
+- Match CRU observations on the closest FAO year on **or before** the CRU year
+- What is the `join_by()` expression?
+
+. . .
+
+`join_by(ISO3,closest(Year <= Year))`
+
+
+## Types of inequality joins: Rolling
+
+```{r example-closest-join}
+#| echo: true
+#| code-fold: true
+cru_tmp_ann |>
+  inner_join(
+    faostat_evenonly,
+    join_by(ISO3,closest(Year <= Year))
+  ) -> evenonly_join
+
+print(evenonly_join)
+```
+
+
+## Examine the columns from a rolling join
+
+Any red flags?
+```{r glimpse-closest-join}
+glimpse(evenonly_join)
+```
+
+What years show up in our first match?
+
+## Examine the matched years
+
+```{r plot-matched-years}
+#| echo: true
+#| code-fold: true
+
+ggplot(evenonly_join) +
+  geom_point(
+    aes(x=Year.x,y=Year.y),
+    color="black", alpha=0.05, size=1
+  ) +
+  theme_bw() +
+  labs(x="CRU Year",y="FAO Year")
+```
+Why might data for a country in 2010?
+
+## Rolling Join Diagnosis
+
+What happened with our rolling join?
+
+- The first Angola CRU observation is in 1900
+- The first Angola Avocado yield data is in 2016
+- Think about Angola from the CRU data in 1900
+- What is the "closest" year in the Avocado yield data?
+
+## Rolling Join Logic
+
+- Rolling joins don't bound how far apart matches might be
+- Finds the "best" match regardless of distance
+- As long at it satisfies the inequality
+- What can you do?
+  - Look after the fact and filter out "bad" matches
+  - How?
+
+:::{.callout-tip}
+### Removing unreasonable rolling matches
+
+Remember that R retains relationship variable from both tables. Here we have
+both `Year.x` and `Year.y`
+:::
+
+## A more reasonable rolling join
+
+```{r example-closest-join-2}
+#| echo: true
+#| code-fold: true
+cru_tmp_ann |>
+  inner_join(
+    faostat_evenonly,
+    join_by(ISO3,closest(Year <= Year))
+  ) |>
+  # Remove matches that differ by more than 2 years
+  filter( abs(Year.x - Year.y) <= 2 ) -> evenonly_join
+
+print(evenonly_join)
+```
+
+
+## Diagnostic plot
+
+```{r plot-matched-years-2}
+#| echo: true
+#| code-fold: true
+
+ggplot(evenonly_join) +
+  geom_point(
+    aes(x=Year.x,y=Year.y),
+    color="black", alpha=0.05, size=1
+  ) +
+  theme_bw() +
+  labs(x="CRU Year",y="FAO Year")
+```
+  
+
+## Types of inequality joins: Overlap
+
+There are helper functions for **overlap joins**
+
+- For each row in the left data frame 
+- Match with rows where ranges of values overlap
+- `between(<left_col>,<right_low_col>,<right_high_col>)`
+  - Matches cases when 
+  - `<left_col> >= <right_low_col>` and
+  - `<left_col> <= <right_high_col>`
+
+
+## Types of inequality joins: Overlap
+
+There are helper functions for **overlap joins**
+
+- For each row in the left data frame 
+- Match with rows where ranges of values overlap
+- `within(<left_low_col>,<left_high_col>,<right_low_col>,<right_high_col>)`
+  - Matches cases when 
+  - `<left_low_col> >= <right_low_col>` and
+  - `<left_high_col> <= <right_high_col>`
+
+
+## Types of inequality joins: Overlap
+
+There are helper functions for **overlap joins**
+
+- For each row in the left data frame 
+- Match with rows where ranges of values overlap
+- `overlaps(<left_low_col>,<left_high_col>,<right_low_col>,<right_high_col>)`
+  - Matches cases when 
+  - `<left_high_col> >= <right_low_col>` and
+  - `<left_low_col> <= <right_high_col>`
+  
+
+## Types of inequality joins: Overlap 
+
+Each of the **overlap join** helpers can take an option `bounds=` argument
+
+- Two character string
+- Characters can be 
+  - square brackets `[` or `]` to denote equality
+  - parentheses `(` or `)` to denote inequality
+- e.g., `bounds="[)"` indicates
+  - Lower bound holds with **equality**
+  - Upper bound holds with **inequality**
+
+
+## Recap on inequality joins
+
+- Dplyr 2.0 introduced inequality joins
+- Require using the `join_by()` syntax
+- I always use the new syntax, even for equality joins
+- Allow for complicated logic in matching observations between datasets
+- The alternative is long and complicated to code
+- Can still lead to cross join-like explosions in the number of observations
+- Be careful when you use these and check your work
+  
+
+# Wrap up {visibility="hidden"}
+
+## Next Class
+
+- Basic Modeling
