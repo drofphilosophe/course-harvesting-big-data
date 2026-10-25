@@ -1,0 +1,334 @@
+---
+title: |
+  Modeling Basics
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-10-27
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- Discuss modeling
+  - What are models?
+  - Why do we use them?
+  - What makes a "good" model?
+- Modeling in R
+  - Implement a univariate linear model in R
+
+We will use the CRU **and** FAO data
+
+- `AGNR-AREC280_Fall2026/Data/CRU/parquet`
+  - Filter to annual data
+- `AGNR-AREC280_Fall2026/Data/FAO/parquet`
+  - Filter to Avocado Yields
+- Join on `Year` and `ISO3` into a single dataset
+
+
+
+
+  
+## Loading Datasets
+
+First load the CRU and FAO data from Parquet Files
+
+```{r load_fao}
+#| echo: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"FAO","parquet","FAO_crop_livestock.parquet")
+) |>
+  filter(Item == "Avocados" & Element == "Yield") -> faostat_avocado
+
+read_parquet(
+  file.path(data_path,"CRU","parquet","tmp_w_ISO3.parquet")
+) |>
+  filter(Period == "ANN") -> cru_tmp_ann
+
+faostat_avocado |>
+  inner_join(cru_tmp_ann,join_by(ISO3,Year),suffix=c("_fao","_cru")) |>
+  drop_na(ISO3) -> avocado_tmp
+```
+
+# What is a Model?
+
+## Models - Framing Discussion
+
+What is a **model**?
+
+. . .
+
+A simplified abstraction of reality
+
+- Purposefully designed to approximate some system or complex phenomenon
+- Intentionally simplified (why?)
+- Captures first-order behavior or relationships
+- Discards distracting noise or minutiae 
+  
+
+## What is the goal of a model?
+
+Real world systems are incredibly complex
+
+- Suppose a model ignores some biological and/or environmental realities
+  - Is it still more useful than just looking at the raw historical data?
+  - Why or why not?
+  
+## Evaluating models
+
+What is a "good" model?
+
+- What properties will make us prefer one model over another?
+- How should we evaluate or compare potential models?
+- How should we make decisions over what features to include in a model?
+
+
+## Many forms of models
+
+Models come in many forms
+
+- Miniature analogs of physical objects (e.g., wind tunnel models)
+- Simplified biological systems in controlled environments
+- Sophisticated computer-based simulations
+- Mathematical representations of relationships in physical, biological, or economic systems
+
+This class will focus on the mathematical representations
+
+## Models as math
+
+Models can be implemented as mathematical abstractions of the real world
+
+- Attempt to use information we know about the world
+  - Called features, explanatory variables, or independent variables
+- To explain some outcome we care about
+  - Called labels, response variables, or dependent variables
+  
+
+## Models as math
+
+Some symbology
+
+- Labels are often denoted as $y$
+- The collection of features denoted as $x$
+
+We are attempting to learn about the function
+
+$$y = f(x) + \varepsilon$$
+
+What is $\varepsilon$ here?
+
+
+## Breaking down models as math
+
+Suppose we have the model: $y = f(x) + \varepsilon$
+
+- $f(x)$ represents the relationship we want to uncover
+- $\varepsilon$ represents the "noise"
+- Why is there "noise" in this process?
+- What contributes to noise?
+
+
+# Goals of Modeling
+
+## What are the goals of modeling?
+
+In general we will have one of two objectives in building models
+
+**Explanation**
+
+- Determine *causal* and *structural* relationships
+- Focused on relationships between specific features and the label
+  - Direction/Sign
+  - Magnitude
+  - Statistical Precision
+- Favors simple, interpretable models over predictive power
+- Focus on accounting for *confounders*
+
+## Explanation Model Examples
+
+Examples of questions that lead to explanation models:
+
+- Suppose average July temperatures increase by 1°C. How much do avocado yields change?
+- How much can we mitigate the impacts of drought on avocado yields using advanced
+fertilizers or technology?
+
+## What are the goals of modeling?
+
+In general we will have one of two objectives in building models
+
+**Prediction**
+
+- Use what we know about the world to make predictions of something we don't know
+- Often using current conditions to predict the future
+- Focused on *accurate* and *precise* predictions of the label
+- Care about the quality of the prediction, not how individual features change predictions
+
+## Prediction Model Examples
+
+Examples of questions that lead to prediction models:
+
+- Given this year's climate predictions, what do we expect avocado yields to be?
+- How do we expect avocado yields to change over the next 20 years?
+
+## Evaluating Prediction Models
+
+How do we decide if a prediction model is "good"?
+
+- Good predictions tend to have two attributes
+- **Accuracy**: Predictions are, on average, correct
+- **Precision**: Predictions have low noise or variability
+
+Suppose I want to predict tomorrow's high temperature
+
+- **Model 1**: I always predict it will be 75 degrees
+- **Model 2**: I always predict it will be today's high temperature
+
+# Ordinary Least Squares (OLS) Models 
+
+## Ordinary Least Squares
+
+We construct models in this class using [**Ordinary Least Squares**](https://en.wikipedia.org/wiki/Ordinary_least_squares) (OLS)
+
+- Assumes $y$ is a _linear function_ of the features ($x_1, x_2, \dots, x_n$) and unknown parameters
+- Our prediction of the label $\hat y$ is
+$$\hat y = b_0 + b_1 x_1 + b_2 x_2 + \dots + b_n x_n + \varepsilon$$
+- Where the $b$ values are *model parameters*
+- OLS finds $b$ values that minimize the Mean Square Error (MSE) of the predictions
+
+## Mean Square Error
+
+In OLS, we use MSE as the **loss function**
+
+- MSE is the average of squared prediction errors ($y - \hat y$)
+- Perfect predictions have MSE of zero
+- MSE increases as predictions become less accurate
+- Models with lower MSE have "better" predictions
+
+## Why OLS?
+
+Why do we use OLS in this class?
+
+- Simple, linear relationship is a good starting point for modeling
+- Mathematical trick makes it "easy" to find $b$ values that minimize MSE
+- Predictions from OLS have desirable properties
+  - OLS is the best linear unbiased estimator (BLUE)
+  - Best is most precise
+  - Unbiased means predictions are correct on average
+  
+## Other Models
+
+There are many other modeling approaches used in the real world
+
+- Relax or fully abandon the linear functional form
+- Trade some bias for improved precision
+- Implement alternative loss functions
+- Address cases where there are many features to choose between
+
+# Modeling using OLS
+
+## A modeling question
+
+Suppose I am interested in the impact of average temperature on avocado yields
+
+- How might I investigate this relationship?
+- What steps might I take to get there using the data we have?
+
+
+## Pre-modeling Investigation
+
+From last class:
+```{r yield-plot-1}
+#| echo: true
+#| code-fold: true
+ggplot(data=avocado_tmp,aes(x=Value_cru,y=Value_fao)) +
+  geom_point(aes(color=ISO3)) +
+  theme_bw() +
+  labs(
+    x="Annual Average Temperature (C)",
+    y="Yeild (mt/ha)",
+    title="Avocado Yeilds by Country",
+    color="Country"
+  ) +
+  scale_color_viridis_d()
+```
+What seems to be the biggest driver of yields?
+
+
+## Modeling a single country
+
+The country seems to matter a lot for yeilds
+
+- We'll think about how to model country effects later
+- Let's start off focusing on only Mexico
+```{r filter-mexico}
+#| echo: true
+avocado_tmp |>
+  filter(ISO3 == "MEX") -> avocado_tmp_mex
+```
+
+
+## Pre-modeling Investigation
+
+```{r yield-plot-2}
+#| echo: true
+#| code-fold: true
+ggplot(data=avocado_tmp_mex,aes(x=Value_cru,y=Value_fao)) +
+  geom_point(color="black",size=3) +
+  theme_bw() +
+  labs(
+    x="Annual Average Temperature (C)",
+    y="Yeild (mt/ha)",
+    title="Avocado Yeilds in Mexico"
+  )
+```
+Does it seem like there is a relationship between temperature and yields?
+
+## Proposing a model
+
+From our visual analysis
+
+- There may be a relationship between temperature and yields
+- If it were linear, we could model it as
+
+$$Yield = b_0 + b_1 Temperature + \epsilon$$
+
+
+
+
+# Wrap up {visibility="hidden"}
+
+## Next Class
+
+- Advanced Modeling
+  - Multivariate Models
+  - Formatting Output
