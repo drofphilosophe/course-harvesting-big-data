@@ -51,6 +51,11 @@ format:
     # Figure parameters
     fig-format: svg
 
+    # Math typesetting parameters
+    html-math-method:
+      method: katex
+      url: "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/"
+
     # PDF printing configuration
     pdf-separate-fragments: false
 

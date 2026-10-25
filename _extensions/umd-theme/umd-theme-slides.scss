@@ -4,6 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;700&display=swap');
 
+
 // 2. Font Variables
 $mainFont: 'Plus Jakarta Sans', system-ui, sans-serif;
 $headingFont: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -327,3 +328,31 @@ $callout-color-warning: #FF7221;
   background-color: $umd-red;
 }
 
+/* Math typesetting modifications */
+
+
+// Prevent slide theme font inheritance from leaking into KaTeX
+.reveal .katex {
+  font-family: KaTeX_Main, "Times New Roman", serif !important;
+}
+
+// Ensure math variables (like y, b, x, ε) use the italic Computer Modern math font
+.reveal .katex .mathnormal {
+  font-family: KaTeX_Math, "Times New Roman", serif !important;
+  font-style: italic !important;
+}
+
+// Ensure numbers, operators, and upright text use upright Computer Modern
+.reveal .katex .mord,
+.reveal .katex .mbin,
+.reveal .katex .mrel,
+.reveal .katex .mopen,
+.reveal .katex .mclose,
+.reveal .katex .mpunct {
+  font-family: KaTeX_Main, "Times New Roman", serif;
+}
+
+// Reset line-height to KaTeX native metrics to avoid vertical misalignments
+.reveal .katex-html {
+  line-height: normal;
+}
