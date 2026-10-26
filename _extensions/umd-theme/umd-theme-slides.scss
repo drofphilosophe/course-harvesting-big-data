@@ -331,28 +331,30 @@ $callout-color-warning: #FF7221;
 /* Math typesetting modifications */
 
 
-// Prevent slide theme font inheritance from leaking into KaTeX
-.reveal .katex {
+// 1. Force the container and all internal spans back to Computer Modern
+.reveal .katex,
+.reveal .katex * {
   font-family: KaTeX_Main, "Times New Roman", serif !important;
 }
 
-// Ensure math variables (like y, b, x, ε) use the italic Computer Modern math font
-.reveal .katex .mathnormal {
+// 2. Keep standard mathematical variables (x, y, b, etc.) in italic Computer Modern
+.reveal .katex .mathnormal,
+.reveal .katex .mathdefault {
   font-family: KaTeX_Math, "Times New Roman", serif !important;
   font-style: italic !important;
 }
 
-// Ensure numbers, operators, and upright text use upright Computer Modern
+// 3. Ensure subscripts, superscripts, and their inner characters use upright Computer Modern
+.reveal .katex .msupsub,
+.reveal .katex .msupsub *,
 .reveal .katex .mord,
-.reveal .katex .mbin,
-.reveal .katex .mrel,
-.reveal .katex .mopen,
-.reveal .katex .mclose,
-.reveal .katex .mpunct {
-  font-family: KaTeX_Main, "Times New Roman", serif;
+.reveal .katex .mord.text {
+  font-family: KaTeX_Main, "Times New Roman", serif !important;
+  font-style: normal;
 }
 
-// Reset line-height to KaTeX native metrics to avoid vertical misalignments
-.reveal .katex-html {
-  line-height: normal;
+// 4. Preserve bold math symbols if you use \mathbf or \boldsymbol
+.reveal .katex .mathbf {
+  font-family: KaTeX_Main, "Times New Roman", serif !important;
+  font-weight: bold !important;
 }
