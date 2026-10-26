@@ -217,22 +217,49 @@ Suppose I want to predict tomorrow's high temperature
 
 ## Ordinary Least Squares
 
-We construct models in this class using [**Ordinary Least Squares**](https://en.wikipedia.org/wiki/Ordinary_least_squares) (OLS)
+We'll use [**Ordinary Least Squares**](https://en.wikipedia.org/wiki/Ordinary_least_squares) (OLS)
 
-- Assumes $y$ is a _linear function_ of the features ($x_1, x_2, \dots, x_n$) and unknown parameters
+- Assumes $y$ is a **linear function** of 
+  - Features ($x_1, x_2, \dots, x_n$) 
+  - Unknown parameters ($b_0, b_1, b_2, \dots, b_n$)
 - Our prediction of the label $\hat y$ is
-$$\hat y = b_0 + b_1 x_1 + b_2 x_2 + \dots + b_n x_n + \varepsilon$$
-- Where the $b$ values are *model parameters*
+$$\hat y = b_0 + b_1 x_1 + b_2 x_2 + \dots + b_n x_n$$
 - OLS finds $b$ values that minimize the Mean Square Error (MSE) of the predictions
 
 ## Mean Square Error
 
 In OLS, we use MSE as the **loss function**
 
-- MSE is the average of squared prediction errors ($y - \hat y$)
+- MSE is the average of squared prediction errors 
+$$MSE = \frac{1}{N} \sum_{i=1}^{N} \left( y_i - \hat y_i \right)^2$$
 - Perfect predictions have MSE of zero
 - MSE increases as predictions become less accurate
 - Models with lower MSE have "better" predictions
+
+## Loss Functions
+
+Building a model requires choosing a **loss function**
+
+- Allows comparing different types of prediction errors
+- In general, loss functions increase as model predictions get "worse"
+- Attempt to find models that minimize the loss function
+- The loss function embeds **your preferences** over different types of prediction errors
+
+## MSE Loss Function Properties
+
+MSE averages **squared prediction errors**
+
+|Error|Squared| |Error|Squared|
+|:---:|:---:|---|:---:|:---:|
+| 1 | 1 | | -1 | 1 |
+| 2 | 4 | | -2 | 4 |
+| 3 | 9 | | -3 | 9 |
+| 4 | 16 | | -4 | 16 |
+
+- Over- and under-predictions equally bad
+- Larger errors much worse than smaller errors
+- Predictions will be centered around the true value, avoid really large errors
+
 
 ## Why OLS?
 
@@ -242,8 +269,8 @@ Why do we use OLS in this class?
 - Mathematical trick makes it "easy" to find $b$ values that minimize MSE
 - Predictions from OLS have desirable properties
   - OLS is the best linear unbiased estimator (BLUE)
-  - Best is most precise
-  - Unbiased means predictions are correct on average
+  - "Best" means most precise
+  - "Unbiased" means predictions are correct on average
   
 ## Other Models
 
@@ -322,7 +349,35 @@ From our visual analysis
 
 $$Yield = b_0 + b_1 Temperature + \epsilon$$
 
+- How do we do this in R?
 
+## Training OLS Models in R
+
+Train OLS models in R using `lm(<formula>,<data>)`
+
+- `<formula>` is an [R Formula](https://www.econometrics.blog/post/the-r-formula-cheatsheet/)
+  - Describes the relationship we will model
+  - General form `<depvar> ~ <expr>`
+- `<data>` is the data frame to use for training
+- Returns a trained model object
+
+## Training an OLS Model
+
+Train the following OLS model on the Mexico Avocado Yield data
+$$Yield = b_0 + b_1 Temperature + \epsilon$$
+
+
+## Training an OLS Model - Example
+
+```{r train-ols}
+#| echo: true
+lm(
+  Value_cru ~ Value_fao,
+  data=avocado_tmp_mex
+) -> yield_model
+
+print(yield_model)
+```
 
 
 # Wrap up {visibility="hidden"}
