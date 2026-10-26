@@ -372,13 +372,98 @@ $$Yield = b_0 + b_1 Temperature + \epsilon$$
 ```{r train-ols}
 #| echo: true
 lm(
-  Value_cru ~ Value_fao,
+  Value_fao ~ Value_cru,
   data=avocado_tmp_mex
 ) -> yield_model
 
 print(yield_model)
 ```
+What does this mean?
+```{r extract-params}
+b0 = coefficients(yield_model)[["(Intercept)"]]
+b1 = coefficients(yield_model)[["Value_cru"]]
+pred_fn <- function(x) b0 + b1 * x
+```
 
+## Interpreting a trained model
+
+These trained model parameters imply
+
+```{r show-params}
+print(yield_model)
+```
+
+Train the following OLS model on the Mexico Avocado Yield data
+$$Yield = `r format(b0,scientific = FALSE,digits=5)` + `r format(b1,scientific = FALSE,digits=5)` \cdot Temperature + \epsilon$$
+From this, do temperatures appear to have an **economically significant** impact
+on avocado yields?
+
+
+## Interpreting a trained model
+
+The trained model predicts
+$$Yield = `r format(b0,scientific = FALSE,digits=5)` + `r format(b1,scientific = FALSE,digits=5)` \cdot Temperature + \epsilon$$
+
+|Temperature|Yield|
+|:---|---:|
+|10|`r format(pred_fn(10),scientific = FALSE,digits=8)`|
+|15|`r format(pred_fn(15),scientific = FALSE,digits=8)`|
+|20|`r format(pred_fn(20),scientific = FALSE,digits=8)`|
+|25|`r format(pred_fn(25),scientific = FALSE,digits=8)`|
+|30|`r format(pred_fn(30),scientific = FALSE,digits=8)`|
+
+
+
+## Visualizing the Model
+
+```{r yield-plot-3}
+#| echo: true
+#| code-fold: true
+ggplot(data=avocado_tmp_mex,aes(x=Value_cru,y=Value_fao)) +
+  geom_point(color="black",size=3) +
+  geom_abline(
+    intercept=coefficients(yield_model)[["(Intercept)"]],
+    slope=coefficients(yield_model)[["Value_cru"]],
+    linewidth=1.2,color="red"
+  ) +
+  theme_bw() +
+  labs(
+    x="Annual Average Temperature (C)",
+    y="Yeild (mt/ha)",
+    title="Avocado Yeilds in Mexico"
+  )
+```
+
+## Extending our analysis
+
+How can we extend or improve this model?
+
+- Besides temperature are there other factors we might think influence yields?
+- Does this model tell us anything about yields outside of Mexico? 
+  - How could we generalize it?
+- Did our visual analysis suggest there are other things we should be looking at?
+
+## Extending our analysis - Yields over time
+
+```{r yield-plot-4}
+#| echo: true
+#| code-fold: true
+ggplot(data=avocado_tmp_mex,aes(x=Value_cru,y=Value_fao)) +
+  geom_point(aes(color=Year),size=3) +
+  geom_abline(
+    intercept=coefficients(yield_model)[["(Intercept)"]],
+    slope=coefficients(yield_model)[["Value_cru"]],
+    color="red",linewidth=1.2
+  ) +
+  theme_bw() +
+  labs(
+    x="Annual Average Temperature (C)",
+    y="Yeild (mt/ha)",
+    title="Avocado Yeilds in Mexico"
+  ) +
+  scale_color_viridis_c()
+```
+Does time seem like an important factor here?
 
 # Wrap up {visibility="hidden"}
 
@@ -386,4 +471,6 @@ print(yield_model)
 
 - Advanced Modeling
   - Multivariate Models
+  - Creating predictions
+  - Examining prediction errors
   - Formatting Output
