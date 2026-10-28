@@ -1,0 +1,231 @@
+---
+title: |
+  More Modeling
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-10-29
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- More Modeling
+  - Generating Predictions
+  - Visually Evaluating Models
+- Modeling in R
+  - Implement a univariate linear model in R
+
+We will use the CRU **and** FAO data
+
+- `AGNR-AREC280_Fall2026/Data/CRU/parquet`
+  - Filter to annual data
+- `AGNR-AREC280_Fall2026/Data/FAO/parquet`
+  - Filter to Avocado Yields
+- Join on `Year` and `ISO3` into a single dataset
+
+
+
+
+  
+## Loading Datasets
+
+First load the CRU and FAO data from Parquet Files
+
+```{r load_fao}
+#| echo: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"FAO","parquet","FAO_crop_livestock.parquet")
+) |>
+  filter(Item == "Avocados" & Element == "Yield") -> faostat_avocado
+
+read_parquet(
+  file.path(data_path,"CRU","parquet","tmp_w_ISO3.parquet")
+) |>
+  filter(Period == "ANN") -> cru_tmp_ann
+
+faostat_avocado |>
+  inner_join(cru_tmp_ann,join_by(ISO3,Year),suffix=c("_fao","_cru")) |>
+  drop_na(ISO3) -> avocado_tmp
+```
+
+# Recap from last class 
+
+## Modeling a single country
+
+The country seems to matter a lot for yields
+
+- We'll think about how to model country effects later
+- Let's start off focusing on only Mexico
+```{r filter-mexico}
+#| echo: true
+avocado_tmp |>
+  filter(ISO3 == "MEX") -> avocado_tmp_mex
+```
+
+
+
+## Training an OLS Model
+
+Train the following OLS model on the Mexico Avocado Yield data
+$$Yield = b_0 + b_1 Temperature + \epsilon$$
+
+```{r train-ols}
+#| echo: true
+lm(
+  Value_fao ~ Value_cru,
+  data=avocado_tmp_mex
+) -> yield_model
+
+print(yield_model)
+```
+What does this mean?
+```{r extract-params}
+b0 = coefficients(yield_model)[["(Intercept)"]]
+b1 = coefficients(yield_model)[["Value_cru"]]
+pred_fn <- function(x) b0 + b1 * x
+```
+
+
+
+## Visualizing Our Model
+
+```{r yield-plot-4}
+#| echo: true
+#| code-fold: true
+ggplot(data=avocado_tmp_mex,aes(x=Value_cru,y=Value_fao)) +
+  geom_point(aes(color=Year),size=3) +
+  geom_abline(
+    intercept=coefficients(yield_model)[["(Intercept)"]],
+    slope=coefficients(yield_model)[["Value_cru"]],
+    color="red",linewidth=1.2
+  ) +
+  theme_bw() +
+  labs(
+    x="Annual Average Temperature (C)",
+    y="Yeild (mt/ha)",
+    title="Avocado Yeilds in Mexico"
+  ) +
+  scale_color_viridis_c()
+```
+
+
+# Formatting Output
+
+## Using `moderndive`
+
+```{r show-reg-table}
+#| echo: true
+#| code-fold: true
+library(moderndive)
+get_regression_table(yield_model)
+```
+
+## Formatting table output
+
+```{r show-reg-table-kable}
+#| echo: true
+#| code-fold: true
+library(knitr)
+get_regression_table(yield_model) |> 
+  kable(format="html")
+```
+
+## Using `moderndive` {.smaller}
+
+```{r get-predictions}
+#| echo: true
+#| code-fold: true
+get_regression_points(yield_model) -> yield_model_points
+print(yield_model_points)
+```
+
+
+## Evaluating Model Predictions
+
+```{r eval-predictions-viz}
+#| echo: true
+#| code-fold: true
+ggplot(yield_model_points) +
+  geom_point(aes(x=Value_fao,y=Value_fao_hat),color="black",size=1.5) +
+  geom_abline(slope=1,intercept=0,color="red",linewidth=1) +
+  theme_bw() +
+  labs(
+    title="Modeled Yields for Mexico",
+    x="Actual Yield",
+    y="Predicted Yield"
+  )
+```
+
+## Applying the Model
+
+```{r subset-columbia}
+#| echo: true
+avocado_tmp |>
+  filter(ISO3 == "COL") -> avocado_tmp_col
+```
+
+## Use model to predict
+
+```{r predict-col}
+#| echo: true
+#| code-fold: true
+get_regression_points(yield_model,newdata=avocado_tmp_col) -> forecast_col
+print(forecast_col)
+```
+
+## Visualize Predictions
+```{r eval-predictions-viz-col}
+#| echo: true
+#| code-fold: true
+ggplot(forecast_col) +
+  geom_point(aes(x=Value_fao,y=Value_fao_hat),color="black",size=1.5) +
+  geom_abline(slope=1,intercept=0,color="red",linewidth=1) +
+  theme_bw() +
+  labs(
+    title="Modeled Yields for Columbia",
+    x="Actual Yield",
+    y="Predicted Yield"
+  )
+```
+
+
+# Wrap up {visibility="hidden"}
+
+## Next Class
+
+- Advanced Modeling
+  - Multivariate Models
+  - Creating predictions
+  - Examining prediction errors
+  - Formatting Output
