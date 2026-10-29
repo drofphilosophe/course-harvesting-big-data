@@ -109,7 +109,6 @@ lm(
 
 print(yield_model)
 ```
-What does this mean?
 ```{r extract-params}
 b0 = coefficients(yield_model)[["(Intercept)"]]
 b1 = coefficients(yield_model)[["Value_cru"]]
@@ -139,10 +138,32 @@ ggplot(data=avocado_tmp_mex,aes(x=Value_cru,y=Value_fao)) +
   scale_color_viridis_c()
 ```
 
+# Handling Model Output
+
+## Using `moderndive`
+
+The `moderndive` library adds a bunch of convienence functions for handling model output
+
+- Wraps functions in the older `broom` library
+- Designed to be consistent and easy-to-use
+- You will need to install this package if you haven't already
+```r
+install.pacakges("moderndive")
+```
 
 # Formatting Output
 
-## Using `moderndive`
+## Model Output
+
+- We trained a linear model
+$$\hat y = b_0 + b_1 x_1 + b_2 x_2 + \dots + b_n x_n$$
+- Each feature $x_i$ has an associated parameter $b_i$
+- Beyond the estimate of $b_i$ OLS determines other information
+- Some is visible using `print()`, others require addional functions
+
+## Formatting Model Output Using `moderndive`
+
+Create a table of model parameters and other info using `get_regression_table(<model>)`
 
 ```{r show-reg-table}
 #| echo: true
@@ -151,15 +172,99 @@ library(moderndive)
 get_regression_table(yield_model)
 ```
 
+## Understanding Model Output {.smaller}
+
+```{r show-reg-table-2}
+get_regression_table(yield_model)
+```
+What is this information?
+
+- **term**: Name of the feature associated with this parameter ($x_i$)
+- **estimate**: Model's estimated value of the parameter ($b_i$)
+- **std_error**: A measure of the statistical uncertainty in the parameter estimate
+- **statistic**: The [t-statistic](https://en.wikipedia.org/wiki/T-statistic) of a hypothesis test the true parameter is equal to zero
+- **p_value**: The [p-value](https://en.wikipedia.org/wiki/P-value) of this hypothesis test
+- **lower_ci**: The lower bound of the 95% [Confidence Interval](https://en.wikipedia.org/wiki/Confidence_interval) of the estimated parameter
+- **upper_ci**: The upper bound of the 95% [Confidence Interval](https://en.wikipedia.org/wiki/Confidence_interval) of the estimated parameter
+
+
+## Interpreting Model Output - Warnings
+
+Much of the information in this table relates to statistical properties of the estimated parameters
+
+- This is not a course in econometrics or statistics
+- We won't spend time formally defining these terms
+- In particular, confidence intervals are a nuanced statistical concept
+- In real-world data these values are likely "incorrect"
+  - Need to be adjusted for peculiarities of your data
+  - Used as-is would lead to incorrect conclusions
+
+## Interpreting Model Output - Standard Error
+
+For the purposes of this class
+
+- **std_error** is the [Standard Error](https://en.wikipedia.org/wiki/Standard_error) of the parameter estimate
+- Measure of the precision of the estimated parameter
+- Small values indicate high precision
+- Adding more data or running the analysis on new data unlikely to 
+substantially alter the estimate of the parameter
+- Small standard errors increase your confidence you have a reliable estimate
+
+## Interpreting Model Output - Confidence Intervals
+
+For the purposes of this class
+
+- **lower_ci** and **upper_ci** are bounds on the 95% confidence interval of the estimated parameter
+- A measure of the range of parameter values you might have seen
+- The model's best guess of
+  - If you collected new data and repeated this process many times
+  - 95% of the parameter estimates would fall in this range
+- Narrow confidence intervals increase your confidence you have a reliable estimate
+- Suggest estimates outside that range are unlikely
+
+
+
 ## Formatting table output
 
+You can request [Markdown](https://en.wikipedia.org/wiki/Markdown) formatted output
+by setting `print=TRUE`
+
+```{r}
+#| echo: true
+#| eval: false
+get_regression_table(yield_model,print=TRUE)
+```
+
+Gives output
+```{r show-reg-table-kable-2}
+#| echo: false
+get_regression_table(yield_model,print=TRUE) |> writeLines()
+```
+
+## Formatting table output - Markdown {.smaller}
+
+The provided markdown renders to something like this
 ```{r show-reg-table-kable}
 #| echo: true
 #| code-fold: true
-library(knitr)
-get_regression_table(yield_model) |> 
-  kable(format="html")
+get_regression_table(yield_model,print=TRUE)
 ```
+Create a table in 
+
+- [Google Docs](https://support.google.com/docs/answer/12014036?hl=en) with "Paste as Markdown"
+- MS Word requires third-party plugins
+
+
+# Generating Model Predictions
+
+## Model Predictions
+
+- We have a trained OLS model
+$$Yield = `r format(b0,scientific = FALSE,digits=5)` + `r format(b1,scientific = FALSE,digits=5)` \cdot Temperature + \epsilon$$
+- Implies a **prediction** for each observation
+- Our best guess of the label given the features and this model
+- We can construct predictions by hand using this formula
+- Or use `get_regression_points()`
 
 ## Using `moderndive` {.smaller}
 
