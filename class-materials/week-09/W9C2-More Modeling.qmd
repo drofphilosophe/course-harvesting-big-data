@@ -266,7 +266,9 @@ $$Yield = `r format(b0,scientific = FALSE,digits=5)` + `r format(b1,scientific =
 - We can construct predictions by hand using this formula
 - Or use `get_regression_points()`
 
-## Using `moderndive` {.smaller}
+## Computing Model Predictions
+
+Create a new dataframe of predictions from our training data
 
 ```{r get-predictions}
 #| echo: true
@@ -276,7 +278,45 @@ print(yield_model_points)
 ```
 
 
+## Evaluating Models
+
+You may want to evaluate a model's predictions for accuracy and precision
+
+- We plotted the model's predicted value using the slope and intercept
+- What if your model includes more than one feature?
+  - Plotting predictions in 2 dimensions gets messy
+  - No longer a straight line
+  - Difficult to interpret
+- Instead we might consider plotting predictions against the actual values
+
+## Evaluating Model Predictions Graphically
+
+- Suppose a create a scatter plot with
+  - Predicted value on the horizontal axis
+  - Actual value on the vertical axis
+- Where does a "perfect" prediction fall in this graph?
+- What would the scatter plot look like for an accurate model?
+- What would the scatter plot look like for a precise model?
+
+## Best Practices for Evaluating Prediction Graphs {.smaller}
+
+This is a common method of evaluating predictive models
+
+- Create a scatter plot from your predictions
+  - Predicted value on the horizontal axis
+  - Actual value on the vertical axis
+- Draw a slope 1 intercept 0 line on the graph
+  - Represents a "perfect" prediction
+- Accurate predictions follow the line 
+  - Don't need to fall on it
+  - Should be evenly distributed on either side
+- Precise predictions are tightly clustered
+  - Don't need to fall on the line
+  - Should be "close"
+
 ## Evaluating Model Predictions
+
+Create this model evaluation visualization
 
 ```{r eval-predictions-viz}
 #| echo: true
@@ -292,7 +332,32 @@ ggplot(yield_model_points) +
   )
 ```
 
-## Applying the Model
+# Forecasting Out-of-Sample
+
+## Out-of-Sample Forecasting
+
+So far, we've computed predictions using the data we used to train the model
+
+- Seems a bit unnecessary
+- We already know the value of the label. Why predict it?
+- Real value is predicting when we **don't know the outcome**
+- Given the data you have here, you always know the outcome
+
+
+## Simulating Out-of-Sample Forecasting 
+
+We could *simulate* the process of out-of-sample forecasting
+
+- Apply our model to data that wasn't used to train it
+- See how well the forecasts work
+- This is a method of testing whether our models generalize
+
+## Creating a new sample
+
+Let's evaluate our model out-of-sample
+
+- Check how well it predicts yields in a different country
+- Columbia produces a lot of avocados (`ISO3 == "COL"`)
 
 ```{r subset-columbia}
 #| echo: true
@@ -300,7 +365,19 @@ avocado_tmp |>
   filter(ISO3 == "COL") -> avocado_tmp_col
 ```
 
-## Use model to predict
+## Creating Predictions on a New Sample
+
+The function `get_regression_points()` 
+
+- By default makes a prediction on your original training data
+- Use the argument `newdata=` to make predictions using a different data frame
+- Must have all the feature columns (with the same names) as defined in your model
+
+
+
+## Create Out-of-Sample Predictions
+
+Create predictions on the Columbia data
 
 ```{r predict-col}
 #| echo: true
@@ -309,7 +386,19 @@ get_regression_points(yield_model,newdata=avocado_tmp_col) -> forecast_col
 print(forecast_col)
 ```
 
+
+## Evaluate the Model Out-of-Sample
+
+Now the we have a prediction data frame for Columbia
+
+- Create a model evaluation visualization as we did before
+- Do we think this model generalizes well to Columbia?
+- Is it accurate and/or precise?
+- What theories do you have for why/why not?
+
+
 ## Visualize Predictions
+
 ```{r eval-predictions-viz-col}
 #| echo: true
 #| code-fold: true
@@ -324,13 +413,24 @@ ggplot(forecast_col) +
   )
 ```
 
+# Team Discussions
+
+## Initial Team Session
+
+- If you aren't at your Team table, go there now
+- There is a group discussion check-in on ELMS
+  - It should take just a few minutes to complete
+- Take a look at the Team Projects timeline
+- Come up with a plan for settling on a team project idea
+- You'll need to submit it after additional discussion on Tuesday next week
+
+
 
 # Wrap up {visibility="hidden"}
 
-## Next Class
+## Next Week
 
 - Advanced Modeling
   - Multivariate Models
-  - Creating predictions
-  - Examining prediction errors
-  - Formatting Output
+  - Factors in Models
+  - Feature Interactions
