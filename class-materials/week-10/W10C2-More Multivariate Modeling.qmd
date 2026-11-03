@@ -1,0 +1,452 @@
+---
+title: |
+  More Multivariate Modeling
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-11-05
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- Model Assessment and Selection
+- Multivariate Modeling in R
+  - Implement a model with multiple features
+  - Evaluate models
+- Team Project Topic Proposal
+
+We will use the CRU **and** FAO data
+
+- `AGNR-AREC280_Fall2026/Data/CRU/parquet`
+  - Filter to annual data
+- `AGNR-AREC280_Fall2026/Data/FAO/parquet`
+  - Filter to Avocado Yields
+- Join on `Year` and `ISO3` into a single dataset
+
+
+
+
+  
+## Loading Datasets
+
+First load the CRU and FAO data from Parquet Files
+
+```{r load_fao}
+#| echo: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"FAO","parquet","FAO_crop_livestock.parquet")
+) |>
+  filter(Item == "Avocados" & Element == "Yield") -> faostat_avocado
+
+read_parquet(
+  file.path(data_path,"CRU","parquet","tmp_w_ISO3.parquet")
+) |>
+  filter(Period == "ANN") -> cru_tmp_ann
+
+faostat_avocado |>
+  inner_join(cru_tmp_ann,join_by(ISO3,Year),suffix=c("_fao","_cru")) |>
+  drop_na(ISO3) -> avocado_tmp
+```
+
+
+# Recap from Previous Classes
+
+## Look at Avocado Yields by Temperature
+
+From last class:
+```{r yield-plot-1}
+#| echo: true
+#| code-fold: true
+ggplot(data=avocado_tmp,aes(x=Value_cru,y=Value_fao)) +
+  geom_point(aes(color=ISO3)) +
+  theme_bw() +
+  labs(
+    x="Annual Average Temperature (C)",
+    y="Yeild (mt/ha)",
+    title="Avocado Yeilds by Country",
+    color="Country"
+  ) +
+  scale_color_viridis_d()
+```
+
+## Propose a model
+
+From our visual analysis
+
+- There may be a relationship between temperature and yields
+- Propose the linear model
+$$Yield = b_0 + b_1 Temperature + \epsilon$$
+
+
+## Refine our model
+
+From the visual analysis 
+
+- "Baseline" yield varies substantially across countries
+  - Reflects the fact that some countries are better suited for avocados
+  - At any given temperature yields will be higher
+- What if we gave each country it's own "baseline"?
+  - Requires a different value of $b_0$ for each country
+  
+## Factors in R Formulae
+
+You can include **factors** in formulae
+
+- Use the `factor()` function to denote a feature is a factor
+- R computes one distinct parameter for **each value** of the factor
+  - Distinct values often called **levels**
+- Each factor's parameter enters additively when the feature takes on a particular value
+
+## Factors in practice
+
+Suppose you include `factor(ISO3)` in your formula
+
+- R computes a parameter for each value of `ISO3`
+  - e.g., `MEX`, `COL`, etc
+- Adds the value of the appropriate parameter to the prediction
+- e.g.,
+  - $Yeild = b_0 + b_1 Temp + b_2^{MEX}$ for Mexico
+  - $Yeild = b_0 + b_1 Temp + b_2^{COL}$ for Columbia
+- Effectively a new intercept for each `ISO3`
+
+## Example of a factor
+
+Train a model using **only Mexico and Columbia**
+
+```{r train-factor-mex-col}
+#| echo: true
+#| code-fold: true
+library(moderndive)
+avocado_tmp |>
+  filter(ISO3 %in% c("MEX","COL")) -> avocado_tmp_2cntry
+
+lm(
+  Value_fao ~ Value_cru + factor(ISO3),
+  data=avocado_tmp_2cntry
+) -> yield_model_2ctry
+
+get_regression_table(yield_model_2ctry)
+```
+Why did I only get one factor parameter?
+
+## Factor Parameter Estimates
+
+You will always get one fewer factor parameter than the number of levels
+
+- All models include an intercept term
+- Suppose you compute parameters for each factor level
+  - You could subtract 100 from the intercept
+  - Add 100 to all factor parameters
+  - Exact same predictions
+  - Mathematically the same model
+  
+## Factor Parameter Estimates
+
+You will always get one fewer factor parameter than the number of levels
+
+- If we include all factor parameters in the model
+- The intercept would be **colinear** with the factor parameters
+- Multiple combinations of values for the intercept and factor parameters give identical predictions
+- To solve this R:
+  - Chooses one factor level and forces it to be zero (excludes it)
+  - The intercept and remaining factor levels are now unique
+- R's choice of level to exclude is **arbitrary**
+  
+  
+## A note on Factor Parameter Estimates
+
+R's choice of the *excluded factor level* is arbitrary
+
+- It may not make the same choice each time
+- Choosing a different excluded level changes
+  - All factor parameters (by the exact same amount)
+  - The intercept (by the negative of the factor parameter change)
+- Economically 
+  - You can only compare factor parameters against each other
+  - Comparisons against zero are actually against the excluded level
+
+
+## Train the model on the full dataset
+
+Model without ISO3 Factors
+```{r train-base-all}
+#| echo: true
+#| code-fold: true
+library(moderndive)
+lm(
+  Value_fao ~ Value_cru + Year,
+  data=avocado_tmp
+) -> yield_model_base
+
+get_regression_summaries(yield_model_base)
+```
+
+Model with ISO3 Factors
+```{r train-factor-all}
+#| echo: true
+#| code-fold: true
+lm(
+  Value_fao ~ Value_cru + Year + factor(ISO3),
+  data=avocado_tmp
+) -> yield_model_allctry
+
+get_regression_summaries(yield_model_allctry)
+```
+
+
+## Make a plot
+
+```{r make-plot}
+#| echo: true
+#| code-fold: true
+get_regression_points(yield_model_base) -> points_base
+get_regression_points(yield_model_allctry) -> points_allctry
+
+ggplot(data=points_allctry) +
+  geom_point(aes(x=Value_fao,y=Value_fao_hat,color=ISO3)) +
+  geom_point(data=points_base,aes(x=Value_fao,y=Value_fao_hat), color="#FF00FF",alpha=0.1) +
+  geom_abline(slope=1,intercept=0,color="red",linewidth=1.2) +
+  labs(
+    title="Model Evaluation",
+    x="Actual Yield (mt/ha)",
+    y="Predicted Yield (mt/ha)",
+    color="Country"
+  ) +
+  theme_bw() +
+  scale_color_viridis_d()
+```
+
+# Feature Interactions
+
+## Interplay between features
+
+The typical linear model assumes the effect of each feature is independent
+
+$$y = b_0 + b_1 x_1 + b_2 x_2 + \dots + b_n x_n + \epsilon$$
+
+- The effect of increasing $x_1$ is exactly $b_1$ 
+- Regardless of the value of other features
+
+Are there circumstances where this might not hold?
+
+## Feature interactions
+
+The effects of one feature may depend on the value of another feature
+
+- Drought is exacerbated by high temperatures
+- Low rain in the current month is moderated by rain in previous months
+- High temperatures are bad, but *really high* temperatures are worse
+
+How could we think about accounting for these facts in our models?
+
+
+## Feature interactions
+
+Mathematically you can include **interactions** offeatures
+
+- An additional term that is the product of two or more features
+
+$$\hat y = b_0 + b_1 x_1 + b_2 x_2 + b_{12} x_1 x_2$$
+
+- How much does $\hat y$ change if $x_1$ increases by one?
+$$\frac{\partial \hat y}{\partial x_1} = b_1 + b_{12} x_2$$
+- The effect of $x_1$ depends on the size of $x_2$
+
+## Feature polynomials
+
+You can interact a feature with itself
+
+$$\hat y = b_0 + b_1 x_1 + b_{11} x_1 x_1$$
+- How much does $\hat y$ change if $x_1$ increases by one?
+$$\frac{\partial \hat y}{\partial x_1} = 2 b_1 x_1$$
+- Creates a nonlinear effect
+- The effect of a 1-unit increase in $x_1$ increases as $x_1$ increases
+
+
+## Interactions in R Models
+
+- Construct interaction features in R using the `*` operator
+- R includes both the interaction and **the uninteracted features**
+- e.g., `y ~ x1 * x2`
+$$y = b_0 + b_1 x_1 + b_2 x_2 + b_{12} x_1 x_2$$
+
+## Polynomials in R Models
+
+- Construction polynomial interactions using the `*` operator
+- R includes both the interaction and **uninteracted feature**
+- e.g., `y ~ x1 * x1`
+$$y = b_0 + b_1 x_1 + b_{11} x_1 x_1$$
+
+
+## Higher-order interactions
+
+You can construct higher order interactions
+
+- R includes all possible combinations of the individual features
+- `y ~ x1*x2*x3`
+$$\begin{aligned}
+  y =& b_1 + b_1 x_1 + b_2 x_2 + b_3 x_3 + \\
+      & b_{12} x_1 x_2 + b_{13} x_1 x_3 + b_{23} x_2 x_3 + \\
+      & b_{123} x_1 x_2 x_3
+\end{aligned}$$
+
+## Higher-order polynomials
+
+You can construct higher order polynomials
+
+- R includes all orders of polynomials up to the highest level
+- `y ~ x1*x1*x1`
+$$\begin{aligned}
+  y =& b_1 + b_1 x_1 + b_{11} x_1 x_1 + b_{111} x_1 x_1 x_1
+\end{aligned}$$
+
+
+## Train the model on the full dataset
+
+Model with ISO3 Factors
+```{r show-allctry}
+#| echo: true
+#| code-fold: true
+library(moderndive)
+
+get_regression_summaries(yield_model_allctry)
+```
+
+Model with ISO3 Factors and Temperature-Year interaction
+```{r train-interaction-all}
+#| echo: true
+#| code-fold: true
+lm(
+  Value_fao ~ Value_cru*Year + factor(ISO3),
+  data=avocado_tmp
+) -> yield_model_tmp2
+
+get_regression_summaries(yield_model_tmp2)
+```
+
+
+## Make a plot
+
+```{r make-plot-interaction}
+#| echo: true
+#| code-fold: true
+get_regression_points(yield_model_tmp2) -> points_tmp2
+
+ggplot(data=points_tmp2) +
+  geom_point(aes(x=Value_fao,y=Value_fao_hat,color=ISO3)) +
+  geom_point(data=points_allctry,aes(x=Value_fao,y=Value_fao_hat), color="#FF00FF",alpha=0.1) +
+  geom_abline(slope=1,intercept=0,color="red",linewidth=1.2) +
+  labs(
+    title="Model Evaluation",
+    x="Actual Yield (mt/ha)",
+    y="Predicted Yield (mt/ha)",
+    color="Country"
+  ) +
+  theme_bw() +
+  scale_color_viridis_d()
+```
+
+# Data: NOAA nClimDiv
+
+## Data: NOAA nClimDiv
+
+- NOAA's [US Climate Divisional Database](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00005)
+- Monthly, county-level climate data from 1895 to the present
+- Temperature (min, max, average)
+- Precipitation
+- Heating and Cooling [Degree Days](https://en.wikipedia.org/wiki/Degree_day)
+
+## Data: NOAA nClimDiv {.smaller}
+
+Files in `Data/NOAA-NClimDiv`
+
+Columns:
+
+- **StateCountyFIPS**: State and County [FIPS Code](https://en.wikipedia.org/wiki/FIPS_county_code) 
+- **Element**: Numeric code for the measurement
+- **Year**: Numeric Year
+- **Variable**: Alphabetic code for the measurement
+- **Month**: Three-character month abbreviation 
+- **Value**: Measured Value
+
+
+## Example:PG's County July Temperatures {.smaller}
+
+Let's look at Prince George's County (FIPS 26033) Temperatures 
+
+```{r}
+#| echo: true
+#| code-fold: true
+read_parquet(file.path(data_path,"NOAA-NClimDiv","parquet","tmax.parquet")) |>
+  filter(StateCountyFIPS == "26033") |>
+  filter(Month == "Jul") |>
+  select(Year,Value) |>
+  rename(high_temp = Value) -> tmax
+
+read_parquet(file.path(data_path,"NOAA-NClimDiv","parquet","tmin.parquet")) |>
+  filter(StateCountyFIPS == "26033") |>
+  filter(Month == "Jul") |>
+  select(Year,Value) |>
+  rename(low_temp = Value) -> tmin
+
+tmax |>
+  full_join(tmin,join_by(Year)) -> temps
+
+ggplot(data=temps,mapping=aes(x=Year)) +
+  geom_line(aes(y=high_temp,color="High"),linewidth=1.5) +
+  geom_line(aes(y=low_temp,color="Low"),linewidth=1.5) +
+  scale_color_manual(values=c("High"="red","Low"="blue")) +
+  theme_bw() +
+  labs(
+    title="July Temperatures",
+    subtitle="Prince George's County, MD",
+    x="Year",
+    y="Temperature (F)",
+    color=""
+  ) +
+  theme(legend.position = "bottom")
+```
+All of the R code here should make sense, even without comments
+
+# Wrap up {visibility="hidden"}
+
+## Team Projects
+
+- Continue work on your team project
+  
+  
+## Next Class
+
+- Team Project Work
+- Agricultural Production data from NASS
