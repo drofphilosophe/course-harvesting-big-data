@@ -1,0 +1,418 @@
+---
+title: |
+  Multivariate Modeling
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-11-03
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- Model Assessment and Selection
+- Multivariate Modeling in R
+  - Implement a model with multiple features
+  - Evaluate models
+- Team Project Topic Proposal
+
+We will use the CRU **and** FAO data
+
+- `AGNR-AREC280_Fall2026/Data/CRU/parquet`
+  - Filter to annual data
+- `AGNR-AREC280_Fall2026/Data/FAO/parquet`
+  - Filter to Avocado Yields
+- Join on `Year` and `ISO3` into a single dataset
+
+
+
+
+  
+## Loading Datasets
+
+First load the CRU and FAO data from Parquet Files
+
+```{r load_fao}
+#| echo: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"FAO","parquet","FAO_crop_livestock.parquet")
+) |>
+  filter(Item == "Avocados" & Element == "Yield") -> faostat_avocado
+
+read_parquet(
+  file.path(data_path,"CRU","parquet","tmp_w_ISO3.parquet")
+) |>
+  filter(Period == "ANN") -> cru_tmp_ann
+
+faostat_avocado |>
+  inner_join(cru_tmp_ann,join_by(ISO3,Year),suffix=c("_fao","_cru")) |>
+  drop_na(ISO3) -> avocado_tmp
+```
+
+
+# Recap from Previous Classes
+
+## Look at Avocado Yields by Temperature
+
+From last class:
+```{r yield-plot-1}
+#| echo: true
+#| code-fold: true
+ggplot(data=avocado_tmp,aes(x=Value_cru,y=Value_fao)) +
+  geom_point(aes(color=ISO3)) +
+  theme_bw() +
+  labs(
+    x="Annual Average Temperature (C)",
+    y="Yeild (mt/ha)",
+    title="Avocado Yeilds by Country",
+    color="Country"
+  ) +
+  scale_color_viridis_d()
+```
+
+## Propose a model
+
+From our visual analysis
+
+- There may be a relationship between temperature and yields
+- Propose the linear model
+
+$$Yield = b_0 + b_1 Temperature + \epsilon$$
+
+## Train an OLS Model using data from Mexico
+
+```{r train-mexico-model}
+#| echo: true
+#| code-fold: true
+avocado_tmp |>
+  filter(ISO3 == "MEX") -> avocado_tmp_mex
+
+lm(
+  Value_fao ~ Value_cru,
+  data=avocado_tmp_mex
+) -> yield_model
+
+print(yield_model)
+```
+
+
+## Apply this model to forecast yields in Columbia
+
+```{r forecast-columbia}
+#| echo: true
+#| code-fold: true
+library(moderndive)
+avocado_tmp |>
+  filter(ISO3 == "COL") -> avocado_tmp_col
+
+get_regression_points(
+  yield_model, newdata=avocado_tmp_col
+) -> predicted_yield_col
+
+print(predicted_yield_col)
+```
+
+## Visualize model predictions
+
+```{r viz-pred-columbia}
+#| echo: true
+#| code-fold: true
+ggplot(predicted_yield_col) +
+  geom_point(aes(x=Value_fao,y=Value_fao_hat),color="black",size=1.5) +
+  geom_abline(slope=1,intercept=0,color="red",linewidth=1) +
+  theme_bw() +
+  labs(
+    title="Modeled Yields for Columbia",
+    x="Actual Yield",
+    y="Predicted Yield"
+  )
+```
+
+
+## Model Assessment
+
+Does this model do a good job predicting yields in Columbia?
+
+- Systematically over-predicts yields (inaccurate)
+- High variability in predictions (imprecise)
+- Model seems to make very poor predictions
+- Why?
+- What can we do?
+
+# Multivariate Modeling
+
+## Why Multivariate Models
+
+- Likely more than one factor impacts yields
+  - Temperature, precipitation, technology, etc
+- Modeling yield as only a function of temperature gives poor results
+  - Ignores other important factors
+  - May confuse other factors with temperature effects
+- Leads to multivariate modeling
+
+## Multivariate Models
+
+Multivariate models include multiple features
+$$y = b_0 + b_1 x_1 + b_2 x_2 + \dots + b_n x_n + \epsilon$$
+
+- Simultaneously account for each feature ($x_1$ to $x_n$)
+- Each parameter ($b_1$ to $b_n$) represents
+  - Effect of the associated feature on the label
+  - Holding all other features constant
+
+
+## Multivariate Models in R
+
+How do we implement multivariate models in R?
+
+. . .
+
+- Add additional features to the formula
+- Separate features using the `+` operator
+- **Interact** features using the `*` operator
+- Create factors using the `factor()` function
+
+
+# Implementing Multivariate Models
+
+## Controlling for technological Progress
+
+We modeled yields as a function of temperature
+
+- Average temperatures are increasing over time
+- Technology is improving over time
+- Ignoring technology improvements would
+  - Cause the model to attribute technological improvements to temperature
+  - Overstate the impact of temperature on yields
+- How can we account for technological progress?
+
+## Accounting for technological progress
+
+We can account for technological progress by
+
+- Directly including features that measure the impact of technology on yields
+- Constructing a **proxy** for technological advancement
+  - We know yields have steadily been rising over time
+  - We could include time as a feature in our model
+  
+## Using time as a proxy for technology
+
+We can train the model
+$$Yield = b_0 + b_1 \cdot Temperature + b_2 \cdot Year + \epsilon$$
+
+What does this function imply?
+
+- Yields rise linearly with time due to technology
+  - **Holding temperature constant**
+- Yields rise linearly with temperature 
+  - **Holding technology constant**
+  
+Train this model. What do we get?
+
+
+## Controlling for Technology
+
+```{r model-technology}
+#| echo: true
+#| code-fold: true
+lm(
+  Value_fao ~ Value_cru + Year,
+  data=avocado_tmp_mex
+) -> yield_model_tech
+
+print(yield_model_tech)
+```
+```{r get-params}
+b0 = format(coefficients(yield_model_tech)[["(Intercept)"]],scientific=FALSE,digits=4)
+b1 = format(coefficients(yield_model_tech)[["Value_cru"]],scientific=FALSE,digits=4)
+b2 = format(coefficients(yield_model_tech)[["Year"]],scientific=FALSE,digits=4)
+```
+$$Yield = `r b0` + `r b1` \cdot Temp + `r b2` \cdot Yr$$
+Is this model "better" than our previous model? How can we tell?
+
+
+## Visualize Model Predictions
+
+Visualize predictions against the actual values
+```{r viz-predictions-tech}
+#| echo: true
+#| code-fold: true
+get_regression_points(yield_model_tech) -> points_tech
+
+ggplot(points_tech) +
+  geom_point(aes(x=Value_fao,y=Value_fao_hat),color="black",size=1.5) +
+  geom_abline(slope=1,intercept=0,color="red",linewidth=1) +
+  theme_bw() +
+  labs(
+    title="Modeled Yields for Mexico",
+    subtitle="Controling for Temperature and Technology",
+    x="Actual Yield",
+    y="Predicted Yield"
+  )
+```
+
+## Compare Across Models
+
+```{r viz-predictions-tech-2}
+#| echo: true
+#| code-fold: true
+get_regression_points(yield_model) -> points_tmp
+
+ggplot() +
+  geom_point(data=points_tmp,aes(x=Value_fao,y=Value_fao_hat,color="Temp Only"),size=2.5) +
+  geom_point(data=points_tech,aes(x=Value_fao,y=Value_fao_hat,color="Temp+Tech"),size=2.5) +
+  geom_abline(slope=1,intercept=0,color="red",linewidth=1) +
+  theme_bw() +
+  labs(
+    title="Modeled Yields for Mexico",
+    x="Actual Yield",
+    y="Predicted Yield",
+    color="Model"
+  ) +
+  scale_color_manual(values=c("Temp Only" = "blue","Temp+Tech" = "black"))
+```
+Which model is better?
+
+
+# Evaluating Models
+
+## Numerically evaluating models
+
+Graphical evaluations of models are useful but limited
+
+- Quickly give a sense of accuracy, precision, and potential pitfalls
+- Comparisons won't always be definitive
+- We'd prefer a numeric measure of model performance
+- Do we already have one?
+
+## Measures of model fit/performance
+
+- OLS uses MSE as its **loss function**
+  - A single number that evaluates prediction errors on the training data
+  - Zero means a "perfect" model
+  - Larger numbers mean predictions are less "good"
+- OLS chooses the model parameters that **mathematically minimize the loss function**
+  - No other choice of parameters can reduce the MSE
+- We would tend to prefer models with lower MSE
+- MSE is not the only metric for model performance
+
+## Computing model performance metrics
+
+Get model performance metrics with `get_regression_summaries()`
+```{r model-summaries}
+#| echo: true
+#| code-fold: true
+get_regression_summaries(yield_model)
+get_regression_summaries(yield_model_tech)
+```
+
+## Model performance metrics
+
+The computed metrics are
+
+- **r_squared** - The [R-Squared](https://en.wikipedia.org/wiki/Coefficient_of_determination) Statistic
+  - Squared correlation between model predictions and actual values
+  - Ranges from 0 to 1
+  - Values close to 1 mean predictions more strongly correlated with actual values
+- In OLS adding features will **always reduce the R-squared**!
+  - Regardless of whether the feature is "relevant"
+  
+## Model performance metrics
+
+The computed metrics are
+
+- **adj_r_squared** - The [Adjusted R-Squared](https://en.wikipedia.org/wiki/Coefficient_of_determination#Adjusted_R2)
+  - The R-squared, reduced by a factor related to the number of model features
+  - Typically ranges from 0 to 1, but can be negative
+  - Values close to 1 mean predictions strongly correlated with actual values
+- In OLS adding features may increase or decrease the Adjusted R-Squared
+  - The penalty scales with features/observations
+
+  
+## Model performance metrics
+
+The computed metrics are
+
+- **mse** - The Mean Squared Error
+  - The loss function in OLS
+  - Values close to zero mean predictions are close to actual values
+- In OLS adding features will **always reduce the MSE**
+  - Regardless of whether the feature is "relevant"
+- **rmse** is the square root of MSE
+
+## Model performance metrics
+
+The other metrics
+
+- **sigma** - Variance of the model residual
+- **statistic** - The statistic from an [F-test](https://en.wikipedia.org/wiki/F-test) that all parameters
+(excluding the intercept) are zero
+- **p-value** - The p-value of the above F-test
+- **df** - The Model [Degrees of Freedom](https://en.wikipedia.org/wiki/Degrees_of_freedom_(statistics)) from the above F-test
+- **nobs** - The number of observations in the training data
+
+## Evaluating Models {.smaller}
+
+Which model do you prefer and why?
+
+$Yield = b_0 + b_1 \cdot Temp$
+```{r}
+#| echo: false
+get_regression_summaries(yield_model,print=TRUE)
+```
+
+$Yield = b_0 + b_1 \cdot Temp + b_2 \cdot Yr$
+```{r}
+#| echo: false
+get_regression_summaries(yield_model_tech,print=TRUE)
+```
+
+
+# Wrap up {visibility="hidden"}
+
+## Team Projects
+
+- Submit your proposed team poster topic before the end of class
+  - One submission per team
+- Start discussing strategy for your poster
+- Researching available data
+  - I will provide US, county-level data similar to the CRU and FAO data
+  - You are free (and encouraged) to seek out and use other data sources
+  
+  
+## Next Class
+
+- Advanced Multivariate Modeling
+  - Feature Interactions
+  - Factors
+  - US Weather Data from NOAA
