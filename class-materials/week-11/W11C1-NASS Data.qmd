@@ -1,0 +1,217 @@
+---
+title: |
+  USDA NASS Data
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-11-10
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- USDA National Agricultural Statistics
+- Team Projects
+
+We will use the USDA NASS data
+
+- `AGNR-AREC280_Fall2026/Data/USDA-NASS/parquet`
+
+
+
+
+  
+## Loading Datasets
+
+First load the USDA NASS data from Parquet Files
+
+```{r load_fao}
+#| echo: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"USDA-NASS","parquet","crops_county.parquet")
+) -> nass_crops
+```
+
+## About the USDA NASS
+
+The US Department of Agriculture's [National Agricultural Statistics](https://www.nass.usda.gov/)
+
+- Timely, accurate, and objective operational data
+- US domestic agricultural production.
+- Survey random sample of farms every year
+- Expanded [quinquennial](https://en.wiktionary.org/wiki/quinquennial) Census of Agriculture
+  - Intended to be consistent and comparable for every US county
+
+
+## Goals of NASS
+
+- Report the facts on American agriculture
+- Objective and unbiased statistics on a preannounced schedule
+  - Fair and impartial to all market participants
+- Safeguard the privacy of farmers, ranchers, and other data providers
+
+
+## Collected Data
+
+**Crops**
+
+- Acreage: Acres planted, acres intended for planting, and acres harvested.
+- Yield & Production: Average yield per acre and total aggregate volume harvested
+- Commodities Tracked: 
+  - Field crops (corn, soybeans, wheat, cotton)
+  - Fruit and tree nuts
+  - Vegetables
+  - Floriculture/horticulture.
+
+
+## Collected Data
+
+**Livestock**
+
+- Inventories: Head counts of 
+  - Cattle, hogs, sheep, goats, and poultry 
+  - Distinct lifecycle stages
+- Output Products: 
+  - Dairy: Milk production per cow, total monthly production
+  - Eggs: Egg sets and broiler chick placements
+  - Other: Wool/mohair production
+  - Meat & Processing: head counts and dressed average weights
+
+
+## Get to know the data
+
+This is a new dataset! Take time to understand it
+
+- Time periods
+- Products
+- Places
+
+I'll show examples, but understanding the data takes a lot more
+
+
+## Understainding data
+
+What years are covered?
+
+```{r show-years}
+#| echo: true
+#| code-fold: true
+nass_crops |>
+  count(YEAR) |> 
+  arrange(YEAR) |> 
+  print(n=Inf)
+```
+
+## Is time coverage even?
+
+```{r historgram-years}
+#| echo: true
+#| code-fold: true
+ggplot(nass_crops) +
+  geom_histogram(
+    aes(x=YEAR),
+    binwidth=1,
+    color="black",fill="blue"
+    ) +
+  theme_bw() +
+  labs(
+    x="Year",
+    y="Observation Count"
+  )
+```
+
+## What Products are covered?
+
+```{r show-all-proudcts}
+#| echo: true
+#| code-fold: true
+nass_crops |>
+  distinct(SHORT_DESC) 
+```
+
+
+## What Corn Products are covered?
+
+```{r show-corn-proudcts}
+#| echo: true
+#| code-fold: true
+nass_crops |>
+  filter(str_detect(SHORT_DESC,"CORN")) |>
+  distinct(SHORT_DESC) |>
+  print(n=Inf)
+```
+
+
+## How have corn yields changed over time?
+
+```{r graph-corn-yields}
+#| echo: true
+#| code-fold: true
+nass_crops |>
+  filter(SHORT_DESC == "CORN, GRAIN - YIELD, MEASURED IN BU / ACRE") |>
+  summarize(
+    yield = mean(as.numeric(VALUE),na.rm=TRUE),
+    .by=YEAR
+  ) -> corn_yield
+
+ggplot(corn_yield, aes(x=YEAR,y=yield)) +
+  geom_line(color="black") +
+  geom_smooth(se=FALSE,color="blue",alpha=.5) +
+  theme_bw() +
+  labs(
+    x="Year",
+    y="Corn Yield (bu/acre)"
+  )
+```
+
+
+
+
+# Wrap up {visibility="hidden"}
+
+## Team Projects
+
+- Submit your proposed team poster topic before the end of class
+  - One submission per team
+- Start discussing strategy for your poster
+- Researching available data
+  - I will provide US, county-level data similar to the CRU and FAO data
+  - You are free (and encouraged) to seek out and use other data sources
+  
+  
+## Next Class
+
+- Advanced Multivariate Modeling
+  - Feature Interactions
+  - Factors
+  - US Weather Data from NOAA
