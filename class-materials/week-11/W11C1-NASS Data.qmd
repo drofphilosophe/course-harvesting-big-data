@@ -68,8 +68,8 @@ The US Department of Agriculture's [National Agricultural Statistics](https://ww
 
 - Timely, accurate, and objective operational data
 - US domestic agricultural production.
-- Survey random sample of farms every year
-- Expanded [quinquennial](https://en.wiktionary.org/wiki/quinquennial) Census of Agriculture
+- **Annual**: Random sample survey of farms
+- [**Quinquennial**](https://en.wiktionary.org/wiki/quinquennial): Full Census of Agriculture
   - Intended to be consistent and comparable for every US county
 
 
@@ -81,9 +81,7 @@ The US Department of Agriculture's [National Agricultural Statistics](https://ww
 - Safeguard the privacy of farmers, ranchers, and other data providers
 
 
-## Collected Data
-
-**Crops**
+## Collected Data - **Crops**
 
 - Acreage: Acres planted, acres intended for planting, and acres harvested.
 - Yield & Production: Average yield per acre and total aggregate volume harvested
@@ -94,9 +92,7 @@ The US Department of Agriculture's [National Agricultural Statistics](https://ww
   - Floriculture/horticulture.
 
 
-## Collected Data
-
-**Livestock**
+## Collected Data - **Livestock**
 
 - Inventories: Head counts of 
   - Cattle, hogs, sheep, goats, and poultry 
@@ -201,12 +197,13 @@ ggplot(corn_yield, aes(x=YEAR,y=yield)) +
 
 ## Team Projects
 
-- Submit your proposed team poster topic before the end of class
-  - One submission per team
-- Start discussing strategy for your poster
-- Researching available data
-  - I will provide US, county-level data similar to the CRU and FAO data
-  - You are free (and encouraged) to seek out and use other data sources
+- Continue working on your team project
+- Complete the team project check-in before the end of class
+- Individual submissions
+- Two short questions about your team project
+  - What did you team accomplish working on your project in class today?
+  - What does your team plan to accomplish before the end of the week?
+
   
   
 ## Next Class
