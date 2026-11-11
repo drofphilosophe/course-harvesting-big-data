@@ -6,6 +6,20 @@
     ]
   },
   {
+    "listing": "/class-materials/week-10/index.html",
+    "items": [
+      "/class-materials/week-10/W10C2-More Multivariate Modeling.html",
+      "/class-materials/week-10/W10C1-Multivariate Modeling.html"
+    ]
+  },
+  {
+    "listing": "/class-materials/week-08/index.html",
+    "items": [
+      "/class-materials/week-08/W8C2-Advanced Joins.html",
+      "/class-materials/week-08/W8C1-Relational Data.html"
+    ]
+  },
+  {
     "listing": "/class-materials/week-07/index.html",
     "items": [
       "/class-materials/week-07/W7C2-more-data-wrangling.html"
@@ -20,9 +34,13 @@
   {
     "listing": "/class-materials/index.html",
     "items": [
+      "/class-materials/week-11/index.html",
       "/class-materials/week-05/index.html",
       "/class-materials/week-06/index.html",
-      "/class-materials/week-07/index.html"
+      "/class-materials/week-07/index.html",
+      "/class-materials/week-08/index.html",
+      "/class-materials/week-09/index.html",
+      "/class-materials/week-10/index.html"
     ]
   },
   {
@@ -30,6 +48,20 @@
     "items": [
       "/class-materials/week-05/W5C2-customizing-visualizations.html",
       "/class-materials/week-05/W5C1-basic-data-visualization.html"
+    ]
+  },
+  {
+    "listing": "/class-materials/week-09/index.html",
+    "items": [
+      "/class-materials/week-09/W9C1-Modeling Basics.html",
+      "/class-materials/week-09/W9C2-More Modeling.html"
+    ]
+  },
+  {
+    "listing": "/class-materials/week-11/index.html",
+    "items": [
+      "/class-materials/week-11/W11C2-FIPS Codes and Maps.html",
+      "/class-materials/week-11/W11C1-NASS Data.html"
     ]
   },
   {
