@@ -1,0 +1,441 @@
+---
+title: |
+  FIPS Codes and Maps
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-11-10
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Today's Goals {.smaller}
+
+Today we will
+
+- USDA National Agricultural Statistics
+- Team Projects
+
+We will use the NOAA nClimDiv data
+
+- `AGNR-AREC280_Fall2026/Data/NOAA-NClimDiv/parquet`
+
+
+
+
+  
+## Loading Datasets
+
+First load the USDA NASS data from Parquet Files
+
+```{r load_noaa}
+#| echo: true
+# Load required libraries
+library(tidyverse)
+library(arrow)
+library(usmap)
+# Load the full fao dataset
+read_parquet(
+  file.path(data_path,"NOAA-NCLimDiv","parquet","tmp.parquet")
+) -> noaa_tmp
+```
+
+
+# FIPS Codes
+
+## FIPS Codes
+
+The US Data files use [FIPS Codes](https://en.wikipedia.org/wiki/FIPS_county_code)
+to identify counties
+
+- Standardized codes to represent geographic regions
+  - From Census block groups (~1000 people) to states
+- State FIPS codes are two numeric characters
+- County FIPS codes are three numeric characters
+- The combination of State and County FIPS
+  - 5 numeric characters
+  - Uniquely identifies each county in the US
+  
+## Why FIPS Codes?
+
+- FIPS provide a standardized, unique identifier for geographic units in the US
+- We are in county `24033`
+- Contrast with
+  - Prince Georges
+  - Prince George's
+  - PG County
+
+
+# The `usmap` Package
+
+## The `usmap` Package
+
+`usmap` has facilities for dealing with US geospatial data
+
+- Create Maps of state/county data
+- Look up proper names of states and counties using FIPS codes (easy)
+- Convert State/County names into FIPS codes (hard)
+
+## Using `usmap`
+
+To use `usmap`
+
+- Install the `usmap` packge
+```r
+install.packages("usmap")
+```
+- Load the library
+```r
+library(usmap)
+```
+
+# Looking Up Information for a FIPS
+
+## Getting names from FIPS codes
+
+`usmap` provides a function for looking up geographic entitiy names
+
+```r
+fips_info(
+  fips=<fips>,
+  [data_year=<year>])
+```
+
+- `<fips>` A FIPS code to look up
+- `<year>` Year from which to pull FIPS data (if they change)
+
+
+## Example - Look Up Information for a FIPS
+
+Looking up a single name
+```{r}
+#| echo: true
+fips_info("24033")
+```
+Extract the individual components with double-brackets
+```{r}
+#| echo: true
+fips_info("24033")[["abbr"]]
+```
+
+```{r}
+#| echo: true
+fips_info("24033")[["county"]]
+```
+
+
+## Using with `mutate()`
+
+You can _technically_ use `fips_info()` with `mutate()`
+
+- Lookups are slow can can take a long time
+  - Best practice is to use `distinct()` on your FIPS codes first
+  - Use a `join_*()` to combine info back in
+- `fips_info()` returns an empty list if the FIPS is `NA` or invalid
+  - R skips these when pulling results together in `mutate()`
+  - You'll have fewer rows than your full dataset
+  - `mutate()` will fail with an error message
+
+## Using with `mutate()`
+
+If you want to use `fips_info()` with mutate, create a wrapper that checks for invalid FIPS
+
+- I've provided this code as a template to get this done
+- It probably doesn't make sense
+
+
+## Example wrapper function for `mutate()`
+
+```{r}
+#| echo: true
+get_fips_county <- function(fips, ...) {
+  # If NA or not 5 characters, reutrn NA
+  if(is.na(fips) | !str_detect(fips,"^[0-9]{5}$")) result = NA_character_
+  else {
+    # Look up the FIPS
+    county_info = fips_info(fips, ...)
+    # If we get an empty response, return NA
+    if(nrow(county_info) == 0) result = NA_character_
+    # Otherwise extract the county and reuturn it
+    else result = county_info[["county"]]
+  }
+  return(result)
+}
+```
+
+## Example wrapper function for `mutate()`
+
+Same thing for state abbriviations 
+
+```{r}
+#| echo: true
+get_fips_state <- function(fips, ...) {
+  # If NA or not 5 characters, reutrn NA
+  if(is.na(fips) | !str_detect(fips,"^[0-9]{5}$")) result = NA_character_
+  else {
+    # Look up the FIPS
+    state_info = fips_info(fips, ...)
+    # If we get an empty response, return NA
+    if(nrow(state_info) == 0) result = NA_character_
+    # Otherwise extract the county and reuturn it
+    else result = state_info[["abbr"]]
+  }
+  return(result)
+}
+```
+
+## Example - Using with `mutate()`
+
+You need to use the `map_*()` function to get R to perform this operation one row at a time
+
+- Again, we haven't covered this, but the code is a template for accomplishing the task
+```r
+noaa_tmp |>
+  distinct(StateCountyFIPS) |>
+  mutate(
+    county_name = map_chr(StateCountyFIPS,get_fips_county),
+    state_abbr = map_chr(StateCountyFIPS,get_fips_state)
+  ) -> fips_map
+
+noaa_tmp |>
+  left_join(fips_map,join_by(StateCounty_FIPS)) |>
+  select(Year,Month,Value,StateCountyFIPS,county_name)
+```
+
+## Example - Using with `mutate()`
+```{r}
+#| echo: true
+#| code-fold: true
+# Example eval on a small subset to speed computation time
+noaa_tmp |>
+  distinct(StateCountyFIPS) |>
+  slice(1:20) |>
+  mutate(
+    county_name = map_chr(StateCountyFIPS,get_fips_county),
+    state_abbr = map_chr(StateCountyFIPS,get_fips_state)
+  ) -> fips_map
+
+noaa_tmp |>
+  inner_join(fips_map,join_by(StateCountyFIPS)) |>
+  select(Year,Month,Value,StateCountyFIPS,county_name,state_abbr) |>
+  glimpse()
+```
+
+:::{.callout-tip}
+
+### The number of observations is reduced in this example
+
+The code above limits the counties it translates to the first 20. Looking up
+county info is slow and I've limited the number of counties processed in this
+example using `slice()` to speed up computation. 
+:::
+
+## Create a map of temperatures
+
+Create maps using `plot_usmap()`
+
+- An extension of `ggplot()`
+- Creates a plot and adds the map layer
+- Requires several arguments
+
+
+# Creating maps
+
+## Creating Maps
+
+The US Map package can be used to create maps
+
+- Creates maps of data from US states
+- Automatically insets Alaska and Hawaii
+- Uses either state or county data
+- Indexed by FIPS
+
+## Creating maps
+
+Example usage
+
+```r
+plot_usmap(
+  data=<data>, 
+  regions="<county|state>", 
+  )
+```
+
+- `<data>` A dataframe with columns
+  - `fips` The State (2-character) or County (5-character) FIPS as text
+  - `values` A column of values to plot
+- `"<county|state>"` Specifies geography to use for plotting
+
+## Creating maps
+
+`plot_usmap()` is an extension of `ggplot()`
+
+- Identical to `ggplot()` plus a map layer
+- You can use other `ggplot()` functions and aesthetics to customize the 
+visualization
+- There are some other useful options as well
+
+Let's create a map of temperatures in July 2025
+
+
+## Create data for a map of temperatures
+
+First, create a dataset of temperatures in only July 2025
+
+```{r filter-month}
+#| echo: true
+#| code-fold: false
+noaa_tmp |>
+  filter(Year == 2025 & Month == "Jul") |>
+  rename(
+    fips = StateCountyFIPS,
+    values = Value  
+  ) -> noaa_tmp_jul2025
+```
+
+## First map of temperatures
+
+```{r map-1}
+#| fig-align: "center"
+#| fig-height: 7
+#| echo: true
+#| code-fold: true
+
+plot_usmap(
+  data=noaa_tmp_jul2025, 
+  regions="county"
+  )
+```
+
+## First map of temperatures
+
+::::{.columns}
+
+:::{.column width="60%"}
+```{r map-1a}
+#| echo: false
+plot_usmap(
+  data=noaa_tmp_jul2025, 
+  regions="county"
+  )
+```
+:::
+
+:::{.column width="40%"}
+
+**Problems**
+
+- No data for AK/HI
+- County outlines make it hard to read
+- Color scale is tough to read
+- What's up with CT?
+
+:::
+
+::::
+
+
+## Fixing Problems
+
+**Problems**
+
+- No data for AK/HI
+  - `exclude=` argument
+- County outlines make it hard to read
+  - `color=` layer property
+- Color scale is tough to read
+  - `scale_fill_*()`
+- What's up with CT?
+  - ???
+
+
+## A Better Map
+
+```{r map-penultimate}
+#| fig-align: "center"
+#| fig-height: 7
+#| echo: true
+#| code-fold: true
+plot_usmap(
+  data=noaa_tmp_jul2025, 
+  regions="county", 
+  color=NA,
+  exclude=c("HI","AK")
+  ) +
+  scale_fill_viridis_c(option="turbo") +
+  theme_bw() +
+  labs(
+    fill="Average\nTemperature"
+  ) +
+  theme(legend.position = "bottom")
+```
+
+## What's up with CT?
+
+Connecticut is gray in the map -- No data. Why?
+
+- The US Census bureau redivided CT in 2024
+- Split former 8 counties into 9 planning regions
+- New planning regions have different FIPS codes
+- By default `usmap` uses the most recent map
+- Old FIPS codes don't match new values in the map
+
+Force an older map with `data_year=`
+
+## An Even Better Map
+
+```{r map-final}
+#| fig-align: "center"
+#| fig-height: 7
+#| echo: true
+#| code-fold: true
+plot_usmap(
+  data=noaa_tmp_jul2025, 
+  regions="county", 
+  color=NA,
+  exclude=c("HI","AK"),
+  data_year=2021
+  ) +
+  scale_fill_viridis_c(option="turbo") +
+  theme_bw() +
+  labs(
+    fill="Average\nTemperature"
+  ) +
+  theme(legend.position = "bottom")
+```
+
+# Wrap up {visibility="hidden"}
+
+## Team Projects
+
+- Continue work on team projects
+  
+## Next Class
+
+- Advanced Multivariate Modeling
+  - Feature Interactions
+  - Factors
+  - US Weather Data from NOAA
