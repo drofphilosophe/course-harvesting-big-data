@@ -1,0 +1,200 @@
+---
+title: |
+  Team Project Poster Presentations
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-11-16
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+## Team Project Presentation Goals
+
+- **Poster Deadlines & Specs:** What needs to be submitted, when, and how it should be formatted
+- **Design Principles:** Making your research clear, readable, and visually compelling
+- **Session Format:** How the rotating poster session works
+- **Presentation Best Practices:** How to deliver a sharp 5-minute pitch
+
+---
+
+## Key Dates & Submission
+
+- **Poster PDF Due:** Thursday, **December 10 at 11:59 PM** via ELMS
+  - *Strict deadline:* Late submissions may not be printed in time
+  - We handle printing—your poster will be waiting for you at your table on presentation day
+- **Poster Session:** Friday, **December 18, 4:00 PM – 6:00 PM**
+  - Arrive promptly, we will precisely follow the schedule
+
+---
+
+## Physical Specs & Originality
+
+- **Dimensions:** **29" × 39"** (Portrait orientation)
+  - Approximately your team table monitor, rotated 90 degrees
+- **100% Original Analysis:**
+  - Summarize your team's original question, data analysis, and main results
+  - **No outside charts or tables** (unlike the fact sheets, cited third-party plots are not allowed here)
+- **Images:** Must be original, public domain, or properly licensed (Creative Commons) with required attribution included on the poster
+
+---
+
+## Visual Design: Less Is More
+
+::: {.columns}
+::: {.column width="45%"}
+### Do
+- Treat the poster as a **visual anchor** for a conversation, not a printed paper
+- Lead with your **best original visualizations**
+- Leave plenty of **whitespace** so the eye can breathe
+- Use a **light background** with dark, high-contrast text
+:::
+
+::: {.column width="10%"}
+
+:::
+
+::: {.column width="45%"}
+### Don't
+- Write dense walls of text or paste paragraphs
+- Use large, solid-color backgrounds—especially **dark backgrounds with white/light text**
+- Mix too many different fonts, sizes, or competing colors
+:::
+:::
+
+---
+
+## Typography & Readability (4–6 Feet Rule)
+
+Everything (except perhaps references) must be readable while standing in a semi-circle around the end of your team table:
+
+| Poster Element | Recommended Size | Style |
+| :--- | :--- | :--- |
+| **Title** | 85–90 pt | Sans Serif |
+| **Authors** | 56–60 pt | Sans Serif |
+| **Sub-headings** | 36–48 pt | Sans Serif |
+| **Body Text** | 22–24 pt | Serif |
+| **Captions / References** | 16–18 pt | Serif |
+
+## Font Styles
+
+**Serif** $\text{fonts have decorative serifs in the letters}$
+
+- e.g., Times New Roman, Georgia, Cambria
+
+**Sans Serif** fonts do not have decorative serifs
+
+- e.g., Arial, Calibri, Helvetica, Book Antiqua
+
+
+## Design Inspiration
+
+ELMS has
+
+- A document with design guidelines and links to design suggestions
+- Examples of high-quality past posters
+
+::: {.callout-tip}
+
+### Sample posters were designed for widescreen computer monitors
+
+The AREC 280 sample posters were designed for widescreen computer monitors, not print. 
+Your poster will be portrait orientation, adjust your layout to be 39" tall and 29" wide.
+
+:::
+
+---
+
+## Session Format & Timing {.smaller}
+
+The session runs from **4:00 PM – 6:00 PM** in 2309 ESJ on a rigid schedule:
+
+- **4:00 PM – 4:10 PM (10 min):** Arrive, pick up your printed poster, and hang it at your assigned station
+- **4:10 PM – 6:00 PM:** **10 simultaneous presentation stations** rotating every **7 minutes**
+  - **5 minutes:** Live presentation + brief Q&A
+  - **2 minutes:** Complete peer evaluation, transition to the next station
+- Each student provided with an individualized schedule
+  - Designates the block during which they present
+  - Other sessions they watch to watch and peer evaluate
+- **5:30:** Submit peer evaluations and clean up
+
+---
+
+## Sample Session Schedule
+
+| Time Block | Activity |
+| :--- | :--- |
+| **4:00 – 4:10** | Setup & Poster Hanging (10 min) |
+| **4:10 – 4:15** | Round 1 Presentation (5 min) |
+| **4:15 – 4:17** | *Transition (2 min)* |
+| **4:17 – 4:22** | Round 2 Presentation (5 min) |
+| **4:22 – 4:24** | *Transition (2 min)* |
+| **4:24 – 5:20** | Rounds 3 – 10 *(5 min talk + 2 min transition each)* |
+| **5:20+** | Final Wrap-up & Teardown |
+
+---
+
+## Your Dual Role: Presenter & Evaluator
+
+- **When Presenting:**
+  - You will be assigned a specific time slot(s) to staff your team's poster and present
+  - Keep an eye on the clock, rotations are strict so everyone gets their full 5 minutes
+- **When Not Presenting:**
+  - You will receive a personalized schedule of posters to visit
+  - You are responsible for **watching and completing peer evaluations** for your assigned presentations
+  - Bring a pen and move promptly during the 2-minute transitions
+
+---
+
+## How to Structure a Great 5-Minute Pitch
+
+Don't read your poster word-for-word. Tell a clear, 5-minute story:
+
+1. **The Hook & Question (45 sec):** What problem are you solving, and why should anyone care?
+2. **Data & Approach (60 sec):** Briefly explain what data you used and how you analyzed it (skip tedious minutiae unless asked)
+3. **Key Findings & Visuals (2 min):** Walk your audience directly through your main charts—point to specific patterns and explain what they mean
+4. **Takeaway & Q&A (1 min 15 sec):** State your core conclusion clearly and leave room for 1–2 quick questions
+
+---
+
+## Poster Presentation Best Practices
+
+- **Face your audience, not the poster:** Stand to the side of the board and use open body language so the whole semi-circle can see and hear you
+- **Use the visuals actively:** Point to axes, trends, and callouts on your plots as you speak—make the poster work for you
+- **Practice with a timer:** 5 minutes goes faster than you think; rehearse until you can hit your main takeaway comfortably in ~4 minutes
+- **Know your limitations:** If someone asks a tough methodological question, answer honestly—acknowledging caveats shows rigor
+
+---
+
+## Team Project Work
+
+Continue Team Project Work
+
+- Only **four** class sessions for poster work remaining
+  - **Nov 24**: Paper due, No organized class work
+  - **Dec 03**: Research paper examination in class
+  - **Dec 10**: Final poster clean up and presentation practice
+  

@@ -1,0 +1,237 @@
+---
+title: "Session Presentation Timers"
+author: "University of Maryland"
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    center: true
+---
+```{=html}
+<style>
+  /* Traffic Light and Timer Layout Styles */
+  .timer-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 2rem;
+  }
+
+  .timer-text {
+    font-size: 6rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  
+  .timer-display {
+    font-family: monospace;
+    font-size: 7rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  
+  /* Traffic Light Box */
+  .traffic-light {
+    display: flex;
+    flex-direction: column;
+    background: #222;
+    padding: 15px;
+    border-radius: 20px;
+    gap: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  }
+  
+  .light {
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+    border: 3px solid #444;
+    background-color: transparent;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* State Colors (Hollow by default, filled when active) */
+  .light.red { border-color: #ff4d4d; }
+  .light.red.active { background-color: #ff4d4d; box-shadow: 0 0 20px #ff4d4d; }
+  
+  .light.amber { border-color: #ffc107; }
+  .light.amber.active { background-color: #ffc107; box-shadow: 0 0 20px #ffc107; }
+  
+  .light.green { border-color: #28a745; }
+  .light.green.active { background-color: #28a745; box-shadow: 0 0 20px #28a745; }
+</style>
+```        
+
+# Example Session
+::: {.timer-container data-duration="20" data-warning="5" data-hold="5" data-start-audio="/assets/audio/time-start.mp3" data-end-audio="/assets/audio/times-up.mp3"}
+
+```{=html}
+<div class="timer-display">05:00</div>
+<div class="traffic-light">
+  <div class="light red"></div>
+  <div class="light amber"></div>
+  <div class="light green"></div>
+</div>
+```
+
+:::
+
+# Example Transition
+::: {.timer-container data-duration="20" data-warning="5" data-hold="5" data-start-audio="" data-end-audio="/assets/audio/times-up.mp3"}
+
+```{=html}
+<div class="timer-display">05:00</div>
+<div class="traffic-light">
+  <div class="light red"></div>
+  <div class="light amber"></div>
+  <div class="light green"></div>
+</div>
+```
+
+:::
+
+
+# Ready for Sessions?
+
+# Session 1
+::: {.timer-container data-duration="20" data-warning="5" data-hold="3" data-start-audio="/assets/audio/time-start.mp3" data-end-audio="/assets/audio/times-up.mp3"}
+
+```{=html}
+<div class="timer-display">05:00</div>
+<div class="traffic-light">
+  <div class="light red"></div>
+  <div class="light amber"></div>
+  <div class="light green"></div>
+</div>
+```
+
+:::
+
+# Go to Session 2
+::: {.timer-container data-duration="10" data-warning="2" data-hold="0" data-start-audio="" data-end-audio=""}
+
+```{=html}
+<div class="timer-display">05:00</div>
+<div class="traffic-light">
+  <div class="light red"></div>
+  <div class="light amber"></div>
+  <div class="light green"></div>
+</div>
+```
+
+:::
+
+## Session 2
+::: {.timer-container data-duration="20" data-warning="5" data-hold="0" data-start-audio="" data-end-audio=""}
+
+```{=html}
+<div class="timer-display">05:00</div>
+<div class="traffic-light">
+  <div class="light red"></div>
+  <div class="light amber"></div>
+  <div class="light green"></div>
+</div>
+```
+
+:::
+
+
+```{=html}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let timerInterval = null;
+
+  function initTimer() {
+    // Clear any previous interval
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    if (typeof Reveal === 'undefined') return;
+    const currentSlide = Reveal.getCurrentSlide();
+    if (!currentSlide) return;
+
+    const timerWrapper = currentSlide.querySelector('.timer-container');
+    if (!timerWrapper || !timerWrapper.hasAttribute('data-duration')) return;
+
+    const totalDuration = parseInt(timerWrapper.getAttribute('data-duration')) || 300;
+    const warningTime = parseInt(timerWrapper.getAttribute('data-warning')) || 60;
+    const holdTime = parseInt(timerWrapper.getAttribute('data-hold')) || 3;
+    const startAudioSrc = timerWrapper.getAttribute('data-start-audio');
+    const endAudioSrc = timerWrapper.getAttribute('data-end-audio');
+
+    const display = timerWrapper.querySelector('.timer-display');
+    const redLight = timerWrapper.querySelector('.light.red');
+    const amberLight = timerWrapper.querySelector('.light.amber');
+    const greenLight = timerWrapper.querySelector('.light.green');
+
+    let timeLeft = totalDuration;
+
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60).toString().padStart(2, '0');
+      const s = (secs % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function setLights(color) {
+      if (!redLight || !amberLight || !greenLight) return;
+      redLight.classList.toggle('active', color === 'red');
+      amberLight.classList.toggle('active', color === 'amber');
+      greenLight.classList.toggle('active', color === 'green');
+    }
+
+    function playSound(src) {
+      if (src && src.trim() !== "") {
+        const audio = new Audio(src);
+        audio.play().catch(e => console.log("Audio blocked:", e));
+      }
+    }
+
+    // Initial state setup
+    if (display) display.textContent = formatTime(timeLeft);
+    setLights('green');
+    playSound(startAudioSrc);
+
+    // Start the countdown loop explicitly
+    timerInterval = setInterval(() => {
+      timeLeft--;
+
+      if (timeLeft > warningTime) {
+        setLights('green');
+      } else if (timeLeft > 0) {
+        setLights('amber');
+      } else {
+        timeLeft = 0;
+        setLights('red');
+        if (display) display.textContent = formatTime(0);
+        clearInterval(timerInterval);
+        timerInterval = null;
+
+        playSound(endAudioSrc);
+
+        setTimeout(() => {
+          if (typeof Reveal !== 'undefined' && Reveal.getCurrentSlide() === currentSlide) {
+            Reveal.next();
+          }
+        }, holdTime * 1000);
+      }
+
+      if (display && timeLeft > 0) {
+        display.textContent = formatTime(timeLeft);
+      }
+    }, 1000);
+  }
+
+  // Hook into Reveal lifecycle events safely
+  setTimeout(() => {
+    if (typeof Reveal !== 'undefined') {
+      initTimer();
+      Reveal.on('slidechanged', () => initTimer());
+      Reveal.on('ready', () => initTimer());
+    }
+  }, 300);
+});
+</script>
+```
