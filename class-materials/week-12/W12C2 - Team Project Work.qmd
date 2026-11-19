@@ -1,0 +1,46 @@
+---
+title: |
+  Team Project Poster Presentations
+editor: source
+categories: ["Class Materials"]
+format: revealjs
+date: 2026-11-19
+---
+
+# Today's Goals {visibility="hidden"}
+
+```{r setup}
+#| include: false
+# Load local .env from project root regardless of folder depth
+
+here::i_am(".env")
+env_path <- here::here(".env")
+if (file.exists(env_path)) {
+  readRenviron(env_path)
+} else {
+  stop(paste("Unable to locate .env file at ", env_path))
+}
+
+# Extract Google Drive path  
+course_path <- Sys.getenv("GDRIVE_PATH")
+if(!dir.exists(course_path)) {
+  stop(paste("Google drive folder ", course_path, " does not exist. Check the .env file."))
+}
+
+data_path = file.path(course_path,"Data")
+library(tidyverse)
+library(arrow)
+```
+
+
+## Continue Team Project Work
+
+- Complete the check-in on ELMS before the end of class
+  - What work do **you personally** plan to complete before the next team meeting?
+  - What work do your **other team members** plan on completing before the next teem meeting?
+- Only **three** class sessions for poster work remaining
+- Other important class dates
+  - **Nov 24**: Paper due, No organized class work. I will be here.
+  - **Dec 03**: Research paper examination in class
+  - **Dec 10**: Final poster clean up and presentation practice
+  
